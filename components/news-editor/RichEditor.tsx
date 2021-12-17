@@ -1,5 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Col, message, Modal, Row, Select } from 'antd';
+import { Button, Card, Col, Form, message, Modal, Row, Select } from 'antd';
 import React, { ReactElement, useEffect } from 'react';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -29,7 +29,7 @@ const modules = {
       ['clean'],
     ],
     handlers: {
-      image: (res) => console.log(res,'asdasd'),
+      image: (res) => console.log(res, 'asdasd'),
     },
   },
 };
@@ -54,7 +54,6 @@ function RichEditor(props): ReactElement {
     NEWS_CATEGORIES,
     _getAllNewsCategories
   );
-  const [recentNewsPosts, setRecentNewsPosts] = useState([]);
   const [richContentMeta, setRichContentMeta] = useState({
     categoryId: 0,
     id: 0,
@@ -103,7 +102,6 @@ function RichEditor(props): ReactElement {
 
   async function getRecentNews() {
     const data = await _getRecentNews();
-    setRecentNewsPosts(data);
   }
 
   useEffect(() => {
@@ -113,41 +111,46 @@ function RichEditor(props): ReactElement {
         content: initialContent,
       });
     }
-    getRecentNews();
   }, []);
 
   return (
-    <div className='container p-10 px-10 mx-auto'>
+    <div className='p-10 px-10 mx-auto'>
       <Row justify='start'>
         <Col lg={24}>
-          <Row>
-            <Col offset={3}>
-              <Select
-                className='w-full'
-                placeholder={'Category'}
-                disabled={isLoading}
-                onChange={onChangeCategory}
-              >
-                {isSuccess &&
-                  data.map((_category) => (
-                    <Select.Option key={_category.id} value={_category.id}>
-                      {_category?.title}
-                    </Select.Option>
-                  ))}
-              </Select>
-            </Col>
-          </Row>
-          <Row justify='center' className='mt-10'>
-            <Col lg={18} md={18} className='bg-white'>
-              <ReactQuill
-                modules={modules}
-                formats={formats}
-                onChange={setContentValue}
-                value={richContentMeta.content}
-                style={{ height: '15rem' }}
-              />
-            </Col>
-          </Row>
+          <Form>
+            <Row>
+              <Col offset={3}>
+                <Form.Item>
+                  <Select
+                    className='w-full'
+                    placeholder={'Category'}
+                    disabled={isLoading}
+                    onChange={onChangeCategory}
+                  >
+                    {isSuccess &&
+                      data.map((_category) => (
+                        <Select.Option key={_category.id} value={_category.id}>
+                          {_category?.title}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row justify='center' className='mt-10'>
+              <Col lg={18} md={18} className='bg-white'>
+                <Form.Item>
+                  <ReactQuill
+                    modules={modules}
+                    formats={formats}
+                    onChange={setContentValue}
+                    value={richContentMeta.content}
+                    style={{ height: '15rem' }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
           <Row justify='center' className='flex gap-5 mt-20'>
             <Col className=''>
               <Button onClick={resetContent} className=''>
@@ -162,16 +165,6 @@ function RichEditor(props): ReactElement {
               >
                 Confirm
               </Button>
-            </Col>
-          </Row>
-          <Row className='mt-5'>
-            <Col offset={3}>
-              <div className='heading-2 text-xl'>Recent Post</div>
-              {recentNewsPosts.map((_post: any) => (
-                <Row key={_post.id}>
-                  <div dangerouslySetInnerHTML={{ __html: _post.content }} />
-                </Row>
-              ))}
             </Col>
           </Row>
         </Col>

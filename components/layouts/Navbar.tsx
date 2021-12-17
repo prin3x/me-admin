@@ -12,7 +12,7 @@ function Navbar(): ReactElement {
     <Row
       justify='space-between'
       align='middle'
-      className='nav-containe shadow-sm	 rounded-b-xl h-20 px-20 bg-primary-color text-white'
+      className='nav-containe shadow-sm	 rounded-b-2xl h-20 px-20 bg-primary-color text-white mx-10'
     >
       <Col md={6}>
         <Link href='/'>
@@ -22,23 +22,23 @@ function Navbar(): ReactElement {
           </Row>
         </Link>
       </Col>
-      <Col md={8} className='flex justify-center'>
-        <ul className='flex gap-5 items-center h-full justify-end text-gray-800 font-regular'>
+      <Col md={10} className='flex justify-center'>
+        <ul className='flex gap-5 items-center h-full justify-end text-white font-regular mb-0 font-semibold'>
         <Link href='/'>
-            <li className='nav-item text-md'>Dashboard</li>
+            <li className='nav-item text-md cursor-pointer'>Dashboard</li>
           </Link>
           <Link href='/contacts'>
-            <li className='nav-item text-md'>Contacts</li>
+            <li className='nav-item text-md cursor-pointer'>Contacts</li>
           </Link>
           <Link href='/calendar'>
-            <li className='nav-item text-md'>Calendar</li>
+            <li className='nav-item text-md cursor-pointer'>Calendar</li>
           </Link>
           <Link href='/news-editor'>
-            <li className='nav-item text-md'>NEWS / BLOG</li>
+            <li className='nav-item text-md cursor-pointer'>Posts</li>
           </Link>
         </ul>
       </Col>
-      <Col md={10}>
+      <Col md={4}>
         <ul className='flex gap-5 items-center h-full justify-end'>
           <li className='nav-item text-md'>
             <SearchOutlined />

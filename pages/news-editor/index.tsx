@@ -1,23 +1,19 @@
-import { PlusSquareOutlined } from '@ant-design/icons';
+import { PlusCircleFilled } from '@ant-design/icons';
 import { Col, Row } from 'antd';
+import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
-import LayoutHOC from '../../layouts/LayoutHOC';
+import NewsPostList from '../../components/news-editor/NewsPostList';
+import LayoutHOC from '../../components/layouts/LayoutHOC';
+import MakeNewBtn from '../../components/news-editor/MakeNewBtn';
 interface Props {}
 
 function BlogEditorContainer({}: Props): ReactElement {
   return (
     <LayoutHOC>
-      <div className='py-10 px-10'>
-        <Row justify='center' className='container mx-auto flex gap-5'>
-          <Col span={6}>
-            <div className='w-full bg-secondary-color shadow-lg hadow-blue-500/40 h-40 rounded-xl flex flex-col items-center justify-center cursor-pointer'>
-              <div className='text-3xl flex gap-5 items-center'>
-                <span>สร้างใหม่</span>
-                <PlusSquareOutlined />
-              </div>
-            </div>
-          </Col>
-        </Row>
+      <div className='container p-10'>
+        <title>ME</title>
+        <MakeNewBtn />
+        <NewsPostList />
       </div>
     </LayoutHOC>
   );

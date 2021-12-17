@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import LayoutHOC from '../../layouts/LayoutHOC';
+import LayoutHOC from '../../components/layouts/LayoutHOC';
 import dynamic from 'next/dynamic';
 
 const CustomCalendar = dynamic(

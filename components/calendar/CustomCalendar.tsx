@@ -4,130 +4,26 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
-import { Button, Col, Row, Select } from 'antd';
-import { v4 as uuidv4 } from 'uuid';
+import { Button, Col, Form, message, Row, Select } from 'antd';
 import { useEffect } from 'react';
 import CalendarEventModal from './CalendarEventModal';
-import { _findAllCalendarEvent } from '../../services/calendar/calendar.service';
-
-const addDaysToday = (days = 0) => {
-  const result = new Date();
-  result.setDate(result.getDate() + days);
-  return result.toISOString().replace(/T.*$/, '');
-};
-
-let eventsData = [
-  {
-    id: uuidv4(),
-    title: 'Crash Course',
-    start: addDaysToday(5),
-    end: addDaysToday(7),
-    color: '#ff000',
-    category: 'Education',
-  },
-  {
-    id: uuidv4(),
-    title: 'Sale Meetings',
-    start: addDaysToday(-11),
-    end: addDaysToday(-8),
-    category: 'Work',
-  },
-  {
-    id: uuidv4(),
-    title: 'Birthday Party',
-    start: `${addDaysToday(2)}T12:15:00`,
-    category: 'Personal',
-  },
-  {
-    id: uuidv4(),
-    title: 'Link',
-    start: `${addDaysToday(-3)}T12:00:00`,
-    url: 'https://themeforest.net/user/coloredstrategies/portfolio/',
-    category: 'Work',
-  },
-  {
-    id: uuidv4(),
-    title: 'Meeting',
-    start: `${addDaysToday()}T10:30:00`,
-    end: `${addDaysToday()}T12:30:00`,
-    category: 'Education',
-  },
-  {
-    id: uuidv4(),
-    title: 'Lunch',
-    start: `${addDaysToday()}T14:30:00`,
-    end: `${addDaysToday()}T16:30:00`,
-    category: 'Personal',
-  },
-  {
-    id: uuidv4(),
-    title: 'Dinner',
-    start: `${addDaysToday()}T19:30:00`,
-    end: `${addDaysToday()}T21:30:00`,
-    category: 'Personal',
-  },
-  {
-    id: uuidv4(),
-    title: 'Meeting',
-    start: `${addDaysToday(16)}T9:30:00`,
-    end: `${addDaysToday(16)}T10:15:00`,
-    category: 'Work',
-  },
-  {
-    id: uuidv4(),
-    title: 'React Course',
-    start: addDaysToday(25),
-    end: addDaysToday(29),
-    category: 'Education',
-  },
-  {
-    id: uuidv4(),
-    title: 'Marketing Meetings',
-    start: addDaysToday(-36),
-    end: addDaysToday(-34),
-    category: 'Work',
-  },
-  {
-    id: uuidv4(),
-    title: 'Vue.js Course',
-    start: addDaysToday(35),
-    end: addDaysToday(38),
-    category: 'Education',
-  },
-  {
-    id: uuidv4(),
-    title: 'Lunch',
-    start: `${addDaysToday(-19)}T14:30:00`,
-    end: `${addDaysToday(-19)}T16:30:00`,
-    category: 'Personal',
-  },
-  {
-    id: uuidv4(),
-    title: 'Dinner',
-    start: `${addDaysToday(-21)}T19:30:00`,
-    end: `${addDaysToday(-21)}T21:30:00`,
-    category: 'Personal',
-  },
-  {
-    id: uuidv4(),
-    title: 'Dinner',
-    start: `${addDaysToday(39)}T19:30:00`,
-    end: `${addDaysToday(39)}T21:30:00`,
-    category: 'Personal',
-  },
-  {
-    id: uuidv4(),
-    title: 'Lunch',
-    start: `${addDaysToday(39)}T14:30:00`,
-    end: `${addDaysToday(39)}T16:30:00`,
-    category: 'Personal',
-  },
-];
+import {
+  _findAllCalendarEvent,
+  _getAllCategories,
+  _makeNewEvent,
+  _updateEvent,
+} from '../../services/calendar/calendar.service';
+import {
+  MakeNewsDto,
+  ModalEditType,
+} from '../../services/calendar/calendar.model';
+import { useQueryClient, useQuery } from 'react-query';
+import { CALENDAR_EVENT } from '../../services/calendar/calendar.queryKey';
 
 const colorsMap = [
-  { color: 'primary', category: 'Work' },
-  { color: 'secondary', category: 'Education' },
-  { color: 'tertiary', category: 'Personal' },
+  { color: 'primary', category: 'event', categoryId: 2 },
+  { color: 'secondary', category: 'other', categoryId: 3 },
+  { color: 'tertiary', category: 'Personal', categoryId: 1 },
 ];
 
 const themeValues = {
@@ -137,23 +33,54 @@ const themeValues = {
 };
 
 function CustomCalendar(): ReactElement {
+  const queryClient = useQueryClient();
   const calendarRef = useRef<any>(null);
+  const [form] = Form.useForm();
   const [events, setEvents] = useState([]);
   const [dateTitle, setDateTitle] = useState('');
   const [selectedView, setSelectedView] = useState('dayGridMonth');
   const [isShowModalAddEdit, setIsShowModalAddEdit] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState({
     id: 0,
     title: 'New Event',
     start: '',
     end: '',
-    category: '',
+    categoryId: 0,
+    modalType: ModalEditType.MAKE_EVENT,
   });
+  const [categories, setCategories] = useState([]);
+  const { data, isLoading, isSuccess } = useQuery(
+    [CALENDAR_EVENT],
+    _findAllCalendarEvent
+  );
+
+  async function makeNewEvent() {
+    let res;
+    let _formResult: MakeNewsDto = {} as MakeNewsDto;
+    setIsProcessing(true);
+    try {
+      _formResult = await form.validateFields();
+      // select edit or make a new event
+      res =
+        selectedEvent.modalType === ModalEditType.MAKE_EVENT
+          ? await _makeNewEvent(_formResult)
+          : await _updateEvent(selectedEvent.id, _formResult);
+      queryClient.invalidateQueries(CALENDAR_EVENT);
+      message.success('DONE');
+    } catch (e) {
+      console.error(e);
+      message.error('Error');
+    }
+    setIsProcessing(false);
+    setIsShowModalAddEdit(false);
+    return res;
+  }
 
   const onPrevButtonClick = () => {
     const calendarApi = calendarRef.current.getApi();
     calendarApi.prev();
-    console.log(new Date(calendarApi.view.currentStart),'currentMonthStart')
+    console.log(new Date(calendarApi.view.currentStart), 'currentMonthStart');
     setDateTitle(calendarApi.view.title);
   };
 
@@ -191,10 +118,11 @@ function CustomCalendar(): ReactElement {
     const calendarApi = selectInfo.view.calendar;
     setSelectedEvent({
       id: 0,
-      title: 'New Event',
+      title: 'ชื่อ event',
       start: selectInfo.startStr,
       end: selectInfo.endStr,
-      category: '',
+      categoryId: 0,
+      modalType: ModalEditType.MAKE_EVENT,
     });
     calendarApi.unselect(); // clear date selection
     try {
@@ -208,8 +136,11 @@ function CustomCalendar(): ReactElement {
     let targetEvent;
     const { id, url } = clickInfo.event;
     if (id) {
-      targetEvent = events.find((_item : any) => _item.id.toString() === id);
-      setSelectedEvent(targetEvent);
+      targetEvent = events.find((_item: any) => _item.id.toString() === id);
+      setSelectedEvent({
+        ...targetEvent,
+        modalType: ModalEditType.EDIT_EVENT,
+      });
       setIsShowModalAddEdit(true);
     }
   };
@@ -236,15 +167,13 @@ function CustomCalendar(): ReactElement {
       changeInfo.revert();
     }
   };
-  
 
   async function findAllCalendarEvent() {
-    // let data = await _findAllCalendarEvent()
-    const coloredEvents = eventsData.map((event) => {
+    const coloredEvents = data.map((event) => {
       const coloredEvent = { ...event };
-      if (event.category) {
+      if (event.categoryId) {
         const foundColor = colorsMap.find(
-          (x) => (x as any).category === event.category
+          (x) => (x as any).categoryId === event.categoryId
         );
         if (foundColor) {
           coloredEvent.color = (themeValues as any)[foundColor.color];
@@ -255,12 +184,26 @@ function CustomCalendar(): ReactElement {
     setEvents(coloredEvents);
   }
 
-  useEffect(() => {
-    findAllCalendarEvent()
-  
+  async function fetchAllCategories() {
+    let res;
+    try {
+      res = await _getAllCategories();
+      console.log(res);
+      setCategories(res);
+    } catch (e) {
+      console.error(e);
+    }
 
+    return res;
+  }
+
+  useEffect(() => {
+    if (isSuccess) {
+      fetchAllCategories();
+      findAllCalendarEvent();
+    }
     return () => {};
-  }, []);
+  }, [data]);
 
   return (
     <div className='pb-10'>
@@ -346,6 +289,10 @@ function CustomCalendar(): ReactElement {
         <CalendarEventModal
           handleCloseModal={handleCloseModal}
           selectedEvent={selectedEvent}
+          makeNewEvent={makeNewEvent}
+          form={form}
+          categories={categories}
+          isProcessing={isProcessing}
         />
       )}
     </div>
