@@ -7,7 +7,7 @@ interface Props {
 
 function LayoutHOC({ children }: Props): ReactElement {
   return (
-    <div>
+    <div style={{backgroundColor: '#faf9f8'}}>
       <Navbar />
       {children}
     </div>

@@ -2,9 +2,9 @@ import { PlusCircleFilled } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
-import NewsPostList from '../../components/news-editor/NewsPostList';
+import RecentNewsPostList from '../../components/post-editor/RecentNewsPostList';
 import LayoutHOC from '../../components/layouts/LayoutHOC';
-import MakeNewBtn from '../../components/news-editor/MakeNewBtn';
+import MakeNewBtn from '../../components/post-editor/MakeNewBtn';
 interface Props {}
 
 function BlogEditorContainer({}: Props): ReactElement {
@@ -13,7 +13,7 @@ function BlogEditorContainer({}: Props): ReactElement {
       <div className='container p-10'>
         <title>ME</title>
         <MakeNewBtn />
-        <NewsPostList />
+        <RecentNewsPostList />
       </div>
     </LayoutHOC>
   );

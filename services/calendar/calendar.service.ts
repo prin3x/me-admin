@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { MakeNewsDto, UpdateNewsDto } from './calendar.model';
+import { ListQueryCalendarDTO, MakeNewsDto, UpdateNewsDto } from './calendar.model';
 
-export function _findAllCalendarEvent() {
-  return axios.get('/calendar-event').then((res) => res.data);
+export function _findAllCalendarEvent(q: ListQueryCalendarDTO) {
+  return axios.get(`/calendar-event?startDate=${q.startDate}&endDate=${q.endDate}`).then((res) => res.data);
 }
 export function _getAllCategories() {
   return axios.get('/calendar-event-category').then((res) => res.data);
@@ -20,6 +20,6 @@ export function _updateEvent(id, eventInfo: UpdateNewsDto) {
     .then((res) => res.data);
 }
 
-export function _deleteEvent(id) {
+export function _deleteEvent(id: number | string) {
   return axios.delete(`/calendar-event/${id}`).then((res) => res.data);
 }

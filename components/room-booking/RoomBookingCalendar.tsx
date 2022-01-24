@@ -9,7 +9,6 @@ import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
 //
 import { Button, Col, Form, message, Row, Select } from 'antd';
 import { useEffect } from 'react';
-import CalendarEventModal from './CalendarEventModal';
 import {
   _deleteEvent,
   _findAllCalendarEvent,
@@ -18,7 +17,6 @@ import {
   _updateEvent,
 } from '../../services/calendar/calendar.service';
 import {
-  ListQueryCalendarDTO,
   MakeNewsDto,
   ModalEditType,
 } from '../../services/calendar/calendar.model';
@@ -38,18 +36,13 @@ const themeValues = {
   tertiary: '#577BC1',
 };
 
-function CustomCalendar(): ReactElement {
+function RoomBookingCalendar(): ReactElement {
   const queryClient = useQueryClient();
   const calendarRef = useRef<any>(null);
   const [form] = Form.useForm();
   const [events, setEvents] = useState([]);
-  const [calendarMeta, setCalendarMeta] = useState({
-    month: moment().format('MMMM'),
-    startDate: moment().startOf('month').format('YYYY-MM-DD'),
-    endDate: moment().endOf('month').format('YYYY-MM-DD'),
-  });
   const [dateTitle, setDateTitle] = useState('');
-  const [isShowTime, setIsShowTime] = useState(false);
+  const [isShowTime, setIsShowTime] = useState(true);
   const [selectedView, setSelectedView] = useState('dayGridMonth');
   const [isShowModalAddEdit, setIsShowModalAddEdit] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -61,22 +54,16 @@ function CustomCalendar(): ReactElement {
     modalType: ModalEditType.MAKE_EVENT,
   });
   const [categories, setCategories] = useState([]);
-  const { data, isLoading, isSuccess } = useQuery<any>(
-    [CALENDAR_EVENT, calendarMeta.month],
-    () => {
-      let q: ListQueryCalendarDTO = {
-        startDate: calendarMeta.startDate,
-        endDate: calendarMeta.endDate,
-      };
-      return _findAllCalendarEvent(q);
-    }
-  );
+  //   const { data, isLoading, isSuccess } = useQuery(
+  //     [CALENDAR_EVENT],
+  //     _findAllCalendarEvent
+  //   );
 
   async function deleteEvent(id) {
     setIsProcessing(true);
     try {
       await _deleteEvent(id);
-      queryClient.invalidateQueries([CALENDAR_EVENT, calendarMeta.month]);
+      queryClient.invalidateQueries(CALENDAR_EVENT);
       message.success('DONE');
     } catch (e) {
       console.error(e);
@@ -93,20 +80,21 @@ function CustomCalendar(): ReactElement {
     setIsProcessing(true);
     try {
       formRes = await form.validateFields();
-      console.log(formRes.dateTime?.[0], formRes.dateTime?.[1], 'formRes');
+      console.log(formRes.dateTime?.[0], 'formRes');
       payload.categoryId = formRes?.categoryId;
       payload.content = formRes?.content || '';
-      payload.allDay = !isShowTime;
       payload.title = formRes?.title || '';
-      payload.start = formRes?.dateTime?.[0] || moment().format();
-      payload.end = formRes?.dateTime?.[1] || moment().format();
+      payload.start =
+        formRes?.dateTime?.[0].format(isShowTime ? null : 'YYYY-MM-DD') ||
+        moment().format();
+      payload.end =
+        formRes?.dateTime?.[1].format(isShowTime ? null : 'YYYY-MM-DD') ||
+        moment().format();
       res =
         selectedEvent.modalType === ModalEditType.MAKE_EVENT
           ? await _makeNewEvent(payload)
           : await _updateEvent(selectedEvent.id, payload);
-      queryClient.invalidateQueries([CALENDAR_EVENT]);
-
-      console.log(payload, 'payloadpayload');
+      queryClient.invalidateQueries(CALENDAR_EVENT);
       message.success('Done');
     } catch (e) {
       console.error(e);
@@ -120,36 +108,13 @@ function CustomCalendar(): ReactElement {
   const onPrevButtonClick = () => {
     const calendarApi = calendarRef.current.getApi();
     calendarApi.prev();
-
-    setCalendarMeta({
-      startDate: moment(calendarRef.current.getApi().getDate())
-        .startOf('month')
-        .format('YYYY-MM-DD'),
-      endDate: moment(calendarRef.current.getApi().getDate())
-        .endOf('month')
-        .format('YYYY-MM-DD'),
-      month: moment(calendarRef.current.getApi().getDate()).format('MMMM'),
-    });
-    console.log(
-      moment().endOf('month').format('YYYY-MM-DD'),
-      'currentMonthStart'
-    );
+    console.log(new Date(calendarApi.view.currentStart), 'currentMonthStart');
     setDateTitle(calendarApi.view.title);
   };
 
   const onNextButtonClick = () => {
     const calendarApi = calendarRef.current.getApi();
     calendarApi.next();
-
-    setCalendarMeta({
-      startDate: moment(calendarRef.current.getApi().getDate())
-        .startOf('month')
-        .format('YYYY-MM-DD'),
-      endDate: moment(calendarRef.current.getApi().getDate())
-        .endOf('month')
-        .format('YYYY-MM-DD'),
-      month: moment(calendarRef.current.getApi().getDate()).format('MMMM'),
-    });
     setDateTitle(calendarApi.view.title);
   };
   const onNewEventClick = () => {
@@ -232,24 +197,21 @@ function CustomCalendar(): ReactElement {
     }
   };
 
-  async function findAllCalendarEvent() {
-    if (!data) return;
-    const coloredEvents = data.map((event) => {
-      const coloredEvent = { ...event };
-      if (event.categoryId) {
-        const foundColor = colorsMap.find(
-          (x) => (x as any).categoryId === event.categoryId
-        );
-        if (foundColor) {
-          coloredEvent.color = (themeValues as any)[foundColor.color];
-        }
-        coloredEvent.start = moment(event.start).format();
-        coloredEvent.end = moment(event.end).format();
-      }
-      return coloredEvent;
-    });
-    setEvents(coloredEvents);
-  }
+  //   async function findAllCalendarEvent() {
+  //     const coloredEvents = data.map((event) => {
+  //       const coloredEvent = { ...event };
+  //       if (event.categoryId) {
+  //         const foundColor = colorsMap.find(
+  //           (x) => (x as any).categoryId === event.categoryId
+  //         );
+  //         if (foundColor) {
+  //           coloredEvent.color = (themeValues as any)[foundColor.color];
+  //         }
+  //       }
+  //       return coloredEvent;
+  //     });
+  //     setEvents(coloredEvents);
+  //   }
 
   function toggleShowTime() {
     setIsShowTime((prev) => !prev);
@@ -268,14 +230,13 @@ function CustomCalendar(): ReactElement {
     return res;
   }
 
-  useEffect(() => {
-    console.log(data, 'data');
-    if (isSuccess) {
-      fetchAllCategories();
-      findAllCalendarEvent();
-    }
-    return () => {};
-  }, [data]);
+  //   useEffect(() => {
+  //     if (isSuccess) {
+  //       fetchAllCategories();
+  //       findAllCalendarEvent();
+  //     }
+  //     return () => {};
+  //   }, [data]);
 
   return (
     <div className='pb-10'>
@@ -326,9 +287,6 @@ function CustomCalendar(): ReactElement {
           Today
         </Button>
       </Row>
-      <Row justify='center'>
-        <Col>{calendarMeta.month}</Col>
-      </Row>
       <div className='container mx-auto px-20 py-10'>
         <FullCalendar
           ref={calendarRef}
@@ -342,8 +300,18 @@ function CustomCalendar(): ReactElement {
             resourceTimeGridPlugin,
           ]}
           headerToolbar={false}
-          initialView='dayGridMonth'
+          initialView='resourceTimeGridDay'
           themeSystem='bootstrap'
+          resources={[
+            {
+              id: 'a',
+              title: 'Room A',
+            },
+            {
+              id: 'b',
+              title: 'Room B',
+            },
+          ]}
           editable
           selectable
           selectMirror
@@ -352,7 +320,15 @@ function CustomCalendar(): ReactElement {
           locale={'th'}
           datesSet={handleDates}
           select={handleDateSelect}
-          events={events}
+          events={[
+            {
+              id: '1',
+              resourceIds: ['a'],
+              title: 'Meeting',
+              start: '2022-01-03',
+              end: '2022-01-04',
+            },
+          ]}
           eventClick={handleEventClick}
           eventChange={handleEventChange} // called for drag-n-drop/resize
           viewDidMount={viewDidMount}
@@ -363,22 +339,8 @@ function CustomCalendar(): ReactElement {
           }}
         />
       </div>
-      {moment('2021-12-15T00:00:00.000Z').format('YYYY-MM-DD mm:ss')}
-      {isShowModalAddEdit && (
-        <CalendarEventModal
-          handleCloseModal={handleCloseModal}
-          selectedEvent={selectedEvent}
-          makeNewEvent={makeNewEvent}
-          form={form}
-          categories={categories}
-          isProcessing={isProcessing}
-          deleteEvent={deleteEvent}
-          isShowTime={isShowTime}
-          toggleShowTime={toggleShowTime}
-        />
-      )}
     </div>
   );
 }
 
-export default CustomCalendar;
+export default RoomBookingCalendar;

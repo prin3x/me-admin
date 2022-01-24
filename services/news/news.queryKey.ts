@@ -1,1 +1,0 @@
-export const NEWS_CATEGORIES = 'news-categories'

@@ -3,6 +3,12 @@ export interface MakeNewsDto {
 
   content: string;
 
+  start: string;
+
+  end: string;
+
+  allDay: boolean;
+
   status: NewsStatus;
 
   categoryId: number;
@@ -22,4 +28,10 @@ export enum NewsStatus {
 export enum ModalEditType{
   EDIT_EVENT = 'edit',
   MAKE_EVENT = 'make'
+}
+
+export class ListQueryCalendarDTO {
+  startDate: string;
+
+  endDate: string;
 }

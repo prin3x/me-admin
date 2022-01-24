@@ -1,54 +1,48 @@
-import { Avatar, Button, Col, List, Row } from 'antd';
+import { Avatar, Button, Col, Form, List, Row } from 'antd';
 import { useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
+import {
+  ContactStatus,
+  StaffContact,
+} from '../../services/contact/contact.model';
+import { ALL_CONTACT } from '../../services/contact/contact.queryKey';
+import {
+  _createNewStaffContact,
+  _getAllStaffContacts,
+  _patchStaffContact,
+} from '../../services/contact/contact.service';
 import DrawerEditor from './DrawerEditor';
 
 export enum DrawerType {
   EDIT = 'EDIT',
-  NEW = 'NEW'
+  NEW = 'NEW',
 }
 
-const mockData = [
-  {
-    id: 1,
-    picture: 'https://ui-avatars.com/api/?rounded=true',
-    name: 'Piko',
-    email: 'pik123o@gmain.com',
-  },
-  {
-    id: 2,
-    picture: 'https://ui-avatars.com/api/?rounded=true',
-    name: 'Piko2',
-    email: 'pik13o@gmain.com',
-  },
-  {
-    id: 3,
-    picture: 'https://ui-avatars.com/api/?rounded=true',
-    name: 'Piko3',
-    email: 'pi34ko@gmain.com',
-  },
-  {
-    id: 4,
-    picture: 'https://ui-avatars.com/api/?rounded=true',
-    name: 'Piko4',
-    email: 'pik345o@gmain.com',
-  },
-  {
-    id: 5,
-    picture: 'https://ui-avatars.com/api/?rounded=true',
-    name: 'Piko5',
-    email: 'pik345o@gmain.com',
-  },
-];
+const INITIAL_STATE = {
+  visible: false,
+  id: 0,
+  profilePicUrl: 'https://ui-avatars.com/api/?rounded=true',
+  name: '',
+  nickname: '',
+  company: '',
+  department: '',
+  division: '',
+  ipPhone: '',
+  email: '',
+  status: ContactStatus.ENABLED,
+  type: DrawerType.NEW,
+};
 
 function ContactList() {
-  const [drawerMeta, setDrawerMeta] = useState({
-    visible: false,
-    id: 0,
-    picture: '',
-    name: '',
-    email: '',
-    type: DrawerType.NEW
-  });
+  const queryClient = useQueryClient();
+  const [image, setImage] = useState('')
+  const [form] = Form.useForm();
+  const { data, isLoading, isSuccess } = useQuery(
+    [ALL_CONTACT],
+    _getAllStaffContacts
+  );
+
+  const [drawerMeta, setDrawerMeta] = useState(INITIAL_STATE);
   const loadMore = (
     <div
       style={{
@@ -69,14 +63,8 @@ function ContactList() {
   }
 
   function handleCreateNewContact() {
-    setDrawerMeta({
-      id: 0,
-      picture: '',
-      name: '',
-      email: '',
-      type: DrawerType.NEW,
-      visible: true,
-    });
+    setDrawerMeta(INITIAL_STATE);
+    toggleDrawer();
   }
 
   function openDrawerByContact(_contact) {
@@ -84,7 +72,7 @@ function ContactList() {
 
     let targetContact;
 
-    targetContact = mockData.find((_person) => _person.id === _contact.id);
+    targetContact = data.find((_person) => _person.id === _contact.id);
 
     if (!targetContact) return;
 
@@ -95,6 +83,36 @@ function ContactList() {
     });
   }
 
+  async function createOrUpdateContact() {
+    let res;
+    form.validateFields().then(async (_result) => {
+      const staffContactInstance = {} as StaffContact;
+      staffContactInstance.name = _result.name;
+      staffContactInstance.company = _result.company;
+      staffContactInstance.nickname = _result.nickname;
+      staffContactInstance.department = _result.department;
+      staffContactInstance.division = _result.division;
+      staffContactInstance.email = _result.email;
+      staffContactInstance.ipPhone = _result.ipPhone;
+      staffContactInstance.profilePicUrl = _result.profilePicUrl;
+      staffContactInstance.birthDate = _result.birthDate;
+
+      try {
+        if (drawerMeta.type === DrawerType.NEW) {
+          res = await _createNewStaffContact(staffContactInstance);
+        } else {
+          res = await _patchStaffContact(drawerMeta.id, staffContactInstance);
+        }
+        queryClient.invalidateQueries([ALL_CONTACT]);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+    toggleDrawer();
+
+    return res;
+  }
+
   return (
     <div className='container mx-auto mt-10'>
       <Row justify='end'>
@@ -102,37 +120,54 @@ function ContactList() {
           <Button onClick={handleCreateNewContact}>Add New</Button>
         </Col>
       </Row>
-      <List
-        className='p-5'
-        dataSource={mockData}
-        loadMore={loadMore}
-        renderItem={(_contact) => (
-          <List.Item key={_contact.id}>
-            <Row
-              onClick={() => openDrawerByContact(_contact)}
-              gutter={[32, 0]}
-              className='w-full'
-            >
-              <Col md={8}>
-                <List.Item.Meta
-                  avatar={<Avatar src={_contact.picture} />}
-                  title={<div>{_contact.name}</div>}
-                  description={_contact.email}
-                />
-              </Col>
-              <Col md={8}>
-                <div className='department'>Department</div>
-              </Col>
-              <Col md={8}>birthDate</Col>
-            </Row>
-          </List.Item>
-        )}
-      />
-      <DrawerEditor
-        isShowDrawerEditor={drawerMeta.visible}
-        toggleDrawer={toggleDrawer}
-        drawerMeta={drawerMeta}
-      />
+      <div className='p-10'>
+        <List
+          dataSource={isSuccess ? data : []}
+          loading={isLoading}
+          // loadMore={loadMore}
+          renderItem={(_contact: StaffContact) => (
+            <List.Item key={_contact.id}>
+              <Row
+                onClick={() => openDrawerByContact(_contact)}
+                gutter={[32, 0]}
+                className='w-full'
+              >
+                <Col md={6}>
+                  <List.Item.Meta
+                    avatar={<Avatar src={_contact.profilePicUrl} />}
+                    title={<div>{_contact.name}</div>}
+                    description={_contact.email}
+                  />
+                </Col>
+                <Col md={6}>
+                  <div className='department'>Department</div>
+                  <div className='department'>{_contact.department}</div>
+                </Col>
+                <Col md={6}>
+                  <div className='department'>Phone</div>
+                  <div className='department'>{_contact.ipPhone}</div>
+                </Col>
+                <Col md={6}>
+                  <div className='department'>BirtDate</div>
+                  <div className='department'>{_contact.birthDate}</div>
+                </Col>
+              </Row>
+            </List.Item>
+          )}
+        />
+      </div>
+
+      {drawerMeta.visible && (
+        <DrawerEditor
+          isShowDrawerEditor={drawerMeta.visible}
+          toggleDrawer={toggleDrawer}
+          drawerMeta={drawerMeta}
+          form={form}
+          createOrUpdateContact={createOrUpdateContact}
+          setImage={setImage}
+          image={image}
+        />
+      )}
     </div>
   );
 }

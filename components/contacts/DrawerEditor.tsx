@@ -2,29 +2,33 @@ import { UploadOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Col, Drawer, Form, Input, Row, Upload } from 'antd';
 import React, { ReactElement } from 'react';
 import { useEffect } from 'react';
+import ImageUploader from '../utils/ImageUploader';
 import { DrawerType } from './ContactList';
-
-const { useForm } = Form;
 
 interface Props {
   isShowDrawerEditor: boolean;
   toggleDrawer: () => void;
   drawerMeta: any;
+  form: any;
+  createOrUpdateContact: () => void;
+  setImage: any;
+  image: any;
 }
 
 function DrawerEditor({
   isShowDrawerEditor,
   toggleDrawer,
   drawerMeta,
+  form,
+  createOrUpdateContact,
+  setImage,
+  image,
 }: Props): ReactElement {
-  const [form] = useForm();
-
   useEffect(() => {
     if (drawerMeta) {
       form.setFieldsValue({ ...drawerMeta });
     }
   }, [drawerMeta]);
-
 
   return (
     <Drawer
@@ -36,17 +40,9 @@ function DrawerEditor({
     >
       <Row justify='start'>
         <Col className='mx-auto'>
-          <Form form={form} layout='vertical'>
+          <Form form={form} layout='vertical' onFinish={createOrUpdateContact}>
             <Form.Item name='picture'>
-              <Upload
-                name='avatar'
-                listType='picture-card'
-                className='avatar-uploader'
-                showUploadList={false}
-                action='https://www.mocky.io/v2/5cc8019d300000980a055e76'
-              >
-                <Avatar size={64} icon={<UserOutlined />} />
-              </Upload>
+              <ImageUploader setImage={setImage} />
             </Form.Item>
             <Form.Item name='name' label='Name'>
               <Input />
@@ -55,6 +51,15 @@ function DrawerEditor({
               <Input />
             </Form.Item>
             <Form.Item name='department' label='Department'>
+              <Input />
+            </Form.Item>
+            <Form.Item name='division' label='Division'>
+              <Input />
+            </Form.Item>
+            <Form.Item name='company' label='Company'>
+              <Input />
+            </Form.Item>
+            <Form.Item name='ipPhone' label='Phone'>
               <Input />
             </Form.Item>
             <Row justify='end'>
