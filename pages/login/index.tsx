@@ -19,7 +19,7 @@ function LoginAdmin({}: Props) {
       message.success("เข้าสู่ระบบ");
       router.push("/");
     } catch (e) {
-      message.error({ title: "กรุณาตรวจสอบข้อมูลของท่านใหม่" });
+      message.error("กรุณาตรวจสอบข้อมูลของท่าน");
     } finally {
       setIsLoading(false);
     }

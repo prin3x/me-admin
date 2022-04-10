@@ -1,14 +1,16 @@
-import React, { ReactElement, useState } from "react";
-import { Layout, Menu, Breadcrumb } from "antd";
+import React, { ReactElement, useEffect, useState } from "react";
+import { Layout, Menu, Breadcrumb, Row, Col, message } from "antd";
 import {
   FileOutlined,
   BarsOutlined,
   CalendarOutlined,
   ProfileOutlined,
   ScheduleOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { checkAuth } from "../../services/auth/auth.service";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -42,7 +44,19 @@ const availableSelectedKeys = [
 function LayoutHOC({ children }: Props): ReactElement {
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selectedKey, setSelectedKey] = useState(true);
+  const [adminDetails, setAdminDetails] = useState({ username: "" });
+
+  async function checkAdminId() {
+    let res;
+    try {
+      res = await checkAuth();
+      setAdminDetails(res);
+    } catch (e) {
+      message.error("Unauthorized");
+      onLogout();
+    }
+  }
+
   // return (
   //   <div style={{backgroundColor: '#faf9f8', minHeight: '100vh'}}>
   //     <Navbar />
@@ -55,6 +69,15 @@ function LayoutHOC({ children }: Props): ReactElement {
     setIsCollapsed(collapsed);
   };
 
+  function onLogout() {
+    localStorage.removeItem("token");
+    router.push("/login");
+  }
+
+  useEffect(() => {
+    checkAdminId();
+  }, []);
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsed={false} onCollapse={onCollapse}>
@@ -66,20 +89,18 @@ function LayoutHOC({ children }: Props): ReactElement {
                 : "text-xl"
             } w-36 h-36 rounded-full text-white font-bold text-center`}
           >
-            {isCollapsed ? (
-              <>
-                <div className="d-inline w-full">A</div>
-                <div className="d-inline w-full">D</div>
-                <div className="d-inline w-full">M</div>
-                <div className="d-inline w-full">I</div>
-                <div className="d-inline w-full">N</div>
-              </>
-            ) : (
-              <div className="my-auto">ADMIN</div>
-            )}
+            <div className="my-auto uppercase">
+              {adminDetails.username || ""}
+            </div>
           </div>
         </div>
-        <Menu theme="dark" mode="inline" multiple={false} selectedKeys={[router.pathname]} className="menu-antd-item">
+        <Menu
+          theme="dark"
+          mode="inline"
+          multiple={false}
+          selectedKeys={[router.pathname]}
+          className="menu-antd-item"
+        >
           <Menu.Item key={"/carousel"} icon={<ProfileOutlined />}>
             <Link href="/carousel">Carousel</Link>
           </Menu.Item>
@@ -98,11 +119,24 @@ function LayoutHOC({ children }: Props): ReactElement {
         </Menu>
       </Sider>
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0 }} />
+        <Header className="site-layout-background" style={{ padding: 0 }}>
+          <Row align="middle" justify="end" className="h-full">
+            <Col span={6} pull={1}>
+              <div className="cursor-pointer" onClick={onLogout}>
+                <Row align="middle" justify="end" className="h-full">
+                  <ExportOutlined style={{ color: "white", fontSize: 20 }} />
+                  <div className="text-white font-bold text-2xl uppercase ml-4">
+                    Log Out
+                  </div>
+                </Row>
+              </div>
+            </Col>
+          </Row>
+        </Header>
         <Content>
-          {children}
+          <div className="w-80 min-w-full">{children}</div>
         </Content>
-        <Footer style={{ textAlign: "center" }}>
+        <Footer style={{ textAlign: "center", color: "white" }}>
           Ant Design ©2018 Created by Ant UED
         </Footer>
       </Layout>

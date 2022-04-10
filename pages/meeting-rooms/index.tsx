@@ -76,50 +76,48 @@ function MeetingRooms({}: Props) {
 
   return (
     <LayoutHOC>
-      <>
-        <div className="carousel-list-page h-full">
-          <Row className="h-40 items-center" justify="start">
-            <Col span={6} offset={1}>
-              <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl">
-                Rooms
-              </div>
-            </Col>
-            <Col span={12}>
-              <Input
-                onChange={onChangeSearch}
-                placeholder="SEARCH"
-                className="ml-auto text-right search-text-right"
-                prefix={
-                  <SearchOutlined
-                    style={{
-                      color: "#D8D8D8",
-                    }}
-                  />
-                }
-              />
-            </Col>
-            <Col span={2} offset={1}>
-              <Link href={`/meeting-rooms/make`} passHref>
-                <Button type="primary">Add</Button>
-              </Link>
-            </Col>
-          </Row>
-          <div className="bg-slate-50 h-full p-4">
-            <div className="bg-white p-2 rounded-md -mt-14 shadow-md	">
-              <RoomList
-                removeThisRoom={removeThisRoom}
-                roomData={meetingData?.data?.items || []}
-                isLoading={meetingData?.isLoading}
-                toggleStatus={toggleStatus}
-                isLoadingSwitch={isLoadingSwitch}
-                page={meetingData?.data?.page}
-                onChangePage={onChangePage}
-                total={meetingData?.data?.total || 0}
-              />
+      <div className="carousel-list-page">
+        <Row className="h-40 items-center" justify="start">
+          <Col span={6} offset={1}>
+            <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl">
+              Rooms
             </div>
+          </Col>
+          <Col span={12}>
+            <Input
+              onChange={onChangeSearch}
+              placeholder="SEARCH"
+              className="ml-auto text-right search-text-right"
+              prefix={
+                <SearchOutlined
+                  style={{
+                    color: "#D8D8D8",
+                  }}
+                />
+              }
+            />
+          </Col>
+          <Col span={2} offset={1}>
+            <Link href={`/meeting-rooms/make`} passHref>
+              <Button type="primary">Add</Button>
+            </Link>
+          </Col>
+        </Row>
+        <div className="bg-slate-50 h-full p-4">
+          <div className="bg-white p-2 rounded-md -mt-14 shadow-md	">
+            <RoomList
+              removeThisRoom={removeThisRoom}
+              roomData={meetingData?.data?.items || []}
+              isLoading={meetingData?.isLoading}
+              toggleStatus={toggleStatus}
+              isLoadingSwitch={isLoadingSwitch}
+              page={meetingData?.data?.page}
+              onChangePage={onChangePage}
+              total={meetingData?.data?.total || 0}
+            />
           </div>
         </div>
-      </>
+      </div>
     </LayoutHOC>
   );
 }

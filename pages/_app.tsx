@@ -2,7 +2,6 @@ import '../styles/globals.less';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import axios from 'axios';
-import { BASE_URL } from '../config/axios.config';
 import { API_URL } from '../config';
 import { getAuthToken } from '../services/auth/auth.service';
 
@@ -23,6 +22,15 @@ axios.interceptors.request.use((config) => {
     config.headers["Authorization"] = `Bearer ${jwtToken}`;
   }
   return config;
+});
+
+axios.interceptors.response.use((response) => {
+  return response;
+}, function (error) {
+  if(error.response.status && error.response.status === 401){
+    window.location.replace('/login')
+  }
+  return Promise.reject(error);
 });
 
 

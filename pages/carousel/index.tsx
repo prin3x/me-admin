@@ -71,8 +71,7 @@ function CarouselPage({}: Props) {
 
   return (
     <LayoutHOC>
-      <>
-        <div className="carousel-list-page h-full">
+        <div className="">
           <Row className="h-40 items-center" justify="start">
             <Col span={6} offset={1}>
               <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl">
@@ -114,7 +113,6 @@ function CarouselPage({}: Props) {
             </div>
           </div>
         </div>
-      </>
     </LayoutHOC>
   );
 }
