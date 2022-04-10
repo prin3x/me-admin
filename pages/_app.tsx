@@ -1,9 +1,9 @@
-import '../styles/globals.less';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
-import axios from 'axios';
-import { API_URL } from '../config';
-import { getAuthToken } from '../services/auth/auth.service';
+import "../styles/globals.less";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+import axios from "axios";
+import { API_URL } from "../config";
+import { getAuthToken } from "../services/auth/auth.service";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,19 +24,22 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
-axios.interceptors.response.use((response) => {
-  return response;
-}, function (error) {
-  if(error.response.status && error.response.status === 401){
-    window.location.replace('/login')
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  function (error) {
+    if (error.response.status && error.response.status === 401) {
+      window.location.replace("/login");
+    }
+    return Promise.reject(error);
   }
-  return Promise.reject(error);
-});
-
+);
 
 function MyApp({ Component, pageProps }) {
   return (
     <QueryClientProvider client={queryClient}>
+      <title>ADMIN</title>
       <Component {...pageProps} />
       <ReactQueryDevtools />
     </QueryClientProvider>
