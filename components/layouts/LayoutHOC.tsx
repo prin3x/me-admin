@@ -137,7 +137,7 @@ function LayoutHOC({ children }: Props): ReactElement {
           <div className="w-80 min-w-full">{children}</div>
         </Content>
         <Footer style={{ textAlign: "center", color: "white" }}>
-          Ant Design ©2018 Created by Ant UED
+          Design ©2022 Created by Prin3x
         </Footer>
       </Layout>
     </Layout>

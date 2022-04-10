@@ -136,6 +136,7 @@ function PostEditor(props): ReactElement {
     try {
       res = await _getAllNewsCategories();
       setAllCategories(res);
+      form.setFieldsValue({ categoryName: res?.[0]?.title });
     } catch (e) {
       message.error("Failed Cannot Get Category");
     }
@@ -169,26 +170,31 @@ function PostEditor(props): ReactElement {
         New Post
       </div>
       <div className="bg-white p-5">
-      <Row className="mt-10 w-full">
+        <Row className="mt-10 w-full">
           <Col lg={24}>
             <Form form={form}>
               <Row justify="center">
-                <Col>
+                <Col span={10}>
                   <Form.Item
                     name="title"
                     rules={[{ required: true }]}
                     label="Title"
                   >
-                    <Input placeholder="ชื่อเรื่อง" />
+                    <Input placeholder="ชื่อเรื่อง" width={400} />
                   </Form.Item>
                 </Col>
 
-                <Col>
-                  <Form.Item name="categoryName" rules={[{ required: true }]}>
+                <Col offset={1}>
+                  <Form.Item
+                    name="categoryName"
+                    label="Category Name"
+                    rules={[{ required: true }]}
+                  >
                     <Select
                       placeholder="Select Category"
                       className="w-full"
                       onChange={onChangeCategory}
+                      style={{ width: 200 }}
                     >
                       {allCategories.map((_category) => (
                         <Select.Option
@@ -204,6 +210,7 @@ function PostEditor(props): ReactElement {
               </Row>
               <Row justify="center">
                 <Col>
+                  <div className="text-3xl">Cover Image</div>
                   <ImageUploader
                     setImage={setMainImage}
                     currentImageUrl={initialContent?.imageUrl || ""}
