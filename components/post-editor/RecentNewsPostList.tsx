@@ -35,6 +35,19 @@ function RecentNewsPostList({}: Props): ReactElement {
     orderBy: "updatedDate",
   });
   const parseQuery = () => queryString.stringify(queryStr);
+  const [isLoadingSwitch, setIsloadingSwitch] = useState(false);
+
+  async function toggleCarouselStatus(id: string, status: POST_STATUS) {
+    try {
+      await _toggleStatus(id, status);
+      setIsloadingSwitch(true);
+      await queryClient.invalidateQueries([ALL_RECENT_NEWS]);
+    } catch (error) {
+      message.error(error.response.message);
+    } finally {
+      setIsloadingSwitch(false);
+    }
+  }
 
   const { data, isLoading, isSuccess } = useQuery<IPostStruct>(
     [ALL_RECENT_NEWS, queryStr],
@@ -115,7 +128,7 @@ function RecentNewsPostList({}: Props): ReactElement {
             postData={data?.items || []}
             isLoading={isLoading}
             toggleStatus={togglePostStatus}
-            isLoadingSwitch={true}
+            isLoadingSwitch={isLoadingSwitch}
             onRemove={deletePost}
             page={data?.page}
             total={data?.total || 0}

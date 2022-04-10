@@ -156,11 +156,7 @@ function ContactList() {
             dataLength={isSuccess ? data.items.length : 0}
             next={getMoreContacts}
             hasMore={hasMore}
-            loader={
-              <div className="w-screen h-screen flex flex-col justify-center items-center">
-                <LoadingOutlined style={{ fontSize: 48, color: "#000" }} spin />
-              </div>
-            }
+            loader={<></>}
           >
             <List
               dataSource={isSuccess ? data.items : []}

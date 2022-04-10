@@ -57,7 +57,7 @@ function MeetingRooms({}: Props) {
     try {
       setIsLoadingSwitch(true);
       await _toggleRoomStatus(id, status);
-      queryClient.invalidateQueries([MEETINGROOMS_KEY]);
+      await queryClient.invalidateQueries([MEETINGROOMS_KEY]);
     } catch (e) {
       message.error(e.response.message);
     } finally {

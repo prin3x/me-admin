@@ -49,10 +49,10 @@ function CarouselPage({}: Props) {
   }
 
   async function toggleCarouselStatus(id: string, status: CAROUSEL_STATUS) {
-    setIsloadingSwitch(true);
     try {
+      setIsloadingSwitch(true);
       await _patchCarouselStatus(id, status);
-      queryClient.invalidateQueries([DEFAULT_CAROUSEL]);
+      await queryClient.invalidateQueries([DEFAULT_CAROUSEL]);
     } catch (error) {
       message.error(error.response.message);
     } finally {
@@ -71,48 +71,48 @@ function CarouselPage({}: Props) {
 
   return (
     <LayoutHOC>
-        <div className="">
-          <Row className="h-40 items-center" justify="start">
-            <Col span={6} offset={1}>
-              <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl">
-                Carousel
-              </div>
-            </Col>
-            <Col span={12}>
-              <Input
-                onChange={onChangeSearch}
-                placeholder="SEARCH"
-                className="ml-auto text-right search-text-right"
-                prefix={
-                  <SearchOutlined
-                    style={{
-                      color: "#D8D8D8",
-                    }}
-                  />
-                }
-              />
-            </Col>
-            <Col span={2} offset={1}>
-              <Link href={`/carousel/make`} passHref>
-                <Button type="primary">Add</Button>
-              </Link>
-            </Col>
-          </Row>
-          <div className="bg-slate-50 h-full p-4">
-            <div className="bg-white p-2 rounded-md -mt-14 shadow-md	">
-              <CarouselList
-                carouselData={carouselFetcher?.data?.items || []}
-                isLoading={carouselFetcher.isLoading}
-                onRemove={removeCarouselById}
-                toggleStatus={toggleCarouselStatus}
-                isLoadingSwitch={isLoadingSwitch}
-                page={carouselFetcher?.data?.page || 1}
-                total={carouselFetcher?.data?.total || 0}
-                onChangePage={onChangePage}
-              />
+      <div className="">
+        <Row className="h-40 items-center" justify="start">
+          <Col span={6} offset={1}>
+            <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl">
+              Carousel
             </div>
+          </Col>
+          <Col span={12}>
+            <Input
+              onChange={onChangeSearch}
+              placeholder="SEARCH"
+              className="ml-auto text-right search-text-right"
+              prefix={
+                <SearchOutlined
+                  style={{
+                    color: "#D8D8D8",
+                  }}
+                />
+              }
+            />
+          </Col>
+          <Col span={2} offset={1}>
+            <Link href={`/carousel/make`} passHref>
+              <Button type="primary">Add</Button>
+            </Link>
+          </Col>
+        </Row>
+        <div className="bg-slate-50 h-full p-4">
+          <div className="bg-white p-2 rounded-md -mt-14 shadow-md	">
+            <CarouselList
+              carouselData={carouselFetcher?.data?.items || []}
+              isLoading={carouselFetcher.isLoading}
+              onRemove={removeCarouselById}
+              toggleStatus={toggleCarouselStatus}
+              isLoadingSwitch={isLoadingSwitch}
+              page={carouselFetcher?.data?.page || 1}
+              total={carouselFetcher?.data?.total || 0}
+              onChangePage={onChangePage}
+            />
           </div>
         </div>
+      </div>
     </LayoutHOC>
   );
 }
