@@ -1,6 +1,6 @@
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { message, Upload,Image } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { message, Upload, Image } from "antd";
+import React, { useEffect, useState } from "react";
 
 async function getBase64(img): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -11,55 +11,67 @@ async function getBase64(img): Promise<string> {
   });
 }
 
+export interface IImageURL {
+  loading?: boolean;
+  url: string;
+  file?: any;
+}
+
 const INITIAL_IMAGE_STATE = {
   loading: false,
-  url: '',
+  url: "",
   file: undefined,
 };
 
-function ImageUploader({ setImage }) {
-  const [imageUrl, setImageUrl] = useState(INITIAL_IMAGE_STATE);
+function ImageUploader({ setImage, currentImageUrl }) {
+  const [imageUrl, setImageUrl] = useState<IImageURL>(INITIAL_IMAGE_STATE);
 
   const uploadButton = (
-    <div className=' w-60 sm:h-52 bg-gray-200 rounded-md flex flex-col justify-center items-center'>
-      {imageUrl.loading ? <LoadingOutlined /> : <PlusOutlined />}
+    <div className=" w-60 sm:h-52 bg-gray-200 rounded-md flex flex-col justify-center items-center">
+      {imageUrl?.loading ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
 
   const props = {
-    name: 'file',
+    name: "file",
     multiple: false,
     onChange: async (info) => {
       const { status } = info.file;
-      if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
+      if (status !== "uploading") {
       }
-      if (status === 'done') {
+      if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
         let getImageBase64 = await getBase64(info.file.originFileObj);
         setImageUrl({ loading: false, url: getImageBase64, file: info.file });
-      } else if (status === 'error') {
+        setImage({ file: info.file });
+      } else if (status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-    onRemove: () => setImageUrl(INITIAL_IMAGE_STATE),
+    onRemove: () => {
+      setImageUrl(INITIAL_IMAGE_STATE);
+      setImage({ file: "" });
+    },
     maxCount: 1,
   };
 
   useEffect(() => {
-    setImage(imageUrl.file);
-  }, [imageUrl]);
+    if (currentImageUrl) {
+      setImageUrl({ url: currentImageUrl, loading: false, file: null });
+    }
+  }, [currentImageUrl]);
+
   return (
     <Upload {...props}>
-      {imageUrl.url ? (
+      {imageUrl?.url ? (
         <Image
           src={imageUrl.url}
           preview={false}
-          alt='avatar'
-          width={500}
+          alt="avatar"
+          width={250}
           height={250}
-          className='rounded-md'
+          className="rounded-md"
         />
       ) : (
         uploadButton

@@ -24,7 +24,7 @@ function ExistingNewsEditor({}): ReactElement {
     <LayoutHOC>
       <>
         {!isLoading && isSuccess && (
-          <PostEditor initialContent={data || {}} slug={query.slug} />
+          <PostEditor initialContent={data} slug={query.slug} />
         )}
       </>
     </LayoutHOC>

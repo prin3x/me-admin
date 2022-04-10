@@ -81,7 +81,7 @@ function RoomBookingCalendar(): ReactElement {
     try {
       formRes = await form.validateFields();
       console.log(formRes.dateTime?.[0], 'formRes');
-      payload.categoryId = formRes?.categoryId;
+      payload.title = formRes?.categoryId;
       payload.content = formRes?.content || '';
       payload.title = formRes?.title || '';
       payload.start =

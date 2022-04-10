@@ -1,5 +1,6 @@
 import { UploadOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Col, Drawer, Form, Input, Row, Upload } from 'antd';
+import { Avatar, Button, Col, DatePicker, Drawer, Form, Input, Row, Upload } from 'antd';
+import moment from 'moment';
 import React, { ReactElement } from 'react';
 import { useEffect } from 'react';
 import ImageUploader from '../utils/ImageUploader';
@@ -7,7 +8,7 @@ import { DrawerType } from './ContactList';
 
 interface Props {
   isShowDrawerEditor: boolean;
-  toggleDrawer: () => void;
+  toggleDrawer: (_state) => void;
   drawerMeta: any;
   form: any;
   createOrUpdateContact: () => void;
@@ -26,7 +27,7 @@ function DrawerEditor({
 }: Props): ReactElement {
   useEffect(() => {
     if (drawerMeta) {
-      form.setFieldsValue({ ...drawerMeta });
+      form.setFieldsValue({ ...drawerMeta, birthDate: moment(drawerMeta.birthDate)});
     }
   }, [drawerMeta]);
 
@@ -42,7 +43,7 @@ function DrawerEditor({
         <Col className='mx-auto'>
           <Form form={form} layout='vertical' onFinish={createOrUpdateContact}>
             <Form.Item name='picture'>
-              <ImageUploader setImage={setImage} />
+              <ImageUploader setImage={setImage} currentImageUrl={drawerMeta?.profilePicUrl || undefined} />
             </Form.Item>
             <Form.Item name='name' label='Name'>
               <Input />
@@ -61,6 +62,9 @@ function DrawerEditor({
             </Form.Item>
             <Form.Item name='ipPhone' label='Phone'>
               <Input />
+            </Form.Item>
+            <Form.Item name='birthDate' label='BirthDay'>
+              <DatePicker/>
             </Form.Item>
             <Row justify='end'>
               <Form.Item>

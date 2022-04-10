@@ -1,5 +1,4 @@
 import { Button, DatePicker, Form, Input, Modal, Row, Select } from 'antd';
-import moment from 'moment';
 import React, { ReactElement, useState } from 'react';
 import { useEffect } from 'react';
 import { ModalEditType } from '../../services/calendar/calendar.model';
@@ -54,7 +53,7 @@ function CalendarEventModal({
       categories.length > 0 &&
       selectedEvent.modalType === ModalEditType.MAKE_EVENT
     ) {
-      form.setFieldsValue({ categoryId: categories[2]?.id });
+      form.setFieldsValue({ categoryName: categories[0]?.id });
     }
   }, [categories]);
 
@@ -82,11 +81,11 @@ function CalendarEventModal({
         <Form.Item name='title' label='ชื่อกิจกรรม'>
           <Input />
         </Form.Item>
-        <Form.Item name='categoryId' label='ประเภท'>
+        <Form.Item name='categoryName' label='ประเภท'>
           <Select placeholder=''>
             {categories?.map((_slot) => (
-              <Select.Option key={_slot.id} value={_slot.id}>
-                {_slot.category}
+              <Select.Option key={_slot.title} value={_slot.title}>
+                {_slot.title}
               </Select.Option>
             ))}
           </Select>

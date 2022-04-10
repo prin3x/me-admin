@@ -14,7 +14,7 @@ function MakeNewBtn({}: Props): ReactElement {
           onClick={() => router.push('/news-editor/make')}
           className='w-full bg-secondary-color shadow-lg h-40 rounded-xl flex flex-col items-center justify-center cursor-pointer'
         >
-          <div className='text-4xl font-bold flex gap-5 items-center'>
+          <div className='text-4xl font-bold flex gap-5 items-center text-white'>
             <span>New Post</span>
             <PlusCircleFilled />
           </div>

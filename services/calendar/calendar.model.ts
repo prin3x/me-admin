@@ -11,7 +11,7 @@ export interface MakeNewsDto {
 
   status: NewsStatus;
 
-  categoryId: number;
+  categoryName: string;
 }
 
 export interface UpdateNewsDto extends MakeNewsDto {
@@ -34,4 +34,11 @@ export class ListQueryCalendarDTO {
   startDate: string;
 
   endDate: string;
+}
+
+export enum ECalendarEventType {
+  EVENT = "event",
+  BIRTHDAY = "birthday",
+  HOLIDAY = "holiday",
+  OTHER = "other",
 }

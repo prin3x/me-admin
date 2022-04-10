@@ -1,4 +1,4 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import {
   Button,
   Card,
@@ -9,76 +9,72 @@ import {
   Modal,
   Row,
   Select,
-} from 'antd';
-import React, { ReactElement, useEffect } from 'react';
-import { useState } from 'react';
-import { useQuery } from 'react-query';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import { queryClient } from '../../pages/_app';
-import { EDITOR_BODY, EDITOR_TYPE } from '../../services/post/post.model';
+} from "antd";
+import { useRouter } from "next/router";
+import React, { ReactElement, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "react-query";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { queryClient } from "../../pages/_app";
+import { EDITOR_BODY, EDITOR_TYPE } from "../../services/post/post.model";
 import {
   ALL_RECENT_NEWS,
   NEWS_CATEGORIES,
-} from '../../services/post/post.queryKey';
+} from "../../services/post/post.queryKey";
 import {
   _makeNewsContent,
   _getAllNewsCategories,
   _getRecentNews,
   _updatePost,
-} from '../../services/post/post.service';
-import ImageUploader from '../utils/ImageUploader';
-
-interface Props {}
+} from "../../services/post/post.service";
+import ImageUploader from "../utils/ImageUploader";
 
 const modules = {
   toolbar: {
     container: [
       [{ header: [1, 2, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      ["bold", "italic", "underline", "strike", "blockquote"],
       [
-        { list: 'ordered' },
-        { list: 'bullet' },
-        { indent: '-1' },
-        { indent: '+1' },
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
       ],
-      ['link', 'image'],
-      ['clean'],
+      ["link", "image"],
+      ["clean"],
     ],
   },
 };
 
 const formats = [
-  'header',
-  'bold',
-  'italic',
-  'underline',
-  'strike',
-  'blockquote',
-  'list',
-  'bullet',
-  'indent',
-  'link',
-  'image',
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  "link",
+  "image",
 ];
 
 const INITIAL_STATE = {
-  categoryId: 0,
-  content: '',
-  title: '',
-  type: EDITOR_TYPE.MAKE,
+  categoryName: "announcement",
+  content: "",
+  title: "",
 };
 
 function PostEditor(props): ReactElement {
+  const router = useRouter();
   const [form] = Form.useForm();
   const { initialContent, slug } = props;
-  const { data, isLoading, isSuccess } = useQuery(
-    NEWS_CATEGORIES,
-    _getAllNewsCategories
-  );
+  const [allCategories, setAllCategories] = useState([]);
   const [richContentMeta, setRichContentMeta] =
     useState<EDITOR_BODY>(INITIAL_STATE);
-  const [mainImage, setMainImage] = useState('');
+  const [mainImage, setMainImage] = useState("");
 
   function setContentValue(_content) {
     setRichContentMeta({
@@ -88,110 +84,117 @@ function PostEditor(props): ReactElement {
   }
 
   function resetContent() {
+    setMainImage("");
     setRichContentMeta({
       ...richContentMeta,
-      content: '',
-      categoryId: 0,
+      content: "",
+      categoryName: "",
     });
   }
 
   function onChangeCategory(_value) {
     setRichContentMeta({
       ...richContentMeta,
-      categoryId: _value,
+      categoryName: _value,
     });
   }
 
   async function confirmMakeOrUpdatePost() {
-    Modal.confirm({
-      title: 'Do you want to create these items?',
-      icon: <ExclamationCircleOutlined />,
-      content:
-        'When clicked the OK button, this dialog will be closed after 1 second',
-      onOk: async () => {
-        try {
-          let set = {
-            ...richContentMeta,
-            mainImage,
-          };
-          if (richContentMeta.type === EDITOR_TYPE.MAKE) {
-            console.log(set.mainImage,'asdasd');
-            await _makeNewsContent(set);
-          } else {
-            await _updatePost(slug, richContentMeta);
+    form.validateFields().then((_form) => {
+      Modal.confirm({
+        title: "Are you sure",
+        icon: <ExclamationCircleOutlined />,
+        onOk: async () => {
+          try {
+            let set = {
+              ...richContentMeta,
+              title: _form.title,
+              categoryName: _form.categoryName,
+              mainImage,
+            };
+            if (!slug) {
+              await _makeNewsContent(set);
+            } else {
+              await _updatePost(slug, set);
+            }
+            router.push("/news-editor");
+            setRichContentMeta(INITIAL_STATE);
+            message.success("Done");
+            queryClient.invalidateQueries([ALL_RECENT_NEWS]);
+          } catch (e) {
+            message.error("Failed");
           }
-          setRichContentMeta(INITIAL_STATE);
-          message.success('Done');
-          queryClient.invalidateQueries([ALL_RECENT_NEWS]);
-        } catch (e) {
-          message.error('Failed');
-        }
-      },
-      onCancel() {},
+        },
+        onCancel() {},
+      });
     });
   }
 
-  function onChangeTitle(e) {
-    e.preventDefault();
-    setRichContentMeta({
-      ...richContentMeta,
-      title: e.target.value,
-    });
-  }
+  async function setCategoryName() {
+    let res;
 
-  useEffect(() => {
-    if (slug) {
-      form.setFieldsValue({
-        categoryId: initialContent.categoryId || data?.[0]?.id,
-        title: initialContent.title,
-      });
-      setRichContentMeta({
-        title: initialContent.title,
-        categoryId: initialContent.categoryId,
-        content: initialContent.content,
-        type: EDITOR_TYPE.EDIT,
-      });
+    try {
+      res = await _getAllNewsCategories();
+      setAllCategories(res);
+    } catch (e) {
+      message.error("Failed Cannot Get Category");
     }
-  }, [initialContent]);
+  }
 
   useEffect(() => {
-    if (initialContent) return;
-    if (isSuccess && !form.getFieldValue('categoryId')) {
-      form.setFieldsValue({ categoryId: data?.[0]?.id });
+    setCategoryName();
+  }, []);
+
+  useEffect(() => {
+    if (slug && initialContent) {
+      form.setFieldsValue({
+        categoryName: initialContent.categoryName,
+        title: initialContent.title,
+      });
       setRichContentMeta({
         ...richContentMeta,
-        categoryId: data?.[0]?.id,
-        type: EDITOR_TYPE.MAKE,
+        categoryName: initialContent.categoryName,
+        content: initialContent.content,
       });
     }
-  }, [isSuccess]);
+  }, [slug, initialContent]);
+
+  useEffect(() => {
+    console.log(richContentMeta, "richContentMeta");
+  }, [richContentMeta]);
 
   return (
-    <div className='p-10 px-10 mx-auto'>
-      <Row justify='start'>
-        <Col lg={24}>
-          {isSuccess && (
+    <div className="mx-auto mt-10">
+      <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl ml-10">
+        New Post
+      </div>
+      <div className="bg-white p-5">
+      <Row className="mt-10 w-full">
+          <Col lg={24}>
             <Form form={form}>
-              <Row justify='center'>
+              <Row justify="center">
                 <Col>
                   <Form.Item
-                    name='title'
+                    name="title"
                     rules={[{ required: true }]}
-                    label='Title'
+                    label="Title"
                   >
-                    <Input onChange={onChangeTitle} placeholder='ชื่อเรื่อง' />
+                    <Input placeholder="ชื่อเรื่อง" />
                   </Form.Item>
                 </Col>
 
                 <Col>
-                  <Form.Item name='categoryId' rules={[{ required: true }]}>
+                  <Form.Item name="categoryName" rules={[{ required: true }]}>
                     <Select
-                      className='w-full'
-                      disabled={isLoading}
+                      placeholder="Select Category"
+                      className="w-full"
                       onChange={onChangeCategory}
                     >
-                      {data.map((_category) => (
-                        <Select.Option key={_category.id} value={_category.id}>
+                      {allCategories.map((_category) => (
+                        <Select.Option
+                          key={_category.title}
+                          value={_category.title}
+                        >
                           {_category?.title}
                         </Select.Option>
                       ))}
@@ -199,44 +202,47 @@ function PostEditor(props): ReactElement {
                   </Form.Item>
                 </Col>
               </Row>
-              <Row justify='center'>
+              <Row justify="center">
                 <Col>
-                  <ImageUploader setImage={setMainImage} />
+                  <ImageUploader
+                    setImage={setMainImage}
+                    currentImageUrl={initialContent?.imageUrl || ""}
+                  />
                 </Col>
               </Row>
-              <Row justify='center' className='mt-10'>
-                <Col lg={18} md={18} className='bg-white'>
+              <Row justify="center" className="mt-10">
+                <Col lg={18} md={18} className="bg-white">
                   <Form.Item>
                     <ReactQuill
                       modules={modules}
                       formats={formats}
                       onChange={setContentValue}
                       value={richContentMeta.content}
-                      style={{ height: '15rem' }}
+                      style={{ height: "15rem" }}
                     />
                   </Form.Item>
                 </Col>
               </Row>
             </Form>
-          )}
-          <Row justify='center' className='flex gap-5 mt-20'>
-            <Col className=''>
-              <Button onClick={resetContent} className=''>
-                Reset
-              </Button>
-            </Col>
-            <Col className=''>
-              <Button
-                onClick={confirmMakeOrUpdatePost}
-                className=''
-                type='primary'
-              >
-                Confirm
-              </Button>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+            <Row justify="center" className="flex gap-5 mt-20">
+              <Col className="">
+                <Button onClick={resetContent} className="">
+                  Reset
+                </Button>
+              </Col>
+              <Col className="">
+                <Button
+                  onClick={confirmMakeOrUpdatePost}
+                  className=""
+                  type="primary"
+                >
+                  Confirm
+                </Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </div>
     </div>
   );
 }

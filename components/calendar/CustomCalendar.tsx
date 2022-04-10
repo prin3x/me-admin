@@ -1,41 +1,44 @@
-import React, { ReactElement, useRef, useState } from 'react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import bootstrapPlugin from '@fullcalendar/bootstrap';
-import resourceTimelinePlugin from '@fullcalendar/resource-timeline'; // a plugin!
-import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
+import React, { ReactElement, useRef, useState } from "react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import bootstrapPlugin from "@fullcalendar/bootstrap";
+import resourceTimelinePlugin from "@fullcalendar/resource-timeline"; // a plugin!
+import resourceTimeGridPlugin from "@fullcalendar/resource-timegrid";
 //
-import { Button, Col, Form, message, Row, Select } from 'antd';
-import { useEffect } from 'react';
-import CalendarEventModal from './CalendarEventModal';
+import { Button, Col, Form, message, Row, Select } from "antd";
+import { useEffect } from "react";
+import CalendarEventModal from "./CalendarEventModal";
 import {
   _deleteEvent,
   _findAllCalendarEvent,
   _getAllCategories,
   _makeNewEvent,
   _updateEvent,
-} from '../../services/calendar/calendar.service';
+} from "../../services/calendar/calendar.service";
 import {
+  ECalendarEventType,
   ListQueryCalendarDTO,
   MakeNewsDto,
   ModalEditType,
-} from '../../services/calendar/calendar.model';
-import { useQueryClient, useQuery } from 'react-query';
-import { CALENDAR_EVENT } from '../../services/calendar/calendar.queryKey';
-import moment from 'moment';
+} from "../../services/calendar/calendar.model";
+import { useQueryClient, useQuery } from "react-query";
+import { CALENDAR_EVENT } from "../../services/calendar/calendar.queryKey";
+import moment from "moment";
 
 const colorsMap = [
-  { color: 'primary', category: 'event', categoryId: 2 },
-  { color: 'secondary', category: 'other', categoryId: 3 },
-  { color: 'tertiary', category: 'Personal', categoryId: 1 },
+  { color: "primary", categoryName: ECalendarEventType.EVENT },
+  { color: "secondary", categoryName: ECalendarEventType.BIRTHDAY },
+  { color: "tertiary", categoryName: ECalendarEventType.HOLIDAY },
+  { color: "fourth", categoryName: ECalendarEventType.OTHER },
 ];
 
 const themeValues = {
-  primary: '#F6D7A7',
-  secondary: '#C8E3D4',
-  tertiary: '#577BC1',
+  primary: "#facc14",
+  secondary: "#5ea5fa",
+  tertiary: "#f87171",
+  fourth: "#49de80",
 };
 
 function CustomCalendar(): ReactElement {
@@ -44,18 +47,18 @@ function CustomCalendar(): ReactElement {
   const [form] = Form.useForm();
   const [events, setEvents] = useState([]);
   const [calendarMeta, setCalendarMeta] = useState({
-    month: moment().format('MMMM'),
-    startDate: moment().startOf('month').format('YYYY-MM-DD'),
-    endDate: moment().endOf('month').format('YYYY-MM-DD'),
+    month: moment().format("MMMM"),
+    startDate: moment().startOf("month").format("YYYY-MM-DD"),
+    endDate: moment().endOf("month").format("YYYY-MM-DD"),
   });
-  const [dateTitle, setDateTitle] = useState('');
+  const [dateTitle, setDateTitle] = useState("");
   const [isShowTime, setIsShowTime] = useState(false);
-  const [selectedView, setSelectedView] = useState('dayGridMonth');
+  const [selectedView, setSelectedView] = useState("dayGridMonth");
   const [isShowModalAddEdit, setIsShowModalAddEdit] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState({
     id: 0,
-    title: 'New Event',
+    title: "New Event",
     dateTime: [],
     categoryId: 0,
     modalType: ModalEditType.MAKE_EVENT,
@@ -77,10 +80,10 @@ function CustomCalendar(): ReactElement {
     try {
       await _deleteEvent(id);
       queryClient.invalidateQueries([CALENDAR_EVENT, calendarMeta.month]);
-      message.success('DONE');
+      message.success("DONE");
     } catch (e) {
       console.error(e);
-      message.error('Error');
+      message.error("Error");
     }
     setIsProcessing(false);
     setIsShowModalAddEdit(false);
@@ -93,11 +96,11 @@ function CustomCalendar(): ReactElement {
     setIsProcessing(true);
     try {
       formRes = await form.validateFields();
-      console.log(formRes.dateTime?.[0], formRes.dateTime?.[1], 'formRes');
-      payload.categoryId = formRes?.categoryId;
-      payload.content = formRes?.content || '';
+      console.log(formRes.dateTime?.[0], formRes.dateTime?.[1], "formRes");
+      payload.categoryName = formRes?.categoryName;
+      payload.content = formRes?.content || "";
       payload.allDay = !isShowTime;
-      payload.title = formRes?.title || '';
+      payload.title = formRes?.title || "";
       payload.start = formRes?.dateTime?.[0] || moment().format();
       payload.end = formRes?.dateTime?.[1] || moment().format();
       res =
@@ -106,11 +109,12 @@ function CustomCalendar(): ReactElement {
           : await _updateEvent(selectedEvent.id, payload);
       queryClient.invalidateQueries([CALENDAR_EVENT]);
 
-      console.log(payload, 'payloadpayload');
-      message.success('Done');
+      console.log(payload, "payload");
+
+      message.success("Create Successfully");
     } catch (e) {
       console.error(e);
-      message.error('Error');
+      message.error("Error");
     }
     setIsProcessing(false);
     setIsShowModalAddEdit(false);
@@ -123,17 +127,13 @@ function CustomCalendar(): ReactElement {
 
     setCalendarMeta({
       startDate: moment(calendarRef.current.getApi().getDate())
-        .startOf('month')
-        .format('YYYY-MM-DD'),
+        .startOf("month")
+        .format("YYYY-MM-DD"),
       endDate: moment(calendarRef.current.getApi().getDate())
-        .endOf('month')
-        .format('YYYY-MM-DD'),
-      month: moment(calendarRef.current.getApi().getDate()).format('MMMM'),
+        .endOf("month")
+        .format("YYYY-MM-DD"),
+      month: moment(calendarRef.current.getApi().getDate()).format("MMMM"),
     });
-    console.log(
-      moment().endOf('month').format('YYYY-MM-DD'),
-      'currentMonthStart'
-    );
     setDateTitle(calendarApi.view.title);
   };
 
@@ -143,12 +143,12 @@ function CustomCalendar(): ReactElement {
 
     setCalendarMeta({
       startDate: moment(calendarRef.current.getApi().getDate())
-        .startOf('month')
-        .format('YYYY-MM-DD'),
+        .startOf("month")
+        .format("YYYY-MM-DD"),
       endDate: moment(calendarRef.current.getApi().getDate())
-        .endOf('month')
-        .format('YYYY-MM-DD'),
-      month: moment(calendarRef.current.getApi().getDate()).format('MMMM'),
+        .endOf("month")
+        .format("YYYY-MM-DD"),
+      month: moment(calendarRef.current.getApi().getDate()).format("MMMM"),
     });
     setDateTitle(calendarApi.view.title);
   };
@@ -156,7 +156,7 @@ function CustomCalendar(): ReactElement {
     try {
       setIsShowModalAddEdit(true);
     } catch (e) {
-      console.log('This action could not be completed');
+      console.log("This action could not be completed");
     }
   };
   const viewDidMount = ({ view }: any) => {
@@ -181,7 +181,7 @@ function CustomCalendar(): ReactElement {
     const calendarApi = selectInfo.view.calendar;
     setSelectedEvent({
       id: 0,
-      title: '',
+      title: "",
       dateTime: [moment(selectInfo.startStr), moment(selectInfo.endStr)],
       categoryId: 0,
       modalType: ModalEditType.MAKE_EVENT,
@@ -190,7 +190,7 @@ function CustomCalendar(): ReactElement {
     try {
       setIsShowModalAddEdit(true);
     } catch (e) {
-      console.log('This action could not be completed');
+      console.log("This action could not be completed");
     }
   };
 
@@ -214,7 +214,7 @@ function CustomCalendar(): ReactElement {
   const handleDates = (rangeInfo: any) => {
     try {
     } catch (e) {
-      console.log('This action could not be completed');
+      console.log("This action could not be completed");
     }
   };
 
@@ -227,28 +227,34 @@ function CustomCalendar(): ReactElement {
       const event = changeInfo.event.toPlainObject();
       const { id, start, title, end, extendedProps } = event;
     } catch (e) {
-      console.log('This action could not be completed');
+      console.log("This action could not be completed");
       changeInfo.revert();
     }
   };
 
-  async function findAllCalendarEvent() {
-    if (!data) return;
-    const coloredEvents = data.map((event) => {
+  function setEventState() {
+    let nextState;
+    nextState = displayColoredEvents(data);
+
+    setEvents(nextState);
+  }
+
+  function displayColoredEvents(events) {
+    if (!Array.isArray(events)) return;
+    const coloredEvents = events.map((event: any) => {
       const coloredEvent = { ...event };
-      if (event.categoryId) {
+      if (event.categoryName) {
         const foundColor = colorsMap.find(
-          (x) => (x as any).categoryId === event.categoryId
+          (x) => (x as any).categoryName === event.categoryName
         );
         if (foundColor) {
           coloredEvent.color = (themeValues as any)[foundColor.color];
         }
-        coloredEvent.start = moment(event.start).format();
-        coloredEvent.end = moment(event.end).format();
       }
       return coloredEvent;
     });
-    setEvents(coloredEvents);
+
+    return coloredEvents;
   }
 
   function toggleShowTime() {
@@ -269,101 +275,111 @@ function CustomCalendar(): ReactElement {
   }
 
   useEffect(() => {
-    console.log(data, 'data');
     if (isSuccess) {
       fetchAllCategories();
-      findAllCalendarEvent();
+      setEventState();
     }
     return () => {};
   }, [data]);
 
   return (
-    <div className='pb-10'>
-      <Row justify='end' className='my-10 gap-5 mr-10' align='middle'>
-        <Col className='flex gap-5'>
-          <Button
-            className='btn-icon btn-icon-start ms-1 w-100 w-md-auto'
-            onClick={onPrevButtonClick}
-          >
-            Prev
-          </Button>
-          <Button
-            className='btn-icon btn-icon-start ms-1 w-100 w-md-auto'
-            onClick={onNextButtonClick}
-          >
-            Next
-          </Button>
+    <div className="">
+      <Row className="h-40 items-center" justify="start">
+        <Col span={6} offset={1}>
+          <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl">
+            Calendar
+          </div>
         </Col>
-        <Col className='d-flex align-items-start justify-content-end'>
-          <Button
-            className='btn-icon btn-icon-start ms-1 w-100 w-md-auto'
-            onClick={onNewEventClick}
-            type='primary'
-          >
-            Add Event
-          </Button>
-        </Col>
-        <Col>
-          <Select
-            onChange={(_value) => changeView(_value)}
-            value={selectedView}
-          >
-            <Select.Option key='dayGridMonth' value='dayGridMonth'>
-              Month
-            </Select.Option>
-            <Select.Option key='timeGridWeek' value='timeGridWeek'>
-              Week
-            </Select.Option>
-            <Select.Option key='timeGridDay' value='timeGridDay'>
-              Day
-            </Select.Option>
-          </Select>
-        </Col>
-        <Button
-          className='btn-icon btn-icon-start ms-1 w-100 w-md-auto'
-          onClick={getToday}
-        >
-          Today
-        </Button>
       </Row>
-      <Row justify='center'>
-        <Col>{calendarMeta.month}</Col>
-      </Row>
-      <div className='container mx-auto px-20 py-10'>
-        <FullCalendar
-          ref={calendarRef}
-          schedulerLicenseKey='0261586002-fcs-1640591838'
-          plugins={[
-            dayGridPlugin,
-            timeGridPlugin,
-            interactionPlugin,
-            bootstrapPlugin,
-            resourceTimelinePlugin,
-            resourceTimeGridPlugin,
-          ]}
-          headerToolbar={false}
-          initialView='dayGridMonth'
-          themeSystem='bootstrap'
-          editable
-          selectable
-          selectMirror
-          dayMaxEvents
-          weekends
-          locale={'th'}
-          datesSet={handleDates}
-          select={handleDateSelect}
-          events={events}
-          eventClick={handleEventClick}
-          eventChange={handleEventChange} // called for drag-n-drop/resize
-          viewDidMount={viewDidMount}
-          eventTimeFormat={{
-            hour: '2-digit',
-            minute: '2-digit',
-            meridiem: false,
-          }}
-        />
+      <div className="bg-slate-50 h-full p-4">
+        <div className="bg-white p-2 rounded-md -mt-14 shadow-md	">
+          <Row justify="end" className="my-10 gap-5 mr-10" align="middle">
+            <Col className="flex gap-5">
+              <Button
+                className="btn-icon btn-icon-start ms-1 w-100 w-md-auto"
+                onClick={onPrevButtonClick}
+              >
+                Prev
+              </Button>
+              <Button
+                className="btn-icon btn-icon-start ms-1 w-100 w-md-auto"
+                onClick={onNextButtonClick}
+              >
+                Next
+              </Button>
+            </Col>
+            <Col className="d-flex align-items-start justify-content-end">
+              <Button
+                className="btn-icon btn-icon-start ms-1 w-100 w-md-auto"
+                onClick={onNewEventClick}
+                type="primary"
+              >
+                Add Event
+              </Button>
+            </Col>
+            <Col>
+              <Select
+                onChange={(_value) => changeView(_value)}
+                value={selectedView}
+              >
+                <Select.Option key="dayGridMonth" value="dayGridMonth">
+                  Month
+                </Select.Option>
+                <Select.Option key="timeGridWeek" value="timeGridWeek">
+                  Week
+                </Select.Option>
+                <Select.Option key="timeGridDay" value="timeGridDay">
+                  Day
+                </Select.Option>
+              </Select>
+            </Col>
+            <Button
+              className="btn-icon btn-icon-start ms-1 w-100 w-md-auto"
+              onClick={getToday}
+            >
+              Today
+            </Button>
+          </Row>
+          <Row justify="center">
+            <Col>{calendarMeta.month}</Col>
+          </Row>
+          <div className="container mx-auto px-20 py-10">
+            <FullCalendar
+              ref={calendarRef}
+              schedulerLicenseKey="0261586002-fcs-1640591838"
+              plugins={[
+                dayGridPlugin,
+                timeGridPlugin,
+                interactionPlugin,
+                bootstrapPlugin,
+                resourceTimelinePlugin,
+                resourceTimeGridPlugin,
+              ]}
+              headerToolbar={false}
+              initialView="dayGridMonth"
+              themeSystem="bootstrap"
+              editable
+              selectable
+              selectMirror
+              dayMaxEvents
+              weekends
+              locale={"th"}
+              datesSet={handleDates}
+              select={handleDateSelect}
+              events={events}
+              eventClick={handleEventClick}
+              eventChange={handleEventChange} // called for drag-n-drop/resize
+              viewDidMount={viewDidMount}
+              eventTimeFormat={{
+                hour: "2-digit",
+                minute: "2-digit",
+                meridiem: false,
+              }}
+            />
+          </div>
+        </div>
       </div>
-      {moment('2021-12-15T00:00:00.000Z').format('YYYY-MM-DD mm:ss')}
+      {moment("2021-12-15T00:00:00.000Z").format("YYYY-MM-DD mm:ss")}
       {isShowModalAddEdit && (
         <CalendarEventModal
           handleCloseModal={handleCloseModal}

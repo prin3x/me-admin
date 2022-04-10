@@ -1,20 +1,67 @@
-import { Button, Col, Image, List, Row } from 'antd';
-import Link from 'next/link';
-import React, { ReactElement } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
-import { ALL_RECENT_NEWS } from '../../services/post/post.queryKey';
-import { _deletePost, _getRecentNews } from '../../services/post/post.service';
+import {
+  DeleteFilled,
+  FormOutlined,
+  LoadingOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { Button, Col, Image, Input, List, message, Row, Switch } from "antd";
+import Link from "next/link";
+import React, { ReactElement, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useQuery, useQueryClient } from "react-query";
+import {
+  EPostCategory,
+  IPostItem,
+  IPostStruct,
+  ListQueryPost,
+  POST_RESPOSE,
+  POST_STATUS,
+} from "../../services/post/post.model";
+import { ALL_RECENT_NEWS } from "../../services/post/post.queryKey";
+import {
+  _deletePost,
+  _getRecentNews,
+  _toggleStatus,
+} from "../../services/post/post.service";
+import * as queryString from "query-string";
+import PostTable from "./PostTable";
 
 interface Props {}
 
 function RecentNewsPostList({}: Props): ReactElement {
   const queryClient = useQueryClient();
-  const { data, isLoading, isSuccess } = useQuery(
-    [ALL_RECENT_NEWS],
-    _getRecentNews
+  const [queryStr, setQueryStr] = useState<ListQueryPost>({
+    page: 1,
+    orderBy: "updatedDate",
+  });
+  const parseQuery = () => queryString.stringify(queryStr);
+
+  const { data, isLoading, isSuccess } = useQuery<IPostStruct>(
+    [ALL_RECENT_NEWS, queryStr],
+    () => _getRecentNews(parseQuery())
   );
 
-  async function deletePost(_id: number) {
+  function onChangeSearch(e) {
+    e.preventDefault();
+    const querySet = {
+      ...queryStr,
+      search: e.target.value,
+      page: 1,
+    };
+
+    setQueryStr(querySet);
+  }
+
+  function onChangePage(_page) {
+    const querySet = {
+      ...queryStr,
+      page: _page,
+    };
+
+    setQueryStr(querySet);
+  }
+
+  async function deletePost(_id: string) {
     let res;
     try {
       res = await _deletePost(_id);
@@ -25,42 +72,57 @@ function RecentNewsPostList({}: Props): ReactElement {
     }
   }
 
+  async function togglePostStatus(id: string, status: POST_STATUS) {
+    try {
+      await _toggleStatus(id, status);
+      queryClient.invalidateQueries([ALL_RECENT_NEWS]);
+    } catch (error) {
+      message.error(error.response.message);
+    }
+  }
+
   return (
-    <div className='mt-10'>
-      <List
-        className='p-5'
-        loading={isLoading}
-        dataSource={isSuccess ? data : []}
-        renderItem={(_content: any) => (
-          <List.Item key={_content.id}>
-            <Row gutter={[0, 0]} className='w-full' align='middle'>
-              <Col md={3}>
-                <div className='thumnail'>
-                  <Image src='https://ui-avatars.com/api/?rounded=false' />
-                </div>
-              </Col>
-              <Col md={4}>
-                <List.Item.Meta description={_content.title} />
-              </Col>
-              <Col md={5}>
-                <List.Item.Meta description={_content.content} />
-              </Col>
-              <Col md={3}>
-                <div>{_content.status}</div>
-              </Col>
-              <Col md={3}>
-                {new Date(_content.updatedDate).toLocaleDateString()}
-              </Col>
-              <Col md={3}>
-                <Link href={`/news-editor/${_content.slug}`} passHref>
-                  <Button>Edit</Button>
-                </Link>
-                <Button onClick={() => deletePost(_content.id)}>Delete</Button>
-              </Col>
-            </Row>
-          </List.Item>
-        )}
-      />
+    <div className="">
+      <Row className="h-40 items-center" justify="start">
+        <Col span={6} offset={1}>
+          <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl">
+            Posts
+          </div>
+        </Col>
+        <Col span={12}>
+          <Input
+            onChange={onChangeSearch}
+            placeholder="SEARCH"
+            className="ml-auto text-right search-text-right"
+            prefix={
+              <SearchOutlined
+                style={{
+                  color: "#D8D8D8",
+                }}
+              />
+            }
+          />
+        </Col>
+        <Col span={2} offset={1}>
+          <Link href={`/news-editor/make`} passHref>
+            <Button type="primary">Add</Button>
+          </Link>
+        </Col>
+      </Row>
+      <div className="bg-slate-50 h-full p-4">
+        <div className="bg-white p-2 rounded-md -mt-14 shadow-md	">
+          <PostTable
+            postData={data?.items || []}
+            isLoading={isLoading}
+            toggleStatus={togglePostStatus}
+            isLoadingSwitch={true}
+            onRemove={deletePost}
+            page={data?.page}
+            total={data?.total || 0}
+            onChangePage={onChangePage}
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,3 @@
-import { PlusCircleFilled } from '@ant-design/icons';
-import { Col, Row } from 'antd';
-import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
 import RecentNewsPostList from '../../components/post-editor/RecentNewsPostList';
 import LayoutHOC from '../../components/layouts/LayoutHOC';
@@ -10,9 +7,8 @@ interface Props {}
 function BlogEditorContainer({}: Props): ReactElement {
   return (
     <LayoutHOC>
-      <div className='container p-10'>
+      <div className='pt-10 p-5'>
         <title>ME</title>
-        <MakeNewBtn />
         <RecentNewsPostList />
       </div>
     </LayoutHOC>

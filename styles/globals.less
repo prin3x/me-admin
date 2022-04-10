@@ -1,15 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import '~antd/dist/antd.less';
+@import "~antd/dist/antd.less";
 @import "~@glidejs/glide/dist/css/glide.core.css";
+
+@font-face {
+  font-family: "DB Ozone";
+  src: url("/font/DB_Ozone_X_UlLi_v3.2.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "DB Ozone";
+  src: url("/font/DB_Ozone_X_v3.2.ttf");
+  font-weight: 600;
+  font-style: semibold;
+}
+
+@font-face {
+  font-family: "DB Ozone";
+  src: url("/font/DB_Ozone_X_Bold_v3.2.ttf");
+  font-weight: bold;
+  font-style: bold;
+}
 
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: 'Montserrat', BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "DB Ozone", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  margin: 0 auto;
+  font-size: 120%;
 }
 
 a {
@@ -21,13 +44,15 @@ a {
   box-sizing: border-box;
 }
 
-@primary-color: #F6D7A7;
-@secondary-color: #F6EABE;
-@tertiary-color: #C8E3D4;
-@quaternary-color: #87AAAA;
+@layout-header-background: rgb(37, 47, 62);
+@layout-body-background: rgb(27, 35, 48);
+@primary-color: rgb(34, 211, 238);
+@secondary-color: #f6eabe;
+@tertiary-color: #c8e3d4;
+@quaternary-color: #87aaaa;
+@table-bg: #fff;
 
-
-@blue-color: #577BC1;
+@blue-color: #577bc1;
 
 // Utility Class
 
@@ -47,3 +72,19 @@ a {
   background-color: @quaternary-color;
 }
 
+.normal-col {
+  text-align: center !important;
+}
+
+.menu-antd-item {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.header-highlight {
+  background-color: rgb(27, 35, 48);
+}
+
+.ant-layout-sider {
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+}
