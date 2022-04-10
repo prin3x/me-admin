@@ -1,13 +1,11 @@
-import React, { ReactElement } from 'react';
-import ContactList from '../../components/contacts/ContactList';
-import LayoutHOC from '../../components/layouts/LayoutHOC';
+import React, { ReactElement } from "react";
+import ContactTable from "../../components/contacts/ContactTable";
+import LayoutHOC from "../../components/layouts/LayoutHOC";
 
 function ContactsContainer(): ReactElement {
   return (
     <LayoutHOC>
-      <>
-        <ContactList />
-      </>
+      <ContactTable />
     </LayoutHOC>
   );
 }

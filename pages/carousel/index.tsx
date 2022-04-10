@@ -43,6 +43,7 @@ function CarouselPage({}: Props) {
   async function removeCarouselById(_id: string) {
     try {
       await _removeCarouselById(_id);
+      await queryClient.invalidateQueries([DEFAULT_CAROUSEL]);
     } catch (e) {
       message.error("Error");
     }
