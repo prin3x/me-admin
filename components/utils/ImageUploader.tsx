@@ -37,6 +37,7 @@ function ImageUploader({ setImage, currentImageUrl }) {
     name: "file",
     multiple: false,
     onChange: async (info) => {
+      console.log(info,'info');
       const { status } = info.file;
       if (status !== "uploading") {
       }
