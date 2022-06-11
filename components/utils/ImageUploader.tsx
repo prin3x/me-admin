@@ -25,6 +25,7 @@ const INITIAL_IMAGE_STATE = {
 
 function ImageUploader({ setImage, currentImageUrl }) {
   const [imageUrl, setImageUrl] = useState<IImageURL>(INITIAL_IMAGE_STATE);
+  const [progress, setProgress] = useState(0);
 
   const uploadButton = (
     <div className=" w-60 sm:h-52 bg-gray-200 rounded-md flex flex-col justify-center items-center">
@@ -33,19 +34,29 @@ function ImageUploader({ setImage, currentImageUrl }) {
     </div>
   );
 
+  const uploadImage = async (options) => {
+    const { onSuccess, onError, file } = options;
+    try {
+      let getImageBase64 = await getBase64(file);
+      setImageUrl({ loading: false, url: getImageBase64, file: file });
+      setImage({ file: file });
+      onSuccess('Ok');
+    } catch (err) {
+      console.log("Eroor: ", err);
+      const error = new Error("Some error");
+      onError({ err });
+    }
+  };
+
   const props = {
     name: "file",
     multiple: false,
     onChange: async (info) => {
-      console.log(info,'info');
       const { status } = info.file;
       if (status !== "uploading") {
       }
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
-        let getImageBase64 = await getBase64(info.file.originFileObj);
-        setImageUrl({ loading: false, url: getImageBase64, file: info.file });
-        setImage({ file: info.file });
       } else if (status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }
@@ -54,6 +65,7 @@ function ImageUploader({ setImage, currentImageUrl }) {
       setImageUrl(INITIAL_IMAGE_STATE);
       setImage({ file: "" });
     },
+    customRequest: uploadImage,
     maxCount: 1,
   };
 
