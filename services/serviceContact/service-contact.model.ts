@@ -1,5 +1,5 @@
 export interface IServiceContactDetail {
-  id: number;
+  id: string;
   objective: string;
   contactID: string;
   contactPhoneNumber: string;
@@ -17,4 +17,29 @@ export interface IServiceContact {
   createdDate: Date;
   updatedDate: Date;
   serviceContactDetail: IServiceContactDetail[];
+}
+
+export interface ICreateServiceContactItem {
+  objective: string;
+  contactID: string;
+  contactPhoneNumber: string;
+  name: string;
+  categoryDetail: string;
+}
+
+export interface IUpdateServiceContactItem extends Partial<ICreateServiceContactItem>{
+  id: string;
+}
+
+export interface ICreateServiceContactCategory {
+  title: string;
+}
+
+export interface IUpdateServiceContactCategory extends Partial<ICreateServiceContactCategory>{
+  id: string;
+}
+
+export enum ETypeOfEditing {
+  CREATE = 'create',
+  UPDATED = 'update'
 }

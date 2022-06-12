@@ -7,6 +7,7 @@ import {
   ProfileOutlined,
   ScheduleOutlined,
   ExportOutlined,
+  ContainerOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -38,6 +39,10 @@ const availableSelectedKeys = [
   {
     url: "/meeting-rooms",
     key: "Meeting Rooms",
+  },
+  {
+    url: "/service-contact",
+    key: "Service Contacts",
   },
 ];
 
@@ -115,6 +120,9 @@ function LayoutHOC({ children }: Props): ReactElement {
           </Menu.Item>
           <Menu.Item key={"/meeting-rooms"} icon={<ScheduleOutlined />}>
             <Link href="/meeting-rooms">Meeting Rooms</Link>
+          </Menu.Item>
+          <Menu.Item key={"/service-contact"} icon={<ContainerOutlined />}>
+            <Link href="/service-contact">Service Contacts</Link>
           </Menu.Item>
         </Menu>
       </Sider>
