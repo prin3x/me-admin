@@ -1,20 +1,20 @@
 import { Button, Col, Drawer, Form, Input, Row } from "antd";
 import React, { ReactElement } from "react";
 import { useEffect } from "react";
+import { ICreateFormsRequestCategory } from "../../services/formsRequest/forms-request.model";
 import {
   ETypeOfEditing,
-  ICreateServiceContactCategory,
 } from "../../services/serviceContact/service-contact.model";
 
 type Props = {
   editObjectiveData: any;
   onClose: () => void;
   onCreateNewObjectiveCategory: (title: string) => void;
-  onUpdate: (item: ICreateServiceContactCategory) => void;
+  onUpdate: (item: ICreateFormsRequestCategory) => void;
   onRemove: (id: string) => void;
 };
 
-function ServiceContactDrawer({
+function FormRequestCategoryDrawer({
   editObjectiveData,
   onClose,
   onCreateNewObjectiveCategory,
@@ -73,4 +73,4 @@ function ServiceContactDrawer({
   );
 }
 
-export default ServiceContactDrawer;
+export default FormRequestCategoryDrawer;

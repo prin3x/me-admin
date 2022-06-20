@@ -9,44 +9,48 @@ import { Button, Col, Form, Input, Row } from "antd";
 import React, { Fragment, useState } from "react";
 import {
   ETypeOfEditing,
-  ICreateServiceContactCategory,
-  ICreateServiceContactItem,
-  IServiceContact,
-  IServiceContactDetail,
-  IUpdateServiceContactCategory,
-  IUpdateServiceContactItem,
-} from "../../services/serviceContact/service-contact.model";
-import { _createContactServiceListItem } from "../../services/serviceContact/service-contact.service";
-import ServiceContactDrawer from "./ServiceContactDrawer";
-import ServiceContactListItemDrawer from "./ServiceContactListItemDrawer";
-
-const INIT_EDIT_LIST = {
-  id: "",
-  objective: "",
-  contactID: "",
-  contactPhoneNumber: "",
-  name: "",
-  isEditing: false,
-};
+  ICreateFormsRequestCategory,
+  ICreateFormsRequestItem,
+  IFormsRequest,
+  IFormsRequestDetail,
+  IUpdateFormsRequestCategory,
+  IUpdateFormsRequestItem,
+} from "../../services/formsRequest/forms-request.model";
+import FormRequestCategoryDrawer from "./FormRequestCategoryDrawer";
+import FormRequestListDrawer from "./FormRequestListDrawer";
 
 type Props = {
-  data: IServiceContact[];
-  onCreate: (createDto: ICreateServiceContactItem) => void;
+  data: IFormsRequest[];
+  onCreate: (createDto: ICreateFormsRequestItem) => void;
   onCreateNewObjectiveCategory: (title: string) => void;
-  onUpdateItemList: (items: IUpdateServiceContactItem) => void;
-  _onUpdateObjectiveTitle: (items: IUpdateServiceContactCategory) => void;
+  onUpdateItemList: (items: IUpdateFormsRequestItem) => void;
+  _onUpdateObjectiveTitle: (items: IUpdateFormsRequestCategory) => void;
   _onRemoveListItem: (id: string) => void;
   _onRemoveObjectiveCategory: (id: string) => void;
 };
 
-function ServiceContactTableList({
+export interface IFormRequestEditState {
+  id: string,
+  content: string,
+  downloadLink: string,
+  isEditing: boolean,
+}
+
+const INIT_EDIT_LIST = {
+  id: "",
+  content: "",
+  downloadLink: "",
+  isEditing: false,
+};
+
+function FormRequestTableList({
   data,
   onCreate,
   onCreateNewObjectiveCategory,
   onUpdateItemList,
   _onUpdateObjectiveTitle,
   _onRemoveListItem,
-  _onRemoveObjectiveCategory
+  _onRemoveObjectiveCategory,
 }: Props) {
   const [form] = Form.useForm();
   const [isAddingNewListItem, setIsAddingNewListItem] = useState({
@@ -59,14 +63,14 @@ function ServiceContactTableList({
     isEditing: false,
     type: ETypeOfEditing.CREATE,
   });
-  const [editListItemData, setEditListItemData] = useState(INIT_EDIT_LIST);
+  const [editListItemData, setEditListItemData] = useState<IFormRequestEditState>(INIT_EDIT_LIST);
 
-  const onToggleListItemToEdit = (item?: IServiceContactDetail) => {
+  const onToggleListItemToEdit = (item?: IFormsRequestDetail) => {
     let currentState = { ...editListItemData };
     if (currentState.isEditing) {
       currentState = INIT_EDIT_LIST;
     } else {
-      currentState = { ...editListItemData, ...item, id: item.id + "" };
+      currentState = { ...currentState, ...item, id: item.id + "" };
       currentState.isEditing = true;
     }
 
@@ -86,7 +90,7 @@ function ServiceContactTableList({
   };
 
   const onToggleCategoryDrawer = (
-    item?: IServiceContact,
+    item?: IFormsRequest,
     type: ETypeOfEditing = ETypeOfEditing.CREATE
   ) => {
     let currentState = { ...editObjectiveData };
@@ -108,7 +112,7 @@ function ServiceContactTableList({
   };
 
   const onClickConfirmCreateNewListItem = async () => {
-    let set: ICreateServiceContactItem = {} as ICreateServiceContactItem;
+    let set: ICreateFormsRequestItem = {} as ICreateFormsRequestItem;
     try {
       await form.validateFields();
       set = form.getFieldsValue();
@@ -121,16 +125,15 @@ function ServiceContactTableList({
     }
   };
 
-  const onUpdateItem = (formVal: ICreateServiceContactItem) => {
-    let set: IUpdateServiceContactItem = {} as IUpdateServiceContactItem;
+  const onUpdateItem = (formVal: ICreateFormsRequestItem) => {
+    let set: IUpdateFormsRequestItem = {} as IUpdateFormsRequestItem;
     set = { ...formVal, id: editListItemData.id };
     onUpdateItemList(set);
     onToggleListItemToEdit();
   };
 
-  const onUpdateObjectiveTitle = (formVal: ICreateServiceContactCategory) => {
-    let set: IUpdateServiceContactCategory =
-      {} as IUpdateServiceContactCategory;
+  const onUpdateObjectiveTitle = (formVal: ICreateFormsRequestCategory) => {
+    let set: IUpdateFormsRequestCategory = {} as IUpdateFormsRequestCategory;
     set.title = formVal.title;
     set.id = editObjectiveData.categoryId;
     _onUpdateObjectiveTitle(set);
@@ -146,13 +149,12 @@ function ServiceContactTableList({
     _onRemoveObjectiveCategory(id);
     onToggleCategoryDrawer();
   };
-
   return (
     <div className="px-10 pb-20">
       <Row className="h-40 items-center" justify="start">
         <Col span={24} offset={1}>
           <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl">
-            Service Contacts
+            Forms Request
           </div>
         </Col>
       </Row>
@@ -161,11 +163,13 @@ function ServiceContactTableList({
           className="w-[15rem]"
           style={{ height: "5rem", fontSize: "2rem", fontWeight: "bold" }}
           type="link"
-          onClick={() => onToggleCategoryDrawer()}
         >
-          <div className="flex items-center">
+          <div
+            className="flex items-center"
+            onClick={() => onToggleCategoryDrawer()}
+          >
             <PlusCircleFilled />
-            <p className="ml-3 mb-0">ADD OBJECTIVE</p>
+            <p className="ml-3 mb-0">ADD CATEGORY</p>
           </div>
         </Button>
       </div>
@@ -176,9 +180,8 @@ function ServiceContactTableList({
               style={{ backgroundColor: "#0F52BA" }}
               className="text-white text-[30px]"
             >
-              <th className="border border-slate-300 w-[45%]">OBJECTIVE</th>
-              <th className="border border-slate-300 w-[40%]">CONTACT</th>
-              <th className="border border-slate-300 w-[15%]">NAME</th>
+              <th className="border border-slate-300 w-[45%]">CONTENT</th>
+              <th className="border border-slate-300 w-[40%]">LINK</th>
             </tr>
           </thead>
           <tbody>
@@ -192,7 +195,7 @@ function ServiceContactTableList({
                     className="font-bold border border-slate-300"
                     style={{ color: "#1655B7" }}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between cursor-pointer">
                       <div className="flex items-center">
                         <EditOutlined
                           onClick={() =>
@@ -203,7 +206,7 @@ function ServiceContactTableList({
                         {item.title}
                       </div>
                       <div
-                        className="flex items-center mr-5"
+                        className="flex items-center mr-5 cursor-pointer"
                         onClick={() => onCickAddNewListItem(item.id)}
                       >
                         <PlusCircleFilled className="ml-5" />
@@ -212,30 +215,20 @@ function ServiceContactTableList({
                     </div>
                   </td>
                   <td className="border border-slate-300"></td>
-                  <td className="border border-slate-300"></td>
                 </tr>
-                {item.serviceContactDetail.map((contact) => (
+                {item?.formsRequestDetail.map((contact) => (
                   <tr key={contact.id} className="text-[24px]">
                     <td className="border border-slate-300">
                       <div className="flex items-center">
                         <MoreOutlined
-                          className="cursor-pointer"
                           onClick={() => onToggleListItemToEdit(contact)}
+                          className="cursor-pointer"
                         />
-                        {contact.objective}
+                        {contact.content}
                       </div>
                     </td>
                     <td className="border border-slate-300 text-center">
-                      <p className="mb-0">{contact.contactID}</p>
-                      <p
-                        className="mb-0 text-[19px]"
-                        style={{ color: "#0F52BA" }}
-                      >
-                        {contact.contactPhoneNumber}
-                      </p>
-                    </td>
-                    <td className="border border-slate-300 text-center">
-                      {contact.name}
+                      <p className="mb-0">{contact.downloadLink}</p>
                     </td>
                   </tr>
                 ))}
@@ -248,48 +241,22 @@ function ServiceContactTableList({
                             rules={[
                               { required: true, message: "Please enter title" },
                             ]}
-                            name="objective"
-                            className="m-0 w-full"
+                            name="content"
+                            className="m-0 w-[70%]"
                           >
-                            <Input
-                              type="text"
-                              placeholder="ชื่อรายการ"
-                              className="w-full"
-                            />
+                            <Input type="text" placeholder="ชื่อแบบฟอร์ม" />
                           </Form.Item>
                         </div>
                       </td>
                       <td className="border border-slate-300 pl-7">
-                        <div className="flex gap-3">
+                        <div className="flex items-center justify-center">
                           <Form.Item
                             rules={[{ required: true }]}
-                            name="contactID"
-                            label="Contact ID"
+                            name="downloadLink"
                           >
                             <Input
                               type="text"
-                              placeholder="ID พนักงาน"
-                              className=""
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            name="contactPhoneNumber"
-                            label="Contact Phone"
-                          >
-                            <Input
-                              type="text"
-                              placeholder="เบอร์ ติดต่อ"
-                              className=""
-                            />
-                          </Form.Item>
-                        </div>
-                      </td>
-                      <td className="border border-slate-300 pl-7">
-                        <div className="flex items-center justify-around">
-                          <Form.Item rules={[{ required: true }]} name="name">
-                            <Input
-                              type="text"
-                              placeholder="ชื่อ Contact"
+                              placeholder="Link"
                               className=""
                             />
                           </Form.Item>
@@ -300,7 +267,7 @@ function ServiceContactTableList({
                           />
                           <CloseCircleOutlined
                             style={{ color: "red" }}
-                            className="cursor-pointer"
+                            className="cursor-pointer ml-3"
                             onClick={() => onCickAddNewListItem(item.id)}
                           />
                         </div>
@@ -313,7 +280,7 @@ function ServiceContactTableList({
         </table>
       </Form>
 
-      <ServiceContactDrawer
+      <FormRequestCategoryDrawer
         editObjectiveData={editObjectiveData}
         onClose={onToggleCategoryDrawer}
         onCreateNewObjectiveCategory={onCreateNewObjectiveCategory}
@@ -321,7 +288,7 @@ function ServiceContactTableList({
         onRemove={onRemoveObjectiveCategory}
       />
 
-      <ServiceContactListItemDrawer
+      <FormRequestListDrawer
         editListItemData={editListItemData}
         onClose={onToggleListItemToEdit}
         onUpdate={onUpdateItem}
@@ -331,4 +298,4 @@ function ServiceContactTableList({
   );
 }
 
-export default ServiceContactTableList;
+export default FormRequestTableList;

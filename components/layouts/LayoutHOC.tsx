@@ -8,6 +8,7 @@ import {
   ScheduleOutlined,
   ExportOutlined,
   ContainerOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -43,6 +44,10 @@ const availableSelectedKeys = [
   {
     url: "/service-contact",
     key: "Service Contacts",
+  },
+  {
+    url: "/forms-request",
+    key: "Forms Request",
   },
 ];
 
@@ -123,6 +128,9 @@ function LayoutHOC({ children }: Props): ReactElement {
           </Menu.Item>
           <Menu.Item key={"/service-contact"} icon={<ContainerOutlined />}>
             <Link href="/service-contact">Service Contacts</Link>
+          </Menu.Item>
+          <Menu.Item key={"/forms-request"} icon={<DownloadOutlined />}>
+            <Link href="/forms-request">Forms Request</Link>
           </Menu.Item>
         </Menu>
       </Sider>
