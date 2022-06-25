@@ -28,7 +28,7 @@ function ImageUploader({ setImage, currentImageUrl }) {
   const [progress, setProgress] = useState(0);
 
   const uploadButton = (
-    <div className=" w-60 sm:h-52 bg-gray-200 rounded-md flex flex-col justify-center items-center">
+    <div className=" w-full d-block sm:h-52 bg-gray-200 rounded-md flex flex-col justify-center items-center">
       {imageUrl?.loading ? <LoadingOutlined /> : <PlusOutlined />}
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>

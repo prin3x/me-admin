@@ -99,7 +99,7 @@ function MeetingRooms({}: Props) {
           </Col>
           <Col span={2} offset={1}>
             <Link href={`/meeting-rooms/make`} passHref>
-              <Button type="primary">Add</Button>
+              <Button type="primary">ADD</Button>
             </Link>
           </Col>
         </Row>

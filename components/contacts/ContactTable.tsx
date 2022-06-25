@@ -109,10 +109,11 @@ function ContactTable({}: Props) {
     }
   }
 
-  function onChangePage(_page) {
+  function onChangePage(_page, _pageSize) {
     const querySet = {
       ...queryStr,
       page: _page,
+      limit: _pageSize,
     };
 
     setQueryStr(querySet);
@@ -178,7 +179,6 @@ function ContactTable({}: Props) {
           <div className="flex flex-col items-start ">
             <p
               className="text-left cursor-pointer text-primary-color mb-0 font-semibold	leading-4	"
-              onClick={() => router.push(`/staff-contact/${_record.id}`)}
             >
               {_self}
             </p>
@@ -263,7 +263,7 @@ function ContactTable({}: Props) {
         </Col>
         <Col span={2} offset={1}>
           <Button onClick={handleCreateNewContact} type="primary">
-            Add
+            CREATE
           </Button>
         </Col>
       </Row>
@@ -272,13 +272,13 @@ function ContactTable({}: Props) {
           <Table
             dataSource={data?.items || []}
             loading={isLoading}
-            scroll={{ x: true }}
+            // scroll={{ x: true }}
             bordered
             rowKey={(_row) => _row.id}
             tableLayout="fixed"
             pagination={{
               current: queryStr.page,
-              pageSize: 10,
+              pageSize: queryStr.limit || 10,
               total: data?.total,
               onChange: onChangePage,
             }}

@@ -117,7 +117,7 @@ function PostTable({
         dataSource={postData}
         loading={isLoading}
         className="w-full"
-        scroll={{ x: true }}
+        // scroll={{ x: true }}
         bordered
         rowKey={(_row) => _row?.id}
         tableLayout="fixed"

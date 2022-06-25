@@ -209,8 +209,15 @@ function PostEditor(props): ReactElement {
                 </Col>
               </Row>
               <Row justify="center">
-                <Col>
+                <Col span={8}>
                   <div className="text-3xl">Cover Image</div>
+                  <ImageUploader
+                    setImage={setMainImage}
+                    currentImageUrl={initialContent?.imageUrl || ""}
+                  />
+                </Col>
+                <Col span={8} offset={1}>
+                  <div className="text-3xl">Home Image</div>
                   <ImageUploader
                     setImage={setMainImage}
                     currentImageUrl={initialContent?.imageUrl || ""}

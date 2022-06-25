@@ -6,6 +6,7 @@ import {
 import { DeleteFilled, FormOutlined } from "@ant-design/icons";
 import { Button, Col, Image, Popconfirm, Row, Switch, Table } from "antd";
 import Link from "next/link";
+import moment from "moment-timezone";
 
 type Props = {
   carouselData: ICarousel[];
@@ -29,6 +30,12 @@ function CarouselList({
   onChangePage,
 }: Props) {
   const columns = [
+    {
+      title: "Created Date",
+      dataIndex: "createdDate",
+      className: "normal-col",
+      render: (_self, _record) => <p className="text-center">{moment(_self).tz('Asia/Bangkok').format('DD MM YYYY HH:mm')}</p>,
+    },
     {
       title: "IMAGE",
       dataIndex: "imageUrl",
@@ -70,6 +77,12 @@ function CarouselList({
       ),
     },
     {
+      title: "Created By",
+      dataIndex: "adminId",
+      className: "normal-col",
+      render: (_self, _record) => <p className="text-center">{_self}</p>,
+    },
+    {
       title: "EDIT",
       dataIndex: "edit",
       className: "normal-col",
@@ -105,7 +118,7 @@ function CarouselList({
         dataSource={carouselData}
         loading={isLoading}
         className="w-full"
-        scroll={{ x: true }}
+        // scroll={{ x: true }}
         bordered
         rowKey={(_row) => _row?.id}
         tableLayout="fixed"

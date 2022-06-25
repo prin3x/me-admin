@@ -1,4 +1,5 @@
 import { Button, Col, Form, Input, Row } from "antd";
+import { useRouter } from "next/router";
 import React from "react";
 import { ICarousel } from "../../services/carousel/carousel.model";
 import ImageUploader from "../utils/ImageUploader";
@@ -18,10 +19,11 @@ function CarouselEditor({
   carouselData,
   isEdit,
 }: Props) {
+  const router = useRouter();
   return (
     <div className="mt-10">
       <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl ml-10">
-        New Carousel
+        Cover
       </div>
       <div className="bg-white p-5">
         <Row className="mt-10 w-full">
@@ -30,7 +32,7 @@ function CarouselEditor({
             layout="horizontal"
             onFinish={onFinish}
             className="w-full"
-            labelCol={{span:3}}
+            labelCol={{ span: 3 }}
           >
             <Row className="w-full" justify="center">
               <Col span={10} offset={1}>
@@ -40,6 +42,11 @@ function CarouselEditor({
                     currentImageUrl={carouselData?.imageUrl || ""}
                   />
                 </Form.Item>
+                <div className="lead text-lg text-center">
+                  Size (W x H) 1004 x 565 px
+                  <br />
+                  16 : 9
+                </div>
               </Col>
               <Col span={10} offset={1}>
                 <Form.Item
@@ -56,10 +63,17 @@ function CarouselEditor({
                 >
                   <Input placeholder="Linkout" />
                 </Form.Item>
-                <Row justify="end" align='bottom' className='h-52'>
+                <Row justify="end" align="bottom" className="h-52">
                   <Form.Item>
+                    <Button
+                      type="ghost"
+                      onClick={() => router.push("/carousel")}
+                      className="mr-5"
+                    >
+                      Back
+                    </Button>
                     <Button type="primary" htmlType="submit">
-                      {isEdit ? "Confirm Edit " : "Create"}
+                      {isEdit ? "Confirm" : "Create"}
                     </Button>
                   </Form.Item>
                 </Row>

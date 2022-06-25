@@ -9,10 +9,13 @@ import {
   ExportOutlined,
   ContainerOutlined,
   DownloadOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { checkAuth } from "../../services/auth/auth.service";
+import { ADMIN_ROLES, IAdminJWT } from "../../services/admin/admin.model";
+import { validateAdminRole } from "../../services/admin/admin.service";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -49,17 +52,26 @@ const availableSelectedKeys = [
     url: "/forms-request",
     key: "Forms Request",
   },
+  {
+    url: "/admin-management",
+    key: "Admin Management",
+  },
 ];
 
 function LayoutHOC({ children }: Props): ReactElement {
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [adminDetails, setAdminDetails] = useState({ username: "" });
+  const [adminDetails, setAdminDetails] = useState<IAdminJWT>({
+    username: "",
+    id: 0,
+    role: ADMIN_ROLES.USER,
+    iat: 0,
+  });
 
   async function checkAdminId() {
     let res;
     try {
-      res = await checkAuth();
+      res = validateAdminRole();
       setAdminDetails(res);
     } catch (e) {
       message.error("Unauthorized");
@@ -112,26 +124,47 @@ function LayoutHOC({ children }: Props): ReactElement {
           className="menu-antd-item"
         >
           <Menu.Item key={"/carousel"} icon={<ProfileOutlined />}>
-            <Link href="/carousel">Carousel</Link>
+            <Link href="/carousel" passHref>
+              <div className="text-[20px]">Cover</div>
+            </Link>
           </Menu.Item>
           <Menu.Item key={"/contacts"} icon={<BarsOutlined />}>
-            <Link href="/contacts">Contacts</Link>
+            <Link href="/contacts" passHref>
+              <div className="text-[20px]">Contacts</div>
+            </Link>
           </Menu.Item>
           <Menu.Item key={"/calendar"} icon={<CalendarOutlined />}>
-            <Link href="/calendar">Calendar</Link>
+            <Link href="/calendar" passHref>
+              <div className="text-[20px]">Calendar</div>
+            </Link>
           </Menu.Item>
           <Menu.Item key={"/news-editor"} icon={<FileOutlined />}>
-            <Link href="/news-editor">Posts</Link>
+            <Link href="/news-editor" passHref>
+              <div className="text-[20px]">Posts</div>
+            </Link>
           </Menu.Item>
           <Menu.Item key={"/meeting-rooms"} icon={<ScheduleOutlined />}>
-            <Link href="/meeting-rooms">Meeting Rooms</Link>
+            <Link href="/meeting-rooms" passHref>
+              <div className="text-[20px]">Meeting Rooms</div>
+            </Link>
           </Menu.Item>
           <Menu.Item key={"/service-contact"} icon={<ContainerOutlined />}>
-            <Link href="/service-contact">Service Contacts</Link>
+            <Link href="/service-contact" passHref>
+              <div className="text-[20px]">Service Contacts</div>
+            </Link>
           </Menu.Item>
           <Menu.Item key={"/forms-request"} icon={<DownloadOutlined />}>
-            <Link href="/forms-request">Forms Request</Link>
+            <Link href="/forms-request" passHref>
+              <div className="text-[20px]">Forms Request</div>
+            </Link>
           </Menu.Item>
+          {adminDetails.role === ADMIN_ROLES.SUPER_ADMIN && (
+            <Menu.Item key={"/admin-management"} icon={<UserOutlined />}>
+              <Link href="/admin-management" passHref>
+                <div className="text-[20px]">Admin Management</div>
+              </Link>
+            </Menu.Item>
+          )}
         </Menu>
       </Sider>
       <Layout className="site-layout">

@@ -13,7 +13,7 @@ export async function _createCarousels(params): Promise<ICarousel[]> {
   let formData = new FormData();
   formData.append("title", params.title);
   formData.append("linkOut", params.linkOut);
-  formData.append("image", params.image.file.originFileObj);
+  formData.append("image", params.image.file);
 
   const config = {
     url: `/carousel`,
@@ -26,7 +26,7 @@ export async function _updateCarousels(params): Promise<ICarousel[]> {
   let formData = new FormData();
   formData.append("title", params.title);
   formData.append("linkOut", params.linkOut);
-  formData.append("image", params.image.file.originFileObj || params.image);
+  formData.append("image", params.image.file || params.image);
 
   const config = {
     url: `/carousel`,

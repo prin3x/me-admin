@@ -76,7 +76,7 @@ function CarouselPage({}: Props) {
         <Row className="h-40 items-center" justify="start">
           <Col span={6} offset={1}>
             <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl">
-              Carousel
+              Cover
             </div>
           </Col>
           <Col span={12}>
@@ -95,7 +95,7 @@ function CarouselPage({}: Props) {
           </Col>
           <Col span={2} offset={1}>
             <Link href={`/carousel/make`} passHref>
-              <Button type="primary">Add</Button>
+              <Button type="primary">ADD</Button>
             </Link>
           </Col>
         </Row>

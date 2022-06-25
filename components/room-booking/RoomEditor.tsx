@@ -13,6 +13,7 @@ type Props = {
 };
 
 function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
+  const router = useRouter();
   return (
     <div className="mt-10">
       <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl ml-10">
@@ -67,8 +68,15 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
                 </Form.Item>
                 <Row justify="end" align="bottom" className="h-52">
                   <Form.Item>
+                    <Button
+                      type="ghost"
+                      onClick={() => router.push("/carousel")}
+                      className="mr-5"
+                    >
+                      Back
+                    </Button>
                     <Button type="primary" htmlType="submit">
-                      {isEdit ? "Confirm Edit " : "Create"}
+                      {isEdit ? "Confirm" : "Create"}
                     </Button>
                   </Form.Item>
                 </Row>
