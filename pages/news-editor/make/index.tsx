@@ -1,8 +1,8 @@
-import dynamic from 'next/dynamic';
-import React, { ReactElement } from 'react';
-import LayoutHOC from '../../../components/layouts/LayoutHOC';
-const PostEditor = dynamic(
-  () => import('../../../components/post-editor/PostEditor'),
+import dynamic from "next/dynamic";
+import React, { ReactElement } from "react";
+import LayoutHOC from "../../../components/layouts/LayoutHOC";
+const PostEditor: any = dynamic(
+  () => import("../../../components/post-editor/PostEditor"),
   {
     ssr: false,
   }

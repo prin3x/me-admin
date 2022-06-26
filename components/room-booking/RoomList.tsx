@@ -1,6 +1,6 @@
 import { DeleteFilled, FormOutlined } from "@ant-design/icons";
 import { Button, Col, Image, Popconfirm, Row, Switch, Table } from "antd";
-import moment from "moment";
+import moment from "moment-timezone";
 import Link from "next/link";
 import React from "react";
 import {
@@ -30,6 +30,12 @@ function RoomList({
   onChangePage,
 }: Props) {
   const columns = [
+    {
+      title: "Created Date",
+      dataIndex: "createdDate",
+      className: "normal-col",
+      render: (_self, _record) => <p className="text-center">{moment(_self).tz('Asia/Bangkok').format('DD MM YYYY HH:mm')}</p>,
+    },
     {
       title: "ROOM",
       dataIndex: "imageUrl",

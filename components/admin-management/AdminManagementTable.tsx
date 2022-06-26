@@ -31,6 +31,7 @@ import {
 } from "../../services/admin/admin.service";
 import { useQueryClient } from "react-query";
 import { ADMIN_QUERY } from "../../services/admin/admin.queryKey";
+import moment from "moment-timezone";
 
 type Props = {
   adminRawData: IAdminData;
@@ -132,6 +133,12 @@ function AdminManagementTable({ adminRawData, onChangePage }: Props) {
   };
 
   const columns = [
+    {
+      title: "Created Date",
+      dataIndex: "createdDate",
+      className: "normal-col",
+      render: (_self, _record) => <p className="text-center">{moment(_self).tz("Asia/Bangkok").format("DD MM YYYY HH:mm")}</p>,
+    },
     {
       title: "Username",
       dataIndex: "username",

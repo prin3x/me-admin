@@ -1,9 +1,11 @@
-import { Button, DatePicker, Form, Input, Modal, Row, Select } from 'antd';
-import React, { ReactElement, useState } from 'react';
-import { useEffect } from 'react';
-import { ModalEditType } from '../../services/calendar/calendar.model';
-import locale from 'antd/es/date-picker/locale/th_TH';
+import { Button, DatePicker, Form, Input, Modal, Row, Select } from "antd";
+import React, { ReactElement, useState } from "react";
+import { useEffect } from "react";
+import { ModalEditType } from "../../services/calendar/calendar.model";
+import locale from "antd/es/date-picker/locale/th_TH";
 
+
+const { RangePicker }: any = DatePicker;
 interface Props {
   handleCloseModal: () => void;
   selectedEvent: any;
@@ -31,9 +33,9 @@ function CalendarEventModal({
     const options: any[] = [];
     [...(Array(24) as any).keys()].slice(6, 22).map((h: any) => {
       [0, 15, 30, 45].map((m) => {
-        const time = `${h.toString().padStart(2, '0')}:${m
+        const time = `${h.toString().padStart(2, "0")}:${m
           .toString()
-          .padStart(2, '0')}`;
+          .padStart(2, "0")}`;
         options.push({ value: time, label: time });
         return m;
       });
@@ -46,6 +48,8 @@ function CalendarEventModal({
     if (selectedEvent.dateTime) {
       form.setFieldsValue({ ...selectedEvent });
     }
+
+    return () => form.resetFields();
   }, []);
 
   useEffect(() => {
@@ -55,34 +59,39 @@ function CalendarEventModal({
     ) {
       form.setFieldsValue({ categoryName: categories[0]?.id });
     }
+
+    return () => form.resetFields();
   }, [categories]);
 
   return (
     <Modal
       onCancel={handleCloseModal}
-      className='modal-right fade rounded-xl'
+      className="modal-right fade rounded-xl"
       visible={true}
-      title='Calendar Event Info'
+      title="Calendar Event Info"
       footer={false}
     >
-      <Form form={form} layout='vertical'>
-        <Form.Item name='dateTime' label='เวลาเริ่ม'>
-          <DatePicker.RangePicker
+      <Form form={form} layout="vertical">
+        <Form.Item name="dateTime" label="เวลาเริ่ม">
+          <RangePicker
             locale={locale}
-            className='w-full'
+            className="w-full"
             showTime={isShowTime}
             renderExtraFooter={() => (
-              <Button onClick={toggleShowTime} type='primary'>
-                {isShowTime ? 'All Day' : 'Select Time'}
+              <Button onClick={toggleShowTime} type="primary">
+                {isShowTime ? "All Day" : "Select Time"}
               </Button>
             )}
           />
         </Form.Item>
-        <Form.Item name='title' label='ชื่อกิจกรรม'>
+        <Form.Item name="title" label="ชื่อกิจกรรม">
           <Input />
         </Form.Item>
-        <Form.Item name='categoryName' label='ประเภท'>
-          <Select placeholder=''>
+        <Form.Item name="hyperlink" label="Hyperlink">
+          <Input />
+        </Form.Item>
+        <Form.Item name="categoryName" label="ประเภท">
+          <Select placeholder="">
             {categories?.map((_slot) => (
               <Select.Option key={_slot.title} value={_slot.title}>
                 {_slot.title}
@@ -90,13 +99,13 @@ function CalendarEventModal({
             ))}
           </Select>
         </Form.Item>
-        <Row justify='center'>
+        <Row justify="center">
           <Form.Item>
             <Button
               loading={isProcessing}
               onClick={makeNewEvent}
-              type='primary'
-              htmlType='submit'
+              type="primary"
+              htmlType="submit"
             >
               Add
             </Button>
@@ -106,7 +115,7 @@ function CalendarEventModal({
               <Button
                 loading={isProcessing}
                 onClick={() => deleteEvent(selectedEvent.id)}
-                type='link'
+                type="link"
               >
                 Delete
               </Button>

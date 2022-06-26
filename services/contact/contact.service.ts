@@ -4,6 +4,10 @@ export function _getAllStaffContacts(_queryStr) {
   return axios.get(`/staff-contacts?${_queryStr}`).then((res) => res.data);
 }
 
+export function _getAllStaffOptions() {
+  return axios.get(`/staff-contacts/options`).then((res) => res.data);
+}
+
 export function _createNewStaffContact(_contactDto) {
   let formData = new FormData();
   formData.append("name", _contactDto.name);

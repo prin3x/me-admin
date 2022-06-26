@@ -27,6 +27,18 @@ import { useQueryClient, useQuery } from "react-query";
 import { CALENDAR_EVENT } from "../../services/calendar/calendar.queryKey";
 import moment from "moment";
 
+function createArrayOfYear(): number[] {
+  const resultArr: number[] = [];
+  const currentYearPlusOne = Number(moment().add(2, "year").format("YYYY"));
+
+  for (let i = 1; i < 11; i++) {
+    const n = currentYearPlusOne - i;
+    resultArr.push(n);
+  }
+
+  return resultArr;
+}
+
 const colorsMap = [
   { color: "primary", categoryName: ECalendarEventType.EVENT },
   { color: "secondary", categoryName: ECalendarEventType.BIRTHDAY },
@@ -48,6 +60,7 @@ function CustomCalendar(): ReactElement {
   const [events, setEvents] = useState([]);
   const [calendarMeta, setCalendarMeta] = useState({
     month: moment().format("MMMM"),
+    year: moment().format("YYYY"),
     startDate: moment().startOf("month").format("YYYY-MM-DD"),
     endDate: moment().endOf("month").format("YYYY-MM-DD"),
   });
@@ -65,7 +78,7 @@ function CustomCalendar(): ReactElement {
   });
   const [categories, setCategories] = useState([]);
   const { data, isLoading, isSuccess } = useQuery<any>(
-    [CALENDAR_EVENT, calendarMeta.month],
+    [CALENDAR_EVENT, calendarMeta.year, calendarMeta.month],
     () => {
       let q: ListQueryCalendarDTO = {
         startDate: calendarMeta.startDate,
@@ -79,7 +92,7 @@ function CustomCalendar(): ReactElement {
     setIsProcessing(true);
     try {
       await _deleteEvent(id);
-      queryClient.invalidateQueries([CALENDAR_EVENT, calendarMeta.month]);
+      queryClient.invalidateQueries([CALENDAR_EVENT]);
       message.success("DONE");
     } catch (e) {
       console.error(e);
@@ -96,7 +109,6 @@ function CustomCalendar(): ReactElement {
     setIsProcessing(true);
     try {
       formRes = await form.validateFields();
-      console.log(formRes.dateTime?.[0], formRes.dateTime?.[1], "formRes");
       payload.categoryName = formRes?.categoryName;
       payload.content = formRes?.content || "";
       payload.allDay = !isShowTime;
@@ -108,8 +120,6 @@ function CustomCalendar(): ReactElement {
           ? await _makeNewEvent(payload)
           : await _updateEvent(selectedEvent.id, payload);
       queryClient.invalidateQueries([CALENDAR_EVENT]);
-
-      console.log(payload, "payload");
 
       message.success("Create Successfully");
     } catch (e) {
@@ -126,13 +136,14 @@ function CustomCalendar(): ReactElement {
     calendarApi.prev();
 
     setCalendarMeta({
-      startDate: moment(calendarRef.current.getApi().getDate())
+      startDate: moment(calendarApi.getDate())
         .startOf("month")
         .format("YYYY-MM-DD"),
-      endDate: moment(calendarRef.current.getApi().getDate())
+      endDate: moment(calendarApi.getDate())
         .endOf("month")
         .format("YYYY-MM-DD"),
-      month: moment(calendarRef.current.getApi().getDate()).format("MMMM"),
+      month: moment(calendarApi.getDate()).format("MMMM"),
+      year: moment(calendarApi.getDate()).format("YYYY"),
     });
     setDateTitle(calendarApi.view.title);
   };
@@ -142,19 +153,28 @@ function CustomCalendar(): ReactElement {
     calendarApi.next();
 
     setCalendarMeta({
-      startDate: moment(calendarRef.current.getApi().getDate())
+      startDate: moment(calendarApi.getDate())
         .startOf("month")
         .format("YYYY-MM-DD"),
-      endDate: moment(calendarRef.current.getApi().getDate())
+      endDate: moment(calendarApi.getDate())
         .endOf("month")
         .format("YYYY-MM-DD"),
-      month: moment(calendarRef.current.getApi().getDate()).format("MMMM"),
+      month: moment(calendarApi.getDate()).format("MMMM"),
+      year: moment(calendarApi.getDate()).format("YYYY"),
     });
     setDateTitle(calendarApi.view.title);
   };
   const onNewEventClick = () => {
     try {
+      form.resetFields();
       setIsShowModalAddEdit(true);
+      setSelectedEvent({
+        id: 0,
+        title: "New Event",
+        dateTime: [],
+        categoryId: 0,
+        modalType: ModalEditType.MAKE_EVENT,
+      });
     } catch (e) {
       console.log("This action could not be completed");
     }
@@ -170,9 +190,21 @@ function CustomCalendar(): ReactElement {
     }
   };
   const getToday = () => {
-    if (calendarRef.current) {
-      calendarRef.current.getApi().today();
-    }
+    const calendarApi = calendarRef.current.getApi();
+
+    calendarApi.today();
+
+    setCalendarMeta({
+      startDate: moment(calendarApi.getDate())
+        .startOf("month")
+        .format("YYYY-MM-DD"),
+      endDate: moment(calendarApi.getDate())
+        .endOf("month")
+        .format("YYYY-MM-DD"),
+      month: moment(calendarApi.getDate()).format("MMMM"),
+      year: moment(calendarApi.getDate()).format("YYYY"),
+    });
+    setDateTitle(calendarApi.view.title);
   };
 
   // handlers for user actions
@@ -232,7 +264,7 @@ function CustomCalendar(): ReactElement {
     }
   };
 
-  function setEventState() {
+  function setEventState(data) {
     let nextState;
     nextState = displayColoredEvents(data);
 
@@ -274,13 +306,31 @@ function CustomCalendar(): ReactElement {
     return res;
   }
 
+  const onSelectYear = (_year) => {
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.gotoDate(
+      `${_year}-${moment(calendarApi.getDate()).format("MM")}-01`
+    );
+    setCalendarMeta({
+      startDate: moment(calendarApi.getDate())
+        .startOf("month")
+        .format("YYYY-MM-DD"),
+      endDate: moment(calendarApi.getDate())
+        .endOf("month")
+        .format("YYYY-MM-DD"),
+      month: moment(calendarApi.getDate()).format("MMMM"),
+      year: moment(calendarApi.getDate()).format("YYYY"),
+    });
+    setDateTitle(calendarApi.view.title);
+  };
+
   useEffect(() => {
     if (isSuccess) {
       fetchAllCategories();
-      setEventState();
+      setEventState(data);
     }
     return () => {};
-  }, [data]);
+  }, [data, isLoading]);
 
   return (
     <div className="">
@@ -333,6 +383,18 @@ function CustomCalendar(): ReactElement {
                 </Select.Option>
               </Select>
             </Col>
+            <Col>
+              <Select
+                onChange={(_value) => onSelectYear(_value)}
+                value={calendarMeta.year}
+              >
+                {createArrayOfYear().map((y) => (
+                  <Select.Option key={y} value={y}>
+                    {y}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Col>
             <Button
               className="btn-icon btn-icon-start ms-1 w-100 w-md-auto"
               onClick={getToday}
@@ -341,9 +403,11 @@ function CustomCalendar(): ReactElement {
             </Button>
           </Row>
           <Row justify="center">
-            <Col>{calendarMeta.month}</Col>
+            <Col>
+            {selectedView === 'timeGridDay' ? moment(calendarRef.current.getApi().getDate()).format('DD') : null}  {calendarMeta.month} {calendarMeta.year}
+            </Col>
           </Row>
-          <div className="container mx-auto px-20 py-10">
+          <div className="container mx-auto px-20 py-10 calendar-container">
             <FullCalendar
               ref={calendarRef}
               schedulerLicenseKey="0261586002-fcs-1640591838"

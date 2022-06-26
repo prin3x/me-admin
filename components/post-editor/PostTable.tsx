@@ -8,6 +8,7 @@ import {
   IPostStruct,
   POST_STATUS,
 } from "../../services/post/post.model";
+import moment from "moment-timezone";
 
 type Props = {
   postData: IPostItem[];
@@ -76,8 +77,30 @@ function PostTable({
       ),
     },
     {
+      title: "TAGS",
+      dataIndex: "tag",
+      className: "normal-col",
+      render: (_self, _record) => <p className="text-center">{_self}</p>,
+    },
+    {
+      title: "POST BY",
+      dataIndex: "postBy",
+      className: "normal-col",
+      render: (_self, _record) => <p className="text-center">{_self}</p>,
+    },
+    {
       title: "UPDATED",
       dataIndex: "updatedDate",
+      className: "normal-col",
+      render: (_self, _record) => (
+        <p className="text-center">
+          {moment(_self).tz("Asia/Bangkok").format("DD MM YYYY HH:mm")}
+        </p>
+      ),
+    },
+    {
+      title: "Reads",
+      dataIndex: "readers",
       className: "normal-col",
       render: (_self, _record) => <p className="text-center">{_self}</p>,
     },

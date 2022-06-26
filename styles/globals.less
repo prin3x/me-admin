@@ -90,14 +90,19 @@ a {
   box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
     0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
 }
-.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected .anticon ,
-.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected .anticon + span {
+.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
+  .ant-menu-item-selected
+  .anticon,
+.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal)
+  .ant-menu-item-selected
+  .anticon
+  + span {
   color: @layout-body-background;
 }
 
 .ant-image-preview-img-wrapper::before {
   height: 5%;
-  .ant-image-preview-img{
+  .ant-image-preview-img {
     display: block;
     margin: 0 auto;
   }
@@ -105,4 +110,96 @@ a {
 
 .ant-upload.ant-upload-select.ant-upload-select-text {
   width: 100%;
+}
+
+.new-contact-drawer {
+  .ant-picker-year-btn {
+    display: none;
+  }
+}
+
+.ant-select-selection-item {
+  .delete--contact-options {
+    display: none;
+  }
+}
+
+
+.calendar-container
+  .fc-col-header-cell.fc-day.fc-day-sun
+  .fc-scrollgrid-sync-inner {
+  color: #f59331 !important;
+}
+
+
+.calendar-container .fc .fc-daygrid-day-frame,
+.calendar-container .fc-col-header-cell .fc-scrollgrid-sync-inner {
+  border: 1px solid @primary-color;
+}
+
+.calendar-container .fc-col-header-cell .fc-scrollgrid-sync-inner {
+  border-bottom: none;
+}
+
+.calendar-container .fc-col-header-cell .fc-scrollgrid-sync-inner {
+  color: @primary-color;
+}
+
+.fc-day-sun {
+  color: unset;
+}
+
+.calendar-container
+  tr
+  .fc-col-header-cell:not(:last-of-type)
+  .fc-scrollgrid-sync-inner {
+  border-right: none;
+}
+
+.calendar-container tr:not(:last-child) td .fc-daygrid-day-frame {
+  border-bottom: none;
+}
+
+.calendar-container tr td:not(:last-of-type) .fc-daygrid-day-frame {
+  border-right: none;
+}
+
+.fc-timegrid-slot-label-frame.fc-scrollgrid-shrink-frame {
+  text-align: center !important;
+}
+
+.fc .fc-timegrid-slot {
+  height: 5px !important;
+}
+
+.fc-timegrid-slot-label-frame.fc-scrollgrid-shrink-frame,
+.fc-timegrid-slot-label-cushion.fc-scrollgrid-shrink-cushion {
+  padding: 0px 0;
+}
+
+.fc-scroller {
+  border-color: #fff;
+}
+
+
+.fc-daygrid-day-number,
+fc-daygrid-day-number {
+  font-size: 1.5rem !important;
+}
+
+.fc .fc-scrollgrid-section-liquid {
+  height: 1px !important;
+}
+
+.fc-event-title-container {
+  line-height: 1;
+}
+
+.fc-h-event .fc-event-title-container {
+  height: 20px !important;
+}
+
+.fc-event-title.fc-sticky,
+.fc-event-title {
+  font-size: 16px !important;
 }

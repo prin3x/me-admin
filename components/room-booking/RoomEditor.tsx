@@ -17,7 +17,7 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
   return (
     <div className="mt-10">
       <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl ml-10">
-        New Room
+        Meeting Room
       </div>
       <div className="bg-white p-5">
         <Row className="mt-10 w-full">
@@ -27,6 +27,7 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
             onFinish={onFinish}
             className="w-full"
             labelCol={{ span: 5 }}
+            labelAlign="left"
           >
             <Row className="w-full" justify="center">
               <Col span={10} offset={1}>
@@ -35,6 +36,11 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
                     setImage={setImage}
                     currentImageUrl={roomData?.imageUrl || ""}
                   />
+                  <div className="lead text-lg text-center">
+                    Size (W x H) 1004 x 565 px
+                    <br />
+                    16 : 9
+                  </div>
                 </Form.Item>
               </Col>
               <Col span={10} offset={1}>
@@ -70,7 +76,7 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
                   <Form.Item>
                     <Button
                       type="ghost"
-                      onClick={() => router.push("/carousel")}
+                      onClick={() => router.push("/meeting-rooms")}
                       className="mr-5"
                     >
                       Back

@@ -1,9 +1,9 @@
-import React, { ReactElement } from 'react';
-import LayoutHOC from '../../components/layouts/LayoutHOC';
-import dynamic from 'next/dynamic';
+import React, { ReactElement } from "react";
+import LayoutHOC from "../../components/layouts/LayoutHOC";
+import dynamic from "next/dynamic";
 
-const CustomCalendar = dynamic(
-  () => import('../../components/calendar/CustomCalendar'),
+const CustomCalendar: any = dynamic(
+  () => import("../../components/calendar/CustomCalendar"),
   {
     ssr: false,
   }

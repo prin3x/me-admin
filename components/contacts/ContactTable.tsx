@@ -1,8 +1,4 @@
-import {
-  DeleteFilled,
-  FormOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { DeleteFilled, FormOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -13,13 +9,14 @@ import {
   Popconfirm,
   Row,
 } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { ContactStatus, IContact } from "../../services/contact/contact.model";
 import { ALL_CONTACT } from "../../services/contact/contact.queryKey";
 import {
   _createNewStaffContact,
   _getAllStaffContacts,
+  _getAllStaffOptions,
   _patchStaffContact,
   _removeStaffContact,
 } from "../../services/contact/contact.service";
@@ -34,12 +31,13 @@ export enum DrawerType {
 export interface IBasicQuery {
   limit?: number;
   page?: number;
+  orderBy?: string;
 }
 
 const INITIAL_STATE = {
   visible: false,
   id: 0,
-  profilePicUrl: "https://ui-avatars.com/api/?rounded=true",
+  profilePicUrl: "",
   name: "",
   nickname: "",
   company: "",
@@ -54,6 +52,7 @@ const INITIAL_STATE = {
 import { Table } from "antd";
 import React from "react";
 import { useRouter } from "next/router";
+import moment from "moment-timezone";
 
 type Props = {};
 
@@ -62,15 +61,43 @@ function ContactTable({}: Props) {
   const queryClient = useQueryClient();
   const [image, setImage] = useState("");
   const [form] = Form.useForm();
-  const [queryStr, setQueryStr] = useState<IBasicQuery>({ page: 1 });
+  const [queryStr, setQueryStr] = useState<IBasicQuery>({ page: 1, limit: 10 });
+  const [department, setDepartment] = useState([]);
+  const [company, setCompany] = useState([]);
+  const [division, setDivision] = useState([]);
 
-  const parseQuery = () => queryString.stringify(queryStr);
+  async function setChoicesFromApi() {
+    let company = [];
+    let division = [];
+    let department = [];
+
+    try {
+      const response = await _getAllStaffOptions();
+      company = response.company;
+      division = response.division;
+      department = response.department;
+      setCompany(company);
+      setDepartment(department);
+      setDivision(division);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    setChoicesFromApi();
+  }, []);
 
   const { data, isLoading, isSuccess } = useQuery([ALL_CONTACT, queryStr], () =>
-    _getAllStaffContacts(parseQuery())
+    getAllStaff(queryStr)
   );
 
   const [drawerMeta, setDrawerMeta] = useState(INITIAL_STATE);
+
+  function getAllStaff(query) {
+    const queryStringParsed = queryString.stringify(query);
+    return _getAllStaffContacts(queryStringParsed);
+  }
 
   function toggleDrawer(_state = INITIAL_STATE) {
     setDrawerMeta({
@@ -109,13 +136,15 @@ function ContactTable({}: Props) {
     }
   }
 
-  function onChangePage(_page, _pageSize) {
+  function onChangeTable(pageInfo, sortInfo = undefined) {
+    console.log(pageInfo,sortInfo)
     const querySet = {
       ...queryStr,
-      page: _page,
-      limit: _pageSize,
+      page: pageInfo.current,
+      limit: pageInfo.pageSize,
+      orderBy: sortInfo.field,
+      order: sortInfo.order
     };
-
     setQueryStr(querySet);
   }
 
@@ -162,8 +191,22 @@ function ContactTable({}: Props) {
 
   const columns = [
     {
+      title: "Created Date",
+      dataIndex: "createdDate",
+      className: "normal-col",
+      width: 150,
+      sorter: true,
+      render: (_self, _record) => (
+        <p className="text-center">
+          {moment(_self).tz("Asia/Bangkok").format("DD MM YYYY HH:mm")}
+        </p>
+      ),
+    },
+    {
       title: "NAME",
       dataIndex: "name",
+      className: "normal-col",
+      width: 250,
       render: (_self: string, _record: any) => (
         <div className="flex items-center gap-2">
           <div className="">
@@ -177,9 +220,7 @@ function ContactTable({}: Props) {
             />
           </div>
           <div className="flex flex-col items-start ">
-            <p
-              className="text-left cursor-pointer text-primary-color mb-0 font-semibold	leading-4	"
-            >
+            <p className="text-left cursor-pointer text-primary-color mb-0 font-semibold	leading-4	">
               {_self}
             </p>
             <p className="text-left cursor-pointer mb-0">{_record.nameTH}</p>
@@ -190,32 +231,45 @@ function ContactTable({}: Props) {
     {
       title: "NICKNAME",
       dataIndex: "nickname",
+      className: "normal-col",
+      width: 85,
       render: (_self) => <p className="text-center">{_self}</p>,
     },
     {
       title: "COMPANY",
       dataIndex: "company",
+      className: "normal-col",
+      sorter: true,
+      width: 85,
       render: (_self) => <p className="text-center">{_self}</p>,
     },
     {
       title: "DEPARTMENT",
       dataIndex: "department",
+      className: "normal-col",
+      width: 120,
+      sorter: true,
       render: (_self) => <p className="text-center">{_self}</p>,
     },
     {
       title: "IP-PHONE",
       dataIndex: "ipPhone",
+      className: "normal-col",
+      width: 85,
       render: (_self) => <p className="text-center">{_self}</p>,
     },
     {
       title: "E-MAIL",
       dataIndex: "email",
+      className: "normal-col",
+      width: 250,
       render: (_self) => <p className="text-center">{_self}</p>,
     },
     {
       title: "EDIT",
       dataIndex: "edit",
       className: "normal-col",
+      width: 100,
       render: (_self, _record) => (
         <Row justify="center" gutter={40}>
           <Col span={3}>
@@ -270,6 +324,7 @@ function ContactTable({}: Props) {
       <div className="bg-slate-50 h-full p-4">
         <div className="bg-white p-2 rounded-md -mt-14 shadow-md	">
           <Table
+            onChange={(page, _, sort) => onChangeTable(page, sort)}
             dataSource={data?.items || []}
             loading={isLoading}
             // scroll={{ x: true }}
@@ -280,7 +335,6 @@ function ContactTable({}: Props) {
               current: queryStr.page,
               pageSize: queryStr.limit || 10,
               total: data?.total,
-              onChange: onChangePage,
             }}
             columns={columns}
           />
@@ -294,6 +348,8 @@ function ContactTable({}: Props) {
               createOrUpdateContact={createOrUpdateContact}
               setImage={setImage}
               image={image}
+              options={{ company, department, division }}
+              setChoicesFromApi={setChoicesFromApi}
             />
           )}
         </div>
