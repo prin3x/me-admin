@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { checkAuth } from "../../services/auth/auth.service";
 import { ADMIN_ROLES, IAdminJWT } from "../../services/admin/admin.model";
 import { validateAdminRole } from "../../services/admin/admin.service";
+import jwt_decode from "jwt-decode";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -116,13 +117,58 @@ function LayoutHOC({ children }: Props): ReactElement {
             </div>
           </div>
         </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          multiple={false}
-          selectedKeys={[router.pathname]}
-          className="menu-antd-item"
-        >
+        <RenderAdminAccess router={router} roles={adminDetails.role} />
+      </Sider>
+      <Layout className="site-layout">
+        <Header className="site-layout-background" style={{ padding: 0 }}>
+          <Row align="middle" justify="end" className="h-full">
+            <Col span={6} pull={1}>
+              <div className="cursor-pointer" onClick={onLogout}>
+                <Row align="middle" justify="end" className="h-full">
+                  <ExportOutlined style={{ color: "white", fontSize: 20 }} />
+                  <div className="text-white font-bold text-2xl uppercase ml-4">
+                    Log Out
+                  </div>
+                </Row>
+              </div>
+            </Col>
+          </Row>
+        </Header>
+        <Content>
+          <div className="w-80 min-w-full">{children}</div>
+        </Content>
+        <Footer style={{ textAlign: "center", color: "white" }}>
+          Design ©2022 Created by Prin3x
+        </Footer>
+      </Layout>
+    </Layout>
+  );
+}
+
+function RenderAdminAccess({ roles, router }: any) {
+  return (
+    <Menu
+      theme="dark"
+      mode="inline"
+      multiple={false}
+      selectedKeys={[router.pathname]}
+      className="menu-antd-item"
+    >
+      {roles === "admin" ? (
+        <>
+          <Menu.Item key={"/carousel"} icon={<ProfileOutlined />}>
+            <Link href="/carousel" passHref>
+              <div className="text-[20px]">Cover</div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key={"/admin-management"} icon={<UserOutlined />}>
+            <Link href="/admin-management" passHref>
+              <div className="text-[20px]">Admin Management</div>
+            </Link>
+          </Menu.Item>
+        </>
+      ) : roles === "superAdmin" ? (
+        <>
           <Menu.Item key={"/carousel"} icon={<ProfileOutlined />}>
             <Link href="/carousel" passHref>
               <div className="text-[20px]">Cover</div>
@@ -158,38 +204,14 @@ function LayoutHOC({ children }: Props): ReactElement {
               <div className="text-[20px]">Forms Request</div>
             </Link>
           </Menu.Item>
-          {adminDetails.role === ADMIN_ROLES.SUPER_ADMIN && (
-            <Menu.Item key={"/admin-management"} icon={<UserOutlined />}>
-              <Link href="/admin-management" passHref>
-                <div className="text-[20px]">Admin Management</div>
-              </Link>
-            </Menu.Item>
-          )}
-        </Menu>
-      </Sider>
-      <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0 }}>
-          <Row align="middle" justify="end" className="h-full">
-            <Col span={6} pull={1}>
-              <div className="cursor-pointer" onClick={onLogout}>
-                <Row align="middle" justify="end" className="h-full">
-                  <ExportOutlined style={{ color: "white", fontSize: 20 }} />
-                  <div className="text-white font-bold text-2xl uppercase ml-4">
-                    Log Out
-                  </div>
-                </Row>
-              </div>
-            </Col>
-          </Row>
-        </Header>
-        <Content>
-          <div className="w-80 min-w-full">{children}</div>
-        </Content>
-        <Footer style={{ textAlign: "center", color: "white" }}>
-          Design ©2022 Created by Prin3x
-        </Footer>
-      </Layout>
-    </Layout>
+          <Menu.Item key={"/admin-management"} icon={<UserOutlined />}>
+            <Link href="/admin-management" passHref>
+              <div className="text-[20px]">Admin Management</div>
+            </Link>
+          </Menu.Item>
+        </>
+      ) : null}
+    </Menu>
   );
 }
 

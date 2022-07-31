@@ -9,7 +9,7 @@ import {
 type Props = {
   editObjectiveData: any;
   onClose: () => void;
-  onCreateNewObjectiveCategory: (title: string) => void;
+  onCreateNewCategory: (title: string) => void;
   onUpdate: (item: ICreateServiceContactCategory) => void;
   onRemove: (id: string) => void;
 };
@@ -17,7 +17,7 @@ type Props = {
 function ServiceContactDrawer({
   editObjectiveData,
   onClose,
-  onCreateNewObjectiveCategory,
+  onCreateNewCategory,
   onUpdate,
   onRemove,
 }: Props): ReactElement {
@@ -45,7 +45,7 @@ function ServiceContactDrawer({
             layout="vertical"
             onFinish={(formVal) =>
               editObjectiveData.type === ETypeOfEditing.CREATE
-                ? onCreateNewObjectiveCategory(formVal.title)
+                ? onCreateNewCategory(formVal.title)
                 : onUpdate(formVal)
             }
           >
@@ -61,7 +61,10 @@ function ServiceContactDrawer({
                 </Button>
               </Form.Item>
               {editObjectiveData.type === ETypeOfEditing.UPDATED && (
-                <Button onClick={() => onRemove(editObjectiveData.categoryId)} danger>
+                <Button
+                  onClick={() => onRemove(editObjectiveData.categoryId)}
+                  danger
+                >
                   Remove
                 </Button>
               )}

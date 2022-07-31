@@ -4,7 +4,17 @@ import {
   LoadingOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Image, Input, List, message, Row, Switch } from "antd";
+import {
+  Button,
+  Col,
+  Image,
+  Input,
+  List,
+  message,
+  Row,
+  Select,
+  Switch,
+} from "antd";
 import Link from "next/link";
 import React, { ReactElement, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -33,6 +43,7 @@ function RecentNewsPostList({}: Props): ReactElement {
   const [queryStr, setQueryStr] = useState<ListQueryPost>({
     page: 1,
     orderBy: "updatedDate",
+    categoryName: "",
   });
   const parseQuery = () => queryString.stringify(queryStr);
   const [isLoadingSwitch, setIsloadingSwitch] = useState(false);
@@ -48,6 +59,12 @@ function RecentNewsPostList({}: Props): ReactElement {
       setIsloadingSwitch(false);
     }
   }
+
+  const onSearchCategory = (_category: string) => {
+    const currentQuery = queryStr;
+    const categoryName = _category === 'all' ? '' : _category;
+    setQueryStr({ ...currentQuery, categoryName });
+  };
 
   const { data, isLoading, isSuccess } = useQuery<IPostStruct>(
     [ALL_RECENT_NEWS, queryStr],
@@ -102,7 +119,7 @@ function RecentNewsPostList({}: Props): ReactElement {
             Posts
           </div>
         </Col>
-        <Col span={12}>
+        <Col span={8}>
           <Input
             onChange={onChangeSearch}
             placeholder="SEARCH"
@@ -115,6 +132,14 @@ function RecentNewsPostList({}: Props): ReactElement {
               />
             }
           />
+        </Col>
+        <Col span={4} offset={1}>
+          <Select className="w-full" placeholder="All" onChange={onSearchCategory}>
+            <Select.Option value="all">All</Select.Option>
+            <Select.Option value="announcement">Announcement</Select.Option>
+            <Select.Option value="itclinic">IT Clinic</Select.Option>
+            <Select.Option value="activity">Activity</Select.Option>
+          </Select>
         </Col>
         <Col span={2} offset={1}>
           <Link href={`/news-editor/make`} passHref>

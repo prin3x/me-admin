@@ -1,4 +1,6 @@
 import {
+  ArrowUpOutlined,
+  CaretUpOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   EditOutlined,
@@ -32,11 +34,15 @@ const INIT_EDIT_LIST = {
 type Props = {
   data: IServiceContact[];
   onCreate: (createDto: ICreateServiceContactItem) => void;
-  onCreateNewObjectiveCategory: (title: string) => void;
+  onCreateNewObjectiveCategory: (
+    createDto: ICreateServiceContactCategory
+  ) => void;
   onUpdateItemList: (items: IUpdateServiceContactItem) => void;
   _onUpdateObjectiveTitle: (items: IUpdateServiceContactCategory) => void;
   _onRemoveListItem: (id: string) => void;
   _onRemoveObjectiveCategory: (id: string) => void;
+  _onDecreaseIndex: (id: string, index: number) => void;
+  _onDecreaseCategoryIndex: (id: string, index: number) => void;
 };
 
 function ServiceContactTableList({
@@ -46,7 +52,9 @@ function ServiceContactTableList({
   onUpdateItemList,
   _onUpdateObjectiveTitle,
   _onRemoveListItem,
-  _onRemoveObjectiveCategory
+  _onRemoveObjectiveCategory,
+  _onDecreaseIndex,
+  _onDecreaseCategoryIndex,
 }: Props) {
   const [form] = Form.useForm();
   const [isAddingNewListItem, setIsAddingNewListItem] = useState({
@@ -74,6 +82,7 @@ function ServiceContactTableList({
   };
 
   const onCickAddNewListItem = (id?: string) => {
+    form.resetFields();
     let currentState = { ...isAddingNewListItem };
     if (currentState.isAdding && currentState.categoryId === id) {
       currentState.isAdding = false;
@@ -110,15 +119,30 @@ function ServiceContactTableList({
   const onClickConfirmCreateNewListItem = async () => {
     let set: ICreateServiceContactItem = {} as ICreateServiceContactItem;
     try {
-      await form.validateFields();
-      set = form.getFieldsValue();
-      set.categoryDetail = isAddingNewListItem.categoryId + "";
+      const formValue = await form.validateFields();
+      set = { ...formValue };
+      set.categoryId = isAddingNewListItem.categoryId + "";
+      const listOfCurrentCategory = data.find(
+        (item) => item.id === isAddingNewListItem.categoryId
+      );
+      const lastIndex = listOfCurrentCategory.serviceContactDetail.length + 1;
+
+      set.index = lastIndex;
 
       await onCreate(set);
       onCickAddNewListItem();
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const onCreateNewCategory = (title: string) => {
+    let set: ICreateServiceContactCategory =
+      {} as ICreateServiceContactCategory;
+    set.title = title;
+    set.index = data.length + 1;
+
+    onCreateNewObjectiveCategory(set);
   };
 
   const onUpdateItem = (formVal: ICreateServiceContactItem) => {
@@ -145,6 +169,18 @@ function ServiceContactTableList({
   const onRemoveObjectiveCategory = (id: string) => {
     _onRemoveObjectiveCategory(id);
     onToggleCategoryDrawer();
+  };
+
+  const onDecreaseIndex = (id: string, index: number, type = "item") => {
+    const newIndex = index <= 1 ? 1 : index - 1;
+
+    if (newIndex === index) return;
+
+    if (type === "item") {
+      _onDecreaseIndex(id, newIndex);
+    } else {
+      _onDecreaseCategoryIndex(id, newIndex);
+    }
   };
 
   return (
@@ -202,12 +238,23 @@ function ServiceContactTableList({
                         />{" "}
                         {item.title}
                       </div>
-                      <div
-                        className="flex items-center mr-5"
-                        onClick={() => onCickAddNewListItem(item.id)}
-                      >
-                        <PlusCircleFilled className="ml-5" />
-                        <p className="-mb-1 ml-2">เพิ่มรายการ</p>
+                      <div className="flex items-center">
+                        <PlusCircleFilled
+                          onClick={() => onCickAddNewListItem(item.id)}
+                          className="ml-5"
+                        />
+                        <p
+                          className="-mb-1 ml-2"
+                          onClick={() => onCickAddNewListItem(item.id)}
+                        >
+                          เพิ่มรายการ
+                        </p>
+                        <CaretUpOutlined
+                          onClick={() =>
+                            onDecreaseIndex(item.id, item.index, "category")
+                          }
+                          className="ml-3 block cursor-pointer bg-white rounded-full"
+                        />
                       </div>
                     </div>
                   </td>
@@ -223,6 +270,13 @@ function ServiceContactTableList({
                           onClick={() => onToggleListItemToEdit(contact)}
                         />
                         {contact.objective}
+                        <ArrowUpOutlined
+                          onClick={() =>
+                            onDecreaseIndex(contact.id, contact.index)
+                          }
+                          style={{ color: "white" }}
+                          className="ml-3 block cursor-pointer bg-gray-600 rounded-full"
+                        />
                       </div>
                     </td>
                     <td className="border border-slate-300 text-center">
@@ -300,7 +354,7 @@ function ServiceContactTableList({
                           />
                           <CloseCircleOutlined
                             style={{ color: "red" }}
-                            className="cursor-pointer"
+                            className="cursor-pointer ml-1"
                             onClick={() => onCickAddNewListItem(item.id)}
                           />
                         </div>
@@ -316,7 +370,7 @@ function ServiceContactTableList({
       <ServiceContactDrawer
         editObjectiveData={editObjectiveData}
         onClose={onToggleCategoryDrawer}
-        onCreateNewObjectiveCategory={onCreateNewObjectiveCategory}
+        onCreateNewCategory={onCreateNewCategory}
         onUpdate={onUpdateObjectiveTitle}
         onRemove={onRemoveObjectiveCategory}
       />

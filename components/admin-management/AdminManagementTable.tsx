@@ -197,7 +197,7 @@ function AdminManagementTable({ adminRawData, onChangePage }: Props) {
           <Col span={3}>
             <div className="cursor-pointer text-center">
               <Popconfirm
-                title="Are you sure to delete this room?"
+                title="Are you sure to delete this account?"
                 okText="Yes"
                 cancelText="No"
                 onConfirm={() => deleteAdmin(_record.id)}

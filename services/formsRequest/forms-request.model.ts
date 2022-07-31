@@ -9,6 +9,7 @@ export interface IFormsRequestDetail {
   content: string;
   downloadLink: EFormsRequest;
   status: string;
+  index: number;
   adminId: number;
   createdDate: Date;
   updatedDate: Date;
@@ -18,6 +19,7 @@ export interface IFormsRequest {
   id: string;
   title: string;
   status: string;
+  index: number;
   createdDate: Date;
   updatedDate: Date;
   formsRequestDetail: IFormsRequestDetail[];
@@ -25,7 +27,10 @@ export interface IFormsRequest {
 
 export interface ICreateFormsRequestItem {
   downloadLink: EFormsRequest;
-  categoryDetail: string;
+  categoryId?: string;
+  content: string;
+  file: any;
+  index: number;
 }
 
 export interface IUpdateFormsRequestItem
@@ -35,6 +40,7 @@ export interface IUpdateFormsRequestItem
 
 export interface ICreateFormsRequestCategory {
   title: string;
+  index: number;
 }
 
 export interface IUpdateFormsRequestCategory

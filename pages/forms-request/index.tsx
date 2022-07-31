@@ -7,9 +7,7 @@ type Props = {};
 function ServiceContactIndex({}: Props) {
   return (
     <LayoutHOC>
-      <>
-        <FormRequestFetcher />
-      </>
+      <FormRequestFetcher />
     </LayoutHOC>
   );
 }

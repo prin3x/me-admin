@@ -26,6 +26,7 @@ import {
 import { useQueryClient, useQuery } from "react-query";
 import { CALENDAR_EVENT } from "../../services/calendar/calendar.queryKey";
 import moment from "moment";
+import CalendarListFetcher from "./CalendarListFetcher";
 
 function createArrayOfYear(): number[] {
   const resultArr: number[] = [];
@@ -110,8 +111,9 @@ function CustomCalendar(): ReactElement {
     try {
       formRes = await form.validateFields();
       payload.categoryName = formRes?.categoryName;
+      payload.hyperlink = formRes?.hyperlink;
       payload.content = formRes?.content || "";
-      payload.allDay = !isShowTime;
+      payload.allDay = !!!isShowTime;
       payload.title = formRes?.title || "";
       payload.start = formRes?.dateTime?.[0] || moment().format();
       payload.end = formRes?.dateTime?.[1] || moment().format();
@@ -120,6 +122,7 @@ function CustomCalendar(): ReactElement {
           ? await _makeNewEvent(payload)
           : await _updateEvent(selectedEvent.id, payload);
       queryClient.invalidateQueries([CALENDAR_EVENT]);
+      // queryClient.invalidateQueries(["CALENDAR_LIST", payload.categoryName]);
 
       message.success("Create Successfully");
     } catch (e) {
@@ -231,7 +234,6 @@ function CustomCalendar(): ReactElement {
     const { id, url } = clickInfo.event;
     if (id) {
       targetEvent = events.find((_item: any) => _item.id.toString() === id);
-      console.log(targetEvent, targetEvent);
       setSelectedEvent({
         ...targetEvent,
         dateTime: [moment(targetEvent.start), moment(targetEvent.end)],
@@ -283,10 +285,31 @@ function CustomCalendar(): ReactElement {
           coloredEvent.color = (themeValues as any)[foundColor.color];
         }
       }
+      const index = switchCategoryIndex(coloredEvent.categoryName);
+      coloredEvent.index = index;
       return coloredEvent;
     });
 
     return coloredEvents;
+  }
+
+  function switchCategoryIndex(_categoryName) {
+    switch (_categoryName) {
+      case ECalendarEventType.HOLIDAY:
+        return "a";
+
+      case ECalendarEventType.EVENT:
+        return "b";
+
+      case ECalendarEventType.BIRTHDAY:
+        return "c";
+
+      case ECalendarEventType.OTHER:
+        return "d";
+
+      default:
+        break;
+    }
   }
 
   function toggleShowTime() {
@@ -404,7 +427,10 @@ function CustomCalendar(): ReactElement {
           </Row>
           <Row justify="center">
             <Col>
-            {selectedView === 'timeGridDay' ? moment(calendarRef.current.getApi().getDate()).format('DD') : null}  {calendarMeta.month} {calendarMeta.year}
+              {selectedView === "timeGridDay"
+                ? moment(calendarRef.current.getApi().getDate()).format("DD")
+                : null}{" "}
+              {calendarMeta.month} {calendarMeta.year}
             </Col>
           </Row>
           <div className="container mx-auto px-20 py-10 calendar-container">
@@ -433,6 +459,7 @@ function CustomCalendar(): ReactElement {
               events={events}
               eventClick={handleEventClick}
               eventChange={handleEventChange} // called for drag-n-drop/resize
+              eventOrder={["index"]}
               viewDidMount={viewDidMount}
               eventTimeFormat={{
                 hour: "2-digit",
@@ -441,9 +468,12 @@ function CustomCalendar(): ReactElement {
               }}
             />
           </div>
+          <CalendarListFetcher
+            setIsShowModalAddEdit={setIsShowModalAddEdit}
+            setSelectedEvent={setSelectedEvent}
+          />
         </div>
       </div>
-      {moment("2021-12-15T00:00:00.000Z").format("YYYY-MM-DD mm:ss")}
       {isShowModalAddEdit && (
         <CalendarEventModal
           handleCloseModal={handleCloseModal}

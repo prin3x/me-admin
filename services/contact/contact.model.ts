@@ -6,7 +6,7 @@ export enum ContactStatus {
 
 export interface IContact {
   id: number;
-  profilePicUrl: string;
+  profilePicFile: any;
   name: string;
   nickname: string;
   company: string;

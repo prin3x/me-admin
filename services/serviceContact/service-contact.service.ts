@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  ICreateServiceContactCategory,
   ICreateServiceContactItem,
   IServiceContact,
   IUpdateServiceContactCategory,
@@ -30,18 +31,26 @@ export function _removeContactService(id: string) {
   return axios.delete(`/service-contact/${id}`);
 }
 
-export function _createServiceContactCategory(categoryTitle: string) {
-  return axios.post("/service-contact-category", { title: categoryTitle });
+export function _createServiceContactCategory(categoryDto: ICreateServiceContactCategory) {
+  return axios.post("/service-contact-category", { ...categoryDto });
 }
 
 export function _updateServiceContactCategory(
-  categoryTitle: IUpdateServiceContactCategory
+  categoryDto: IUpdateServiceContactCategory
 ) {
-  return axios.patch(`/service-contact-category/${categoryTitle.id}`, {
-    title: categoryTitle.title,
+  return axios.patch(`/service-contact-category/${categoryDto.id}`, {
+    ...categoryDto,
   });
 }
 
 export function _removeContactServiceCategory(id: string) {
   return axios.delete(`/service-contact-category/${id}`);
+}
+
+export function _alterItemIndex(id: string, index: number) {
+  return axios.patch(`/service-contact/index/${id}/${index}`);
+}
+
+export function _alterCategoryIndex(id: string, index: number) {
+  return axios.patch(`/service-contact-category/index/${id}/${index}`);
 }

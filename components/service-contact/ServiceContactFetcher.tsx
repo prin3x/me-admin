@@ -3,6 +3,7 @@ import { message, Spin } from "antd";
 import React from "react";
 import { useQuery, useQueryClient } from "react-query";
 import {
+  ICreateServiceContactCategory,
   ICreateServiceContactItem,
   IServiceContact,
   IUpdateServiceContactCategory,
@@ -10,6 +11,8 @@ import {
 } from "../../services/serviceContact/service-contact.model";
 import { SERVICE_CONTACT } from "../../services/serviceContact/service-contact.queryKey";
 import {
+  _alterCategoryIndex,
+  _alterItemIndex,
   _createContactServiceListItem,
   _createServiceContactCategory,
   _getContactServiceList,
@@ -49,9 +52,11 @@ function ServiceContactFetcher({}: Props) {
     }
   };
 
-  const onCreateNewObjectiveCategory = async (title: string) => {
+  const onCreateNewObjectiveCategory = async (
+    createDto: ICreateServiceContactCategory
+  ) => {
     try {
-      await _createServiceContactCategory(title);
+      await _createServiceContactCategory(createDto);
       queryClient.invalidateQueries([SERVICE_CONTACT]);
     } catch (e) {
       message.error(e);
@@ -96,6 +101,25 @@ function ServiceContactFetcher({}: Props) {
     }
   };
 
+  const _onDecreaseIndex = async (id: string, index: number) => {
+    try {
+      await _alterItemIndex(id, index);
+      queryClient.invalidateQueries([SERVICE_CONTACT]);
+      message.success("Successfully Swap");
+    } catch (e) {
+      message.error(e);
+    }
+  };
+
+  const _onDecreaseCategoryIndex = async (id: string, index: number) => {
+    try {
+      await _alterCategoryIndex(id, index);
+      queryClient.invalidateQueries([SERVICE_CONTACT]);
+      message.success("Successfully Swap");
+    } catch (e) {
+      message.error(e);
+    }
+  };
 
   if (isLoading)
     return (
@@ -114,6 +138,8 @@ function ServiceContactFetcher({}: Props) {
         _onUpdateObjectiveTitle={onUpdateObjectiveTitle}
         _onRemoveListItem={onRemoveListItem}
         _onRemoveObjectiveCategory={onRemoveObjectiveCategory}
+        _onDecreaseIndex={_onDecreaseIndex}
+        _onDecreaseCategoryIndex={_onDecreaseCategoryIndex}
       />
     );
 

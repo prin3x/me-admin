@@ -6,6 +6,7 @@ import {
 import {
   Button,
   Card,
+  Checkbox,
   Col,
   Divider,
   Form,
@@ -58,6 +59,7 @@ function PostEditor(props): ReactElement {
   const [textState, setTextState] = useState({
     editorState: EditorState.createEmpty(),
   });
+  const [isSameImage, setIsSameImage] = useState(false);
 
   async function setTagOptions() {
     try {
@@ -67,11 +69,6 @@ function PostEditor(props): ReactElement {
     } catch (error) {
       message.error("Unable to load tags");
     }
-  }
-
-  function resetContent() {
-    form.resetFields();
-    setTextState({ editorState: EditorState.createEmpty() });
   }
 
   async function addNewTag(newItem: string) {
@@ -96,7 +93,6 @@ function PostEditor(props): ReactElement {
 
   async function confirmMakeOrUpdatePost() {
     form.validateFields().then((_form) => {
-      console.log(_form, "_form");
       Modal.confirm({
         title: "Are you sure",
         icon: <ExclamationCircleOutlined />,
@@ -106,12 +102,14 @@ function PostEditor(props): ReactElement {
               title: _form.title,
               categoryName: _form.categoryName,
               tag: _form.tag,
+              description: _form.description,
               postBy: _form.postBy,
               content: JSON.stringify(
                 convertToRaw(textState.editorState.getCurrentContent())
               ),
               mainImage,
-              homeImage,
+              homeImage: isSameImage ? mainImage : homeImage,
+              isSameImage: isSameImage,
             };
             if (!slug) {
               await _makeNewsContent(set);
@@ -130,24 +128,27 @@ function PostEditor(props): ReactElement {
     });
   }
 
-  async function setCategoryName() {
-    let res;
+  const onCheckSameImage = (e) => {
+    setIsSameImage(e.target.checked);
+  };
 
-    try {
-      res = await _getAllNewsCategories();
-      setAllCategories(res);
-      form.setFieldsValue({ categoryName: res?.[0]?.title });
-    } catch (e) {
-      message.error("Failed Cannot Get Category");
-    }
-  }
+  // async function setCategoryName() {
+  //   let res;
+
+  //   try {
+  //     res = await _getAllNewsCategories();
+  //     setAllCategories(res);
+  //     form.setFieldsValue({ categoryName: res?.[0]?.title });
+  //   } catch (e) {
+  //     message.error("Failed Cannot Get Category");
+  //   }
+  // }
 
   const onChangeEditorState = (_editorState: EditorState) => {
     setTextState({ editorState: _editorState });
   };
 
   useEffect(() => {
-    setCategoryName();
     setTagOptions();
   }, []);
 
@@ -169,17 +170,7 @@ function PostEditor(props): ReactElement {
           <Col lg={20}>
             <Form form={form}>
               <Row justify="start">
-                <Col span={10} offset={3}>
-                  <Form.Item
-                    name="title"
-                    rules={[{ required: true }]}
-                    label="Title"
-                  >
-                    <Input placeholder="ชื่อเรื่อง" width={200} />
-                  </Form.Item>
-                </Col>
-
-                <Col span={10} offset={1}>
+                <Col span={24}>
                   <Form.Item
                     name="categoryName"
                     label="Category Name"
@@ -190,20 +181,26 @@ function PostEditor(props): ReactElement {
                       className="w-full"
                       style={{ width: 200 }}
                     >
-                      {allCategories.map((_category) => (
-                        <Select.Option
-                          key={_category.title}
-                          value={_category.title}
-                        >
-                          {_category?.title}
-                        </Select.Option>
-                      ))}
+                      <Select.Option value="announcement">
+                        Announcement
+                      </Select.Option>
+                      <Select.Option value="itclinic">IT Clinic</Select.Option>
+                      <Select.Option value="activity">Activity</Select.Option>
                     </Select>
                   </Form.Item>
                 </Col>
               </Row>
               <Row justify="start">
-                <Col span={6} offset={3}>
+                <Col span={12}>
+                  <Form.Item
+                    name="title"
+                    rules={[{ required: true }]}
+                    label="Title"
+                  >
+                    <Input placeholder="ชื่อเรื่อง" width={200} />
+                  </Form.Item>
+                </Col>
+                <Col span={10} offset={1}>
                   <Form.Item
                     name="tag"
                     rules={[{ required: true }]}
@@ -253,30 +250,76 @@ function PostEditor(props): ReactElement {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={4} offset={5}>
-                  <Form.Item
-                    name="postBy"
-                    rules={[{ required: true }]}
-                    label="Post By"
-                  >
-                    <Input placeholder="เขียนโดย" width={200} />
-                  </Form.Item>
-                </Col>
+                <Row className="w-full">
+                  <Col span={12}>
+                    <Form.Item
+                      name="description"
+                      rules={[{ required: true }]}
+                      label="Description"
+                      className="w-full"
+                    >
+                      <Input.TextArea
+                        placeholder="description"
+                        autoSize={{ minRows: 1 }}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={10} offset={1}>
+                    <Form.Item
+                      name="postBy"
+                      rules={[{ required: true }]}
+                      label="Post By"
+                    >
+                      <Input placeholder="เขียนโดย" width={200} />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </Row>
               <Row justify="center">
-                <Col span={8}>
+                <Col span={9}>
                   <div className="text-3xl">Cover Image</div>
                   <ImageUploader
                     setImage={setMainImage}
                     currentImageUrl={initialContent?.imageUrl || ""}
                   />
+                  <div className="lead text-xl font-bold">
+                    Size (W x H)
+                    <br />
+                    <p className="font-normal text-xl">146 x 146 px, 1 : 1</p>
+                  </div>
                 </Col>
-                <Col span={8} offset={1}>
-                  <div className="text-3xl">Home Image</div>
-                  <ImageUploader
-                    setImage={setHomeImage}
-                    currentImageUrl={initialContent?.homeImageUrl || ""}
-                  />
+                {!isSameImage && (
+                  <Col span={10} offset={1}>
+                    <div className="text-3xl">Home Image</div>
+                    <ImageUploader
+                      setImage={setHomeImage}
+                      currentImageUrl={initialContent?.homeImageUrl || ""}
+                    />
+                    <div className="lead text-xl  font-bold">
+                      Size (W x H)
+                      <br />
+                      <p className="font-normal text-xl mb-0">
+                        <span className="min-w-[3rem]">Announcement</span>
+                        <span>:240 x 353 px, 3:4</span>
+                      </p>
+                      <p className="font-normal text-xl">
+                        <span className="min-w-[3rem]">
+                          IT Clinic & Activities
+                        </span>
+                        <span>:495 x 333 px, 2:3</span>
+                      </p>
+                    </div>
+                  </Col>
+                )}
+                <Col span={4}>
+                  <Form.Item name="isSameImage">
+                    <Checkbox
+                      onChange={onCheckSameImage}
+                      style={{ marginLeft: 24 }}
+                    >
+                      Same Image
+                    </Checkbox>
+                  </Form.Item>
                 </Col>
               </Row>
               <Row justify="center" className="mt-10">
@@ -288,10 +331,13 @@ function PostEditor(props): ReactElement {
                 </Col>
               </Row>
             </Form>
-            <Row justify="center" className="flex gap-5 mt-20">
+            <Row justify="center" className="flex gap-5 mt-10">
               <Col className="">
-                <Button onClick={resetContent} className="">
-                  Reset
+                <Button
+                  onClick={() => router.push("/news-editor")}
+                  className=""
+                >
+                  Back
                 </Button>
               </Col>
               <Col className="">

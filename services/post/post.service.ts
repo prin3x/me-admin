@@ -12,10 +12,12 @@ export function _makeNewsContent(_content) {
   formData.append("content", _content.content);
   formData.append("status", _content.status);
   formData.append("type", _content.type);
+  formData.append("description", _content.description);
   formData.append("postBy", _content.postBy);
   formData.append("image", _content.mainImage.file);
   formData.append("homeImage", _content.homeImage.file);
   formData.append("tag", _content.tag);
+  formData.append("isSameImage", _content.isSameImage);
 
   const config = {
     url: `/posts`,
@@ -39,6 +41,7 @@ export function _updatePost(_slug, _content) {
   formData.append("content", _content.content);
   formData.append("status", _content.status);
   formData.append("type", _content.type);
+  formData.append("description", _content.description);
   formData.append("postBy", _content.postBy);
   formData.append("image", "");
   formData.append("homeImage", "");
@@ -49,6 +52,7 @@ export function _updatePost(_slug, _content) {
     formData.append("homeImage", _content.homeImage.file);
   }
   formData.append("tag", _content.tag);
+  formData.append("isSameImage", _content.isSameImage);
 
   const config = {
     url: `/posts/${_slug}`,

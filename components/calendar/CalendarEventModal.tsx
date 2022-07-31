@@ -107,7 +107,7 @@ function CalendarEventModal({
               type="primary"
               htmlType="submit"
             >
-              Add
+              {selectedEvent.modalType === ModalEditType.EDIT_EVENT ? 'EDIT' : 'ADD'}
             </Button>
           </Form.Item>
           {selectedEvent.modalType === ModalEditType.EDIT_EVENT && (
@@ -117,7 +117,7 @@ function CalendarEventModal({
                 onClick={() => deleteEvent(selectedEvent.id)}
                 type="link"
               >
-                Delete
+                DELETE
               </Button>
             </Form.Item>
           )}

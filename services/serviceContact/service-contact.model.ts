@@ -1,4 +1,5 @@
 export interface IServiceContactDetail {
+  index: number;
   id: string;
   objective: string;
   contactID: string;
@@ -14,6 +15,7 @@ export interface IServiceContact {
   id: string;
   title: string;
   status: string;
+  index: number;
   createdDate: Date;
   updatedDate: Date;
   serviceContactDetail: IServiceContactDetail[];
@@ -24,7 +26,8 @@ export interface ICreateServiceContactItem {
   contactID: string;
   contactPhoneNumber: string;
   name: string;
-  categoryDetail: string;
+  categoryId: string;
+  index: number;
 }
 
 export interface IUpdateServiceContactItem extends Partial<ICreateServiceContactItem>{
@@ -33,6 +36,7 @@ export interface IUpdateServiceContactItem extends Partial<ICreateServiceContact
 
 export interface ICreateServiceContactCategory {
   title: string;
+  index: number;
 }
 
 export interface IUpdateServiceContactCategory extends Partial<ICreateServiceContactCategory>{

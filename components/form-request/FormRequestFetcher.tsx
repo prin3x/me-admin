@@ -3,6 +3,7 @@ import { message, Spin } from "antd";
 import React from "react";
 import { useQuery, useQueryClient } from "react-query";
 import {
+  ICreateFormsRequestCategory,
   ICreateFormsRequestItem,
   IFormsRequest,
   IUpdateFormsRequestCategory,
@@ -10,21 +11,16 @@ import {
 } from "../../services/formsRequest/forms-request.model";
 import { FORMS_REQUEST } from "../../services/formsRequest/forms-request.queryKey";
 import {
+  _alterCategoryIndex,
+  _alterItemIndex,
   _createFormsRequestCategory,
   _createFormsRequestListItem,
   _getFormRequestContent,
   _removeFormsRequest,
+  _removeFormsRequestCategory,
   _updateFormsRequestCategory,
+  _updateFormsRequestListItem,
 } from "../../services/formsRequest/forms-request.service";
-import {
-  _createContactServiceListItem,
-  _createServiceContactCategory,
-  _getContactServiceList,
-  _removeContactService,
-  _removeContactServiceCategory,
-  _updateContactServiceListItem,
-  _updateServiceContactCategory,
-} from "../../services/serviceContact/service-contact.service";
 import FormRequestTableList from "./FormRequestTableList";
 
 type Props = {};
@@ -56,9 +52,9 @@ function FormRequestFetcher({}: Props) {
     }
   };
 
-  const onCreateNewObjectiveCategory = async (title: string) => {
+  const onCreateNewObjectiveCategory = async (createDTO: ICreateFormsRequestCategory) => {
     try {
-      await _createFormsRequestCategory(title);
+      await _createFormsRequestCategory(createDTO);
       queryClient.invalidateQueries([FORMS_REQUEST]);
     } catch (e) {
       message.error(e);
@@ -67,7 +63,7 @@ function FormRequestFetcher({}: Props) {
 
   const onUpdateItemList = async (item: IUpdateFormsRequestItem) => {
     try {
-      await _updateContactServiceListItem(item);
+      await _updateFormsRequestListItem(item);
       queryClient.invalidateQueries([FORMS_REQUEST]);
     } catch (e) {
       message.error(e);
@@ -94,8 +90,28 @@ function FormRequestFetcher({}: Props) {
 
   const onRemoveObjectiveCategory = async (id: string) => {
     try {
-      await _removeContactServiceCategory(id);
+      await _removeFormsRequestCategory(id);
       queryClient.invalidateQueries([FORMS_REQUEST]);
+    } catch (e) {
+      message.error(e);
+    }
+  };
+
+  const _onDecreaseIndex = async (id: string, index: number) => {
+    try {
+      await _alterItemIndex(id, index);
+      queryClient.invalidateQueries([FORMS_REQUEST]);
+      message.success("Successfully Swap");
+    } catch (e) {
+      message.error(e);
+    }
+  };
+
+  const _onDecreaseCategoryIndex = async (id: string, index: number) => {
+    try {
+      await _alterCategoryIndex(id, index);
+      queryClient.invalidateQueries([FORMS_REQUEST]);
+      message.success("Successfully Swap");
     } catch (e) {
       message.error(e);
     }
@@ -118,6 +134,8 @@ function FormRequestFetcher({}: Props) {
         _onUpdateObjectiveTitle={onUpdateObjectiveTitle}
         _onRemoveListItem={onRemoveListItem}
         _onRemoveObjectiveCategory={onRemoveObjectiveCategory}
+        _onDecreaseIndex={_onDecreaseIndex}
+        _onDecreaseCategoryIndex={_onDecreaseCategoryIndex}
       />
     );
 

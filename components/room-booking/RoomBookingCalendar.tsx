@@ -80,7 +80,6 @@ function RoomBookingCalendar(): ReactElement {
     setIsProcessing(true);
     try {
       formRes = await form.validateFields();
-      console.log(formRes.dateTime?.[0], 'formRes');
       payload.title = formRes?.categoryId;
       payload.content = formRes?.content || '';
       payload.title = formRes?.title || '';

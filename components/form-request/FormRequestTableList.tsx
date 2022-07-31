@@ -1,4 +1,6 @@
 import {
+  ArrowUpOutlined,
+  CaretUpOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   EditOutlined,
@@ -22,18 +24,22 @@ import FormRequestListDrawer from "./FormRequestListDrawer";
 type Props = {
   data: IFormsRequest[];
   onCreate: (createDto: ICreateFormsRequestItem) => void;
-  onCreateNewObjectiveCategory: (title: string) => void;
+  onCreateNewObjectiveCategory: (
+    createDTO: ICreateFormsRequestCategory
+  ) => void;
   onUpdateItemList: (items: IUpdateFormsRequestItem) => void;
   _onUpdateObjectiveTitle: (items: IUpdateFormsRequestCategory) => void;
   _onRemoveListItem: (id: string) => void;
   _onRemoveObjectiveCategory: (id: string) => void;
+  _onDecreaseIndex: (id: string, index: number) => void;
+  _onDecreaseCategoryIndex: (id: string, index: number) => void;
 };
 
 export interface IFormRequestEditState {
-  id: string,
-  content: string,
-  downloadLink: string,
-  isEditing: boolean,
+  id: string;
+  content: string;
+  downloadLink: string;
+  isEditing: boolean;
 }
 
 const INIT_EDIT_LIST = {
@@ -51,6 +57,8 @@ function FormRequestTableList({
   _onUpdateObjectiveTitle,
   _onRemoveListItem,
   _onRemoveObjectiveCategory,
+  _onDecreaseIndex,
+  _onDecreaseCategoryIndex,
 }: Props) {
   const [form] = Form.useForm();
   const [isAddingNewListItem, setIsAddingNewListItem] = useState({
@@ -63,7 +71,8 @@ function FormRequestTableList({
     isEditing: false,
     type: ETypeOfEditing.CREATE,
   });
-  const [editListItemData, setEditListItemData] = useState<IFormRequestEditState>(INIT_EDIT_LIST);
+  const [editListItemData, setEditListItemData] =
+    useState<IFormRequestEditState>(INIT_EDIT_LIST);
 
   const onToggleListItemToEdit = (item?: IFormsRequestDetail) => {
     let currentState = { ...editListItemData };
@@ -78,6 +87,7 @@ function FormRequestTableList({
   };
 
   const onCickAddNewListItem = (id?: string) => {
+    form.resetFields();
     let currentState = { ...isAddingNewListItem };
     if (currentState.isAdding && currentState.categoryId === id) {
       currentState.isAdding = false;
@@ -114,9 +124,17 @@ function FormRequestTableList({
   const onClickConfirmCreateNewListItem = async () => {
     let set: ICreateFormsRequestItem = {} as ICreateFormsRequestItem;
     try {
-      await form.validateFields();
-      set = form.getFieldsValue();
-      set.categoryDetail = isAddingNewListItem.categoryId + "";
+      const formValue = await form.validateFields();
+      set = { ...formValue };
+      set.categoryId = isAddingNewListItem.categoryId + "";
+      const listOfCurrentCategory = data.find(
+        (item) => item.id === isAddingNewListItem.categoryId
+      );
+      const lastIndex = listOfCurrentCategory.formsRequestDetail.length + 1;
+
+      set.index = lastIndex;
+
+      console.log(set,'set')
 
       await onCreate(set);
       onCickAddNewListItem();
@@ -149,6 +167,27 @@ function FormRequestTableList({
     _onRemoveObjectiveCategory(id);
     onToggleCategoryDrawer();
   };
+
+  const onDecreaseIndex = (id: string, index: number, type = "item") => {
+    const newIndex = index <= 1 ? 1 : index - 1;
+
+    if (newIndex === index) return;
+
+    if (type === "item") {
+      _onDecreaseIndex(id, newIndex);
+    } else {
+      _onDecreaseCategoryIndex(id, newIndex);
+    }
+  };
+
+  const onCreateNewCategory = (title: string) => {
+    let set: ICreateFormsRequestCategory = {} as ICreateFormsRequestCategory;
+    set.title = title;
+    set.index = data.length + 1;
+
+    onCreateNewObjectiveCategory(set);
+  };
+
   return (
     <div className="px-10 pb-20">
       <Row className="h-40 items-center" justify="start">
@@ -205,12 +244,23 @@ function FormRequestTableList({
                         />{" "}
                         {item.title}
                       </div>
-                      <div
-                        className="flex items-center mr-5 cursor-pointer"
-                        onClick={() => onCickAddNewListItem(item.id)}
-                      >
-                        <PlusCircleFilled className="ml-5" />
-                        <p className="-mb-1 ml-2">เพิ่มรายการ</p>
+                      <div className="flex items-center mr-5 cursor-pointer">
+                        <PlusCircleFilled
+                          onClick={() => onCickAddNewListItem(item.id)}
+                          className="ml-5"
+                        />
+                        <p
+                          className="-mb-1 ml-2"
+                          onClick={() => onCickAddNewListItem(item.id)}
+                        >
+                          เพิ่มรายการ
+                        </p>
+                        <CaretUpOutlined
+                          onClick={() =>
+                            onDecreaseIndex(item.id, item.index, "category")
+                          }
+                          className="ml-3 block cursor-pointer bg-white rounded-full"
+                        />
                       </div>
                     </div>
                   </td>
@@ -225,6 +275,13 @@ function FormRequestTableList({
                           className="cursor-pointer"
                         />
                         {contact.content}
+                        <ArrowUpOutlined
+                          onClick={() =>
+                            onDecreaseIndex(contact.id, contact.index)
+                          }
+                          style={{ color: "white" }}
+                          className="ml-3 block cursor-pointer bg-gray-600 rounded-full"
+                        />
                       </div>
                     </td>
                     <td className="border border-slate-300 text-center">
@@ -283,7 +340,7 @@ function FormRequestTableList({
       <FormRequestCategoryDrawer
         editObjectiveData={editObjectiveData}
         onClose={onToggleCategoryDrawer}
-        onCreateNewObjectiveCategory={onCreateNewObjectiveCategory}
+        onCreateNewObjectiveCategory={onCreateNewCategory}
         onUpdate={onUpdateObjectiveTitle}
         onRemove={onRemoveObjectiveCategory}
       />

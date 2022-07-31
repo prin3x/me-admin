@@ -120,7 +120,7 @@ function PostTable({
           <Col span={3}>
             <div className="cursor-pointer text-center">
               <Popconfirm
-                title="Are you sure to delete this room?"
+                title="Are you sure to delete this post?"
                 onConfirm={() => onRemove(_record?.id)}
                 okText="Yes"
                 cancelText="No"

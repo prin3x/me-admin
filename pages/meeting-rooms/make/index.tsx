@@ -12,6 +12,7 @@ function MakeRooms({}: Props) {
   const router = useRouter();
   const [form] = Form.useForm();
   const [image, setImage] = useState<any>("");
+
   const onFinish = async (_formValues) => {
     const set = { ..._formValues };
     set.image = image;

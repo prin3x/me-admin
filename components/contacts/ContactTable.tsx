@@ -53,13 +53,14 @@ import { Table } from "antd";
 import React from "react";
 import { useRouter } from "next/router";
 import moment from "moment-timezone";
+import { INITIAL_IMAGE_STATE } from "../utils/ImageUploader";
 
 type Props = {};
 
 function ContactTable({}: Props) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(INITIAL_IMAGE_STATE);
   const [form] = Form.useForm();
   const [queryStr, setQueryStr] = useState<IBasicQuery>({ page: 1, limit: 10 });
   const [department, setDepartment] = useState([]);
@@ -137,7 +138,6 @@ function ContactTable({}: Props) {
   }
 
   function onChangeTable(pageInfo, sortInfo = undefined) {
-    console.log(pageInfo,sortInfo)
     const querySet = {
       ...queryStr,
       page: pageInfo.current,
@@ -170,7 +170,7 @@ function ContactTable({}: Props) {
       staffContactInstance.division = _result.division;
       staffContactInstance.email = _result.email;
       staffContactInstance.ipPhone = _result.ipPhone;
-      staffContactInstance.profilePicUrl = image;
+      staffContactInstance.profilePicFile = image.url ? image : '';
       staffContactInstance.birthDate = _result.birthDate;
 
       try {
@@ -206,7 +206,7 @@ function ContactTable({}: Props) {
       title: "NAME",
       dataIndex: "name",
       className: "normal-col",
-      width: 250,
+      width: 200,
       render: (_self: string, _record: any) => (
         <div className="flex items-center gap-2">
           <div className="">
@@ -247,7 +247,7 @@ function ContactTable({}: Props) {
       title: "DEPARTMENT",
       dataIndex: "department",
       className: "normal-col",
-      width: 120,
+      width: 100,
       sorter: true,
       render: (_self) => <p className="text-center">{_self}</p>,
     },
@@ -262,7 +262,14 @@ function ContactTable({}: Props) {
       title: "E-MAIL",
       dataIndex: "email",
       className: "normal-col",
-      width: 250,
+      width: 100,
+      render: (_self) => <p className="text-center">{_self}</p>,
+    },
+    {
+      title: "STAFF ID",
+      dataIndex: "staffId",
+      className: "normal-col",
+      width: 100,
       render: (_self) => <p className="text-center">{_self}</p>,
     },
     {

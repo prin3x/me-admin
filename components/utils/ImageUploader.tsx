@@ -17,7 +17,7 @@ export interface IImageURL {
   file?: any;
 }
 
-const INITIAL_IMAGE_STATE = {
+export const INITIAL_IMAGE_STATE = {
   loading: false,
   url: "",
   file: undefined,

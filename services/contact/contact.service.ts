@@ -18,7 +18,7 @@ export function _createNewStaffContact(_contactDto) {
   formData.append("ipPhone", _contactDto.ipPhone);
   formData.append("email", _contactDto.email);
   formData.append("birthDate", _contactDto.birthDate);
-  formData.append("image", _contactDto?.profilePicUrl?.originFileObj);
+  formData.append("image", _contactDto?.profilePicFile);
 
   const config = {
     url: `/staff-contacts/`,

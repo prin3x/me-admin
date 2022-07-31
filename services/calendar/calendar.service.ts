@@ -1,16 +1,27 @@
-import axios from 'axios';
-import { ListQueryCalendarDTO, MakeNewsDto, UpdateNewsDto } from './calendar.model';
+import axios from "axios";
+import {
+  ListCalendarDTO,
+  ListQueryCalendarDTO,
+  MakeNewsDto,
+  UpdateNewsDto,
+} from "./calendar.model";
 
 export function _findAllCalendarEvent(q: ListQueryCalendarDTO) {
-  return axios.get(`/calendar-event?startDate=${q.startDate}&endDate=${q.endDate}`).then((res) => res.data);
+  return axios
+    .get(`/calendar-event?startDate=${q.startDate}&endDate=${q.endDate}`)
+    .then((res) => res.data);
 }
 export function _getAllCategories() {
-  return axios.get('/calendar-event-category').then((res) => res.data);
+  return axios.get("/calendar-event-category").then((res) => res.data);
+}
+
+export function _getCalendarList(queryStr: string) {
+  return axios.get(`/calendar-event/list?${queryStr}`).then((res) => res.data);
 }
 
 export function _makeNewEvent(_eventInfo: MakeNewsDto) {
   return axios
-    .post('/calendar-event', { ..._eventInfo })
+    .post("/calendar-event", { ..._eventInfo })
     .then((res) => res.data);
 }
 

@@ -41,7 +41,7 @@ function CarouselList({
       dataIndex: "imageUrl",
       className: "normal-col",
       render: (_self, _record) => (
-        <Image width={100} height={100} src={_self} alt="image" />
+        <Image width={100} height={100} src={_self} alt="image" preview={{maskClassName: 'w-full'}} />
       ),
     },
     {
@@ -98,7 +98,7 @@ function CarouselList({
           <Col span={3}>
             <div className="cursor-pointer text-center">
               <Popconfirm
-                title="Are you sure to delete this room?"
+                title="Are you sure to delete this cover?"
                 onConfirm={() => onRemove(_record?.id)}
                 okText="Yes"
                 cancelText="No"

@@ -8,6 +8,14 @@ type Props = {
 };
 
 function DraftEditor({ textState, onChangeEditorState }: Props) {
+  const embedVideoCallBack = (link) => {
+    if (link.indexOf("youtube") >= 0) {
+      link = link.replace("watch?v=", "embed/");
+      link = link.replace("/watch/", "/embed/");
+      link = link.replace("youtu.be/", "youtube.com/embed/");
+    }
+    return link;
+  };
   return (
     <div>
       <Editor
@@ -16,6 +24,11 @@ function DraftEditor({ textState, onChangeEditorState }: Props) {
         wrapperClassName="wrapperClassName"
         editorClassName="border border-1 min-h-[10rem]"
         onEditorStateChange={onChangeEditorState}
+        toolbar={{
+          embedded: {
+            embedCallback: embedVideoCallBack,
+          },
+        }}
       />
     </div>
   );

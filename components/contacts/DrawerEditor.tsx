@@ -123,6 +123,7 @@ function DrawerEditor({
       onClose={toggleDrawer}
       visible={isShowDrawerEditor}
       className="new-contact-drawer"
+      destroyOnClose
     >
       <Row justify="start">
         <Col className="w-full">

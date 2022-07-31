@@ -34,12 +34,11 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
                 <Form.Item rules={[{ required: true }]} name="image">
                   <ImageUploader
                     setImage={setImage}
-                    currentImageUrl={roomData?.imageUrl || ""}
+                    currentImageUrl={roomData?.imageUrl || undefined}
                   />
                   <div className="lead text-lg text-center">
-                    Size (W x H) 1004 x 565 px
-                    <br />
-                    16 : 9
+                    Size (W x H) 408 x 272 px
+                    <br />3 : 2
                   </div>
                 </Form.Item>
               </Col>
@@ -59,7 +58,7 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
                   <InputNumber placeholder="capacity" />
                 </Form.Item>
                 <Form.Item
-                  rules={[{ required: false }]}
+                  rules={[{ required: true }]}
                   label="Description"
                   name="description"
                 >
@@ -70,7 +69,7 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
                   label="Floor"
                   name="floor"
                 >
-                  <InputNumber placeholder="floor" />
+                  <InputNumber placeholder="floor" min={1} defaultValue={1} />
                 </Form.Item>
                 <Row justify="end" align="bottom" className="h-52">
                   <Form.Item>

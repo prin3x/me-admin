@@ -36,7 +36,7 @@ export async function _createRoom(params) {
   let formData = new FormData();
   formData.append("name", params.name);
   formData.append("floor", params.floor);
-  formData.append("image", params.image.file.originFileObj);
+  formData.append("image", params.image.file);
   formData.append("description", params.description);
 
   const config = {
@@ -50,7 +50,7 @@ export async function _updateRoom(params) {
   let formData = new FormData();
   formData.append("name", params.name);
   formData.append("floor", params.floor);
-  formData.append("image", params.image?.file?.originFileObj || params.image);
+  formData.append("image", params.image?.file || params.image);
   formData.append("description", params.description);
 
   const config = {
