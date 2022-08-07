@@ -23,7 +23,7 @@ export const INITIAL_IMAGE_STATE = {
   file: undefined,
 };
 
-function ImageUploader({ setImage, currentImageUrl }) {
+function ImageUploader({ setImage, currentImageUrl, height, width }) {
   const [imageUrl, setImageUrl] = useState<IImageURL>(INITIAL_IMAGE_STATE);
   const [progress, setProgress] = useState(0);
 
@@ -80,11 +80,11 @@ function ImageUploader({ setImage, currentImageUrl }) {
       {imageUrl?.url ? (
         <Image
           src={imageUrl.url}
+          height={height}
+          width={width}
           preview={false}
           alt="avatar"
-          width={250}
-          height={250}
-          className="rounded-md"
+          className="rounded-md w-full h-full"
         />
       ) : (
         uploadButton

@@ -62,11 +62,11 @@ function ServiceContactListItemDrawer({
             <Form.Item
               rules={[{ required: true }]}
               name="contactID"
-              label="Contact ID"
+              label="1st Contact"
             >
               <Input type="text" placeholder="ID พนักงาน" className="" />
             </Form.Item>
-            <Form.Item name="contactPhoneNumber" label="Contact Phone">
+            <Form.Item name="contactPhoneNumber" label="2nd Contact">
               <Input type="text" placeholder="เบอร์ ติดต่อ" className="" />
             </Form.Item>
             <Form.Item rules={[{ required: true }]} name="name">

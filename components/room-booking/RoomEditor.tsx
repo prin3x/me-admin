@@ -33,6 +33,8 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
               <Col span={10} offset={1}>
                 <Form.Item rules={[{ required: true }]} name="image">
                   <ImageUploader
+                    height={272}
+                    width={408}
                     setImage={setImage}
                     currentImageUrl={roomData?.imageUrl || undefined}
                   />

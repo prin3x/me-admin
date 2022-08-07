@@ -1,7 +1,7 @@
 export enum ContactStatus {
-  ENABLED = 'enabled',
-  DISABLED = 'disabled',
-  NONE = 'none',
+  ENABLED = "enabled",
+  DISABLED = "disabled",
+  NONE = "none",
 }
 
 export interface IContact {
@@ -68,9 +68,8 @@ export enum ECompanyList {
   MI = "Mindedge Innovation",
   MR = "Mindedge Recruitment",
   FB = "Foodberg",
-  MY = "Me and You Entertainment"
+  MY = "Me and You Entertainment",
 }
-
 
 export const DEPT_SELECTOR = [
   EDepartment.BD,
@@ -96,3 +95,44 @@ export const COMPANY_SELECTOR = [
   ECompanyList.MR,
   ECompanyList.MY,
 ];
+
+export interface CreateStaffDTO {
+  profilePicFile: any;
+
+  profilePicUrl: any;
+
+  name: string;
+
+  nickname: string;
+
+  company: string;
+
+  department: string;
+
+  division: string;
+
+  ipPhone: string;
+
+  email: string;
+
+  status?: CONTACT_STATUS;
+
+  birthDate: string;
+
+  hash: string;
+
+  nameTH: string;
+
+  staffId: string;
+
+  section: string;
+
+  position: string;
+}
+
+
+export enum CONTACT_STATUS {
+  ENABLED = 'enabled',
+  DISABLED = 'disabled',
+  NONE = 'none',
+}

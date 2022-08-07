@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { ContactStatus, IContact } from "../../services/contact/contact.model";
+import { ContactStatus, CreateStaffDTO, IContact } from "../../services/contact/contact.model";
 import { ALL_CONTACT } from "../../services/contact/contact.queryKey";
 import {
   _createNewStaffContact,
@@ -162,16 +162,9 @@ function ContactTable({}: Props) {
   async function createOrUpdateContact() {
     let res;
     form.validateFields().then(async (_result) => {
-      const staffContactInstance = {} as IContact;
-      staffContactInstance.name = _result.name;
-      staffContactInstance.company = _result.company;
-      staffContactInstance.nickname = _result.nickname;
-      staffContactInstance.department = _result.department;
-      staffContactInstance.division = _result.division;
-      staffContactInstance.email = _result.email;
-      staffContactInstance.ipPhone = _result.ipPhone;
-      staffContactInstance.profilePicFile = image.url ? image : '';
-      staffContactInstance.birthDate = _result.birthDate;
+      let staffContactInstance = {} as CreateStaffDTO;
+      staffContactInstance = {..._result}
+      staffContactInstance.profilePicFile = image ? image.file : '';
 
       try {
         if (drawerMeta.type === DrawerType.NEW) {

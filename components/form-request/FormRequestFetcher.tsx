@@ -66,7 +66,8 @@ function FormRequestFetcher({}: Props) {
       await _updateFormsRequestListItem(item);
       queryClient.invalidateQueries([FORMS_REQUEST]);
     } catch (e) {
-      message.error(e);
+      console.log(`${e.message}`)
+      message.error(`${e}`);
     }
   };
 

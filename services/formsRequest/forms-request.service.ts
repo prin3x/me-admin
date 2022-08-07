@@ -23,7 +23,7 @@ export function _updateFormsRequestListItem(
   updatedItem: IUpdateFormsRequestItem
 ) {
   let formData = new FormData();
-  formData.append("downloadLink", updatedItem.downloadLink);
+  formData.append("downloadLink", updatedItem.downloadLink || "");
   formData.append("content", updatedItem.content);
   formData.append(
     "file",

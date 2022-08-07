@@ -131,6 +131,8 @@ function DrawerEditor({
             <Form.Item name="picture">
               <p>Add Image Size 1:1 </p>
               <ImageUploader
+                height={250}
+                width={250}
                 setImage={setImage}
                 currentImageUrl={drawerMeta?.profilePicUrl || undefined}
               />
@@ -141,10 +143,13 @@ function DrawerEditor({
             <Form.Item name="nameTH" label="Name(TH)">
               <Input />
             </Form.Item>
-            <Form.Item name="nicjname" label="Nickname">
+            <Form.Item name="nickname" label="Nickname">
               <Input />
             </Form.Item>
             <Form.Item name="position" label="Position">
+              <Input />
+            </Form.Item>
+            <Form.Item name="staffId" label="Staff ID">
               <Input />
             </Form.Item>
             <Form.Item name="email" label="Email">

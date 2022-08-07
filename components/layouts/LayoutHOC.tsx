@@ -161,13 +161,51 @@ function RenderAdminAccess({ roles, router }: any) {
               <div className="text-[20px]">Cover</div>
             </Link>
           </Menu.Item>
-          <Menu.Item key={"/admin-management"} icon={<UserOutlined />}>
-            <Link href="/admin-management" passHref>
-              <div className="text-[20px]">Admin Management</div>
+          <Menu.Item key={"/news-editor"} icon={<FileOutlined />}>
+            <Link href="/news-editor" passHref>
+              <div className="text-[20px]">Posts</div>
             </Link>
           </Menu.Item>
         </>
       ) : roles === "superAdmin" ? (
+        <>
+          <Menu.Item key={"/carousel"} icon={<ProfileOutlined />}>
+            <Link href="/carousel" passHref>
+              <div className="text-[20px]">Cover</div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key={"/contacts"} icon={<BarsOutlined />}>
+            <Link href="/contacts" passHref>
+              <div className="text-[20px]">Contacts</div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key={"/calendar"} icon={<CalendarOutlined />}>
+            <Link href="/calendar" passHref>
+              <div className="text-[20px]">Calendar</div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key={"/news-editor"} icon={<FileOutlined />}>
+            <Link href="/news-editor" passHref>
+              <div className="text-[20px]">Posts</div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key={"/meeting-rooms"} icon={<ScheduleOutlined />}>
+            <Link href="/meeting-rooms" passHref>
+              <div className="text-[20px]">Meeting Rooms</div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key={"/service-contact"} icon={<ContainerOutlined />}>
+            <Link href="/service-contact" passHref>
+              <div className="text-[20px]">Service Contacts</div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key={"/forms-request"} icon={<DownloadOutlined />}>
+            <Link href="/forms-request" passHref>
+              <div className="text-[20px]">Forms Request</div>
+            </Link>
+          </Menu.Item>
+        </>
+      ) : roles === "host" ? (
         <>
           <Menu.Item key={"/carousel"} icon={<ProfileOutlined />}>
             <Link href="/carousel" passHref>

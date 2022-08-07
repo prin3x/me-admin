@@ -285,7 +285,7 @@ function FormRequestTableList({
                       </div>
                     </td>
                     <td className="border border-slate-300 text-center">
-                      <p className="mb-0">{contact.downloadLink}</p>
+                      <p className="mb-0">{contact.downloadLink || contact.filePath}</p>
                     </td>
                   </tr>
                 ))}

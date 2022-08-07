@@ -279,6 +279,8 @@ function PostEditor(props): ReactElement {
                 <Col span={9}>
                   <div className="text-3xl">Cover Image</div>
                   <ImageUploader
+                    height={240}
+                    width={240}
                     setImage={setMainImage}
                     currentImageUrl={initialContent?.imageUrl || ""}
                   />
@@ -292,6 +294,8 @@ function PostEditor(props): ReactElement {
                   <Col span={10} offset={1}>
                     <div className="text-3xl">Home Image</div>
                     <ImageUploader
+                      height={240}
+                      width={353}
                       setImage={setHomeImage}
                       currentImageUrl={initialContent?.homeImageUrl || ""}
                     />

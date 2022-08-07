@@ -1,4 +1,4 @@
-import { UploadOutlined, UserOutlined } from "@ant-design/icons";
+import { SwapOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Button,
@@ -10,7 +10,7 @@ import {
   Row,
   Upload,
 } from "antd";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState } from "react";
 import { useEffect } from "react";
 import {
   ICreateFormsRequestItem,
@@ -25,6 +25,11 @@ type Props = {
   onRemove: (id: string) => void;
 };
 
+enum UPLOAD_OR_LINK {
+  upload = "upload",
+  link = "link",
+}
+
 function FormRequestListDrawer({
   editListItemData,
   onClose,
@@ -32,12 +37,23 @@ function FormRequestListDrawer({
   onRemove,
 }: Props): ReactElement {
   const [form] = Form.useForm();
+  const [uploadOrLink, setUploadOrLink] = useState<UPLOAD_OR_LINK>(
+    UPLOAD_OR_LINK.link
+  );
   useEffect(() => {
     form.resetFields();
     if (editListItemData.id) {
       form.setFieldsValue({ ...editListItemData });
     }
   }, [editListItemData]);
+
+  const toggleUploadOrLink = (current: UPLOAD_OR_LINK): any => {
+    if (current === UPLOAD_OR_LINK.link) {
+      setUploadOrLink(UPLOAD_OR_LINK.upload);
+    } else {
+      setUploadOrLink(UPLOAD_OR_LINK.link);
+    }
+  };
 
   return (
     <Drawer
@@ -62,48 +78,66 @@ function FormRequestListDrawer({
             >
               <Input type="text" placeholder="ชื่อรายการ" className="w-full" />
             </Form.Item>
-            <Form.Item
-              rules={[({ getFieldValue }) => ({
-                validator(_, value) {
-                  console.log(value,'value')
-                  if (getFieldValue("file")?.fileList?.length > 0 || value?.length > 0) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error(
-                      "กรุณา Upload File หรือ ใส่ Link"
-                    )
-                  );
-                },
-              }),]}
-              name="downloadLink"
-              label="Upload File หรือ ใส่ Link"
+            {uploadOrLink === UPLOAD_OR_LINK.link ? (
+              <Form.Item
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (
+                        getFieldValue("file")?.fileList?.length > 0 ||
+                        value?.length > 0
+                      ) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("กรุณา Upload File หรือ ใส่ Link")
+                      );
+                    },
+                  }),
+                ]}
+                name="downloadLink"
+                label="Upload File หรือ ใส่ Link"
+              >
+                <Input type="text" placeholder="Add Link" className="" />
+              </Form.Item>
+            ) : (
+              <Form.Item
+                dependencies={["downloadLink"]}
+                label="Upload File หรือ ใส่ Link"
+                hasFeedback
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (
+                        getFieldValue("downloadLink").length > 0 ||
+                        value.fileList.length > 0
+                      ) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("กรุณา Upload File หรือ ใส่ Link")
+                      );
+                    },
+                  }),
+                ]}
+                name="file"
+              >
+                <Upload maxCount={1} multiple={false}>
+                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+              </Form.Item>
+            )}
+
+            <Button
+              icon={<SwapOutlined />}
+              type="primary"
+              onClick={() => toggleUploadOrLink(uploadOrLink)}
+              className="mb-5"
             >
-              <Input type="text" placeholder="ID พนักงาน" className="" />
-            </Form.Item>
-            <Form.Item
-              dependencies={["downloadLink"]}
-              hasFeedback
-              rules={[
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (getFieldValue("downloadLink").length > 0 || value.fileList.length > 0) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error(
-                        "กรุณา Upload File หรือ ใส่ Link"
-                      )
-                    );
-                  },
-                }),
-              ]}
-              name="file"
-            >
-              <Upload maxCount={1} multiple={false}>
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
-              </Upload>
-            </Form.Item>
+              {uploadOrLink === UPLOAD_OR_LINK.link
+                ? "Upload File"
+                : "Add Link"}
+            </Button>
             <Row justify="end" className="mt-6">
               <Form.Item>
                 <Button type="primary" htmlType="submit">

@@ -38,6 +38,8 @@ function CarouselEditor({
               <Col span={10} offset={1}>
                 <Form.Item rules={[{ required: true }]} name="image">
                   <ImageUploader
+                    width={1004}
+                    height={565}
                     setImage={setImage}
                     currentImageUrl={carouselData?.imageUrl || ""}
                   />
@@ -57,7 +59,6 @@ function CarouselEditor({
                   <Input placeholder="title" />
                 </Form.Item>
                 <Form.Item
-                  rules={[{ required: true }]}
                   label="LinkOut"
                   name="linkOut"
                 >
