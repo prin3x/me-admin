@@ -29,7 +29,7 @@ export async function _updateCarousels(params): Promise<ICarousel[]> {
   formData.append("image", params.image.file || params.image);
 
   const config = {
-    url: `/carousel`,
+    url: `/carousel/${params.id}`,
     data: formData,
   };
   return axios.patch(config.url, config.data).then((res) => res.data);
