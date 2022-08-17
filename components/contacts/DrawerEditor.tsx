@@ -147,14 +147,61 @@ function DrawerEditor({
             <Form.Item name="nickname" label="Nickname">
               <Input />
             </Form.Item>
-            <Form.Item name="position" label="Position">
+            <Form.Item name="email" label="Email">
+              <Input />
+            </Form.Item>
+            <Form.Item name="ipPhone" label="Phone">
               <Input />
             </Form.Item>
             <Form.Item name="staffId" label="Staff ID">
               <Input />
             </Form.Item>
-            <Form.Item name="email" label="Email">
-              <Input />
+            <Form.Item name="company" label="Company">
+              <Select
+                dropdownRender={(menu) => (
+                  <>
+                    {menu}
+                    <Divider style={{ margin: "8px 0" }} />
+                    <Space align="center" style={{ padding: "0 8px 4px" }}>
+                      <Input
+                        placeholder="Please enter item"
+                        onChange={(e) => setCompany(e.target.value)}
+                        value={company}
+                      />
+                      <Typography.Link
+                        style={{ whiteSpace: "nowrap" }}
+                        onClick={() =>
+                          addNewItem(CONTACT_OPTIONS.COMPANY, company)
+                        }
+                      >
+                        <PlusOutlined /> Add item
+                      </Typography.Link>
+                    </Space>
+                  </>
+                )}
+              >
+                {options.company &&
+                  options.company.map((comp) => (
+                    <Select.Option key={comp.id} value={comp.company}>
+                      <div className="flex justify-between">
+                        <span>
+                          {comp.company.length > 25
+                            ? comp.company.slice(0, 25)
+                            : comp.company}
+                        </span>
+                        <span>
+                          <CloseOutlined
+                            className="delete--contact-options"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeItem(CONTACT_OPTIONS.COMPANY, comp.id);
+                            }}
+                          />
+                        </span>
+                      </div>
+                    </Select.Option>
+                  ))}
+              </Select>
             </Form.Item>
             <Form.Item name="department" label="Department">
               <Select
@@ -250,54 +297,7 @@ function DrawerEditor({
                   ))}
               </Select>
             </Form.Item>
-            <Form.Item name="company" label="Company">
-              <Select
-                dropdownRender={(menu) => (
-                  <>
-                    {menu}
-                    <Divider style={{ margin: "8px 0" }} />
-                    <Space align="center" style={{ padding: "0 8px 4px" }}>
-                      <Input
-                        placeholder="Please enter item"
-                        onChange={(e) => setCompany(e.target.value)}
-                        value={company}
-                      />
-                      <Typography.Link
-                        style={{ whiteSpace: "nowrap" }}
-                        onClick={() =>
-                          addNewItem(CONTACT_OPTIONS.COMPANY, company)
-                        }
-                      >
-                        <PlusOutlined /> Add item
-                      </Typography.Link>
-                    </Space>
-                  </>
-                )}
-              >
-                {options.company &&
-                  options.company.map((comp) => (
-                    <Select.Option key={comp.id} value={comp.company}>
-                      <div className="flex justify-between">
-                        <span>
-                          {comp.company.length > 25
-                            ? comp.company.slice(0, 25)
-                            : comp.company}
-                        </span>
-                        <span>
-                          <CloseOutlined
-                            className="delete--contact-options"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeItem(CONTACT_OPTIONS.COMPANY, comp.id);
-                            }}
-                          />
-                        </span>
-                      </div>
-                    </Select.Option>
-                  ))}
-              </Select>
-            </Form.Item>
-            <Form.Item name="ipPhone" label="Phone">
+            <Form.Item name="position" label="Position">
               <Input />
             </Form.Item>
             <Form.Item

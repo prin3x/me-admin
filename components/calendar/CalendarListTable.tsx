@@ -104,7 +104,6 @@ function CalendarListTable({
             initialValue={ECalendarEventType.EVENT}
           >
             <Select
-              placeholder="Event"
               className="w-full"
               style={{ width: 200 }}
             >

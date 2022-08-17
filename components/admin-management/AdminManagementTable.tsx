@@ -32,6 +32,7 @@ import {
 import { useQueryClient } from "react-query";
 import { ADMIN_QUERY } from "../../services/admin/admin.queryKey";
 import moment from "moment-timezone";
+import Image from "next/image";
 
 type Props = {
   adminRawData: IAdminData;
@@ -263,6 +264,7 @@ function AdminManagementTable({ adminRawData, onChangePage }: Props) {
           changePassword={changePassword}
         />
       )}
+      <img src='/admin-mgt.jpeg'  alt='admin-management'/>
     </div>
   );
 }
