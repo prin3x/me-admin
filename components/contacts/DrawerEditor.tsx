@@ -132,6 +132,7 @@ function DrawerEditor({
               <p>Add Image Size 1:1 </p>
               <ImageUploader
                 height={250}
+                aspect={1/1}
                 width={250}
                 setImage={setImage}
                 currentImageUrl={drawerMeta?.profilePicUrl || undefined}

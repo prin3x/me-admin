@@ -1,6 +1,7 @@
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { message, Upload, Image } from "antd";
 import React, { useEffect, useState } from "react";
+import ImgCrop from "antd-img-crop";
 
 async function getBase64(img): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -23,7 +24,7 @@ export const INITIAL_IMAGE_STATE = {
   file: undefined,
 };
 
-function ImageUploader({ setImage, currentImageUrl, height, width }) {
+function ImageUploader({ setImage, currentImageUrl, height, width, aspect }) {
   const [imageUrl, setImageUrl] = useState<IImageURL>(INITIAL_IMAGE_STATE);
   const [progress, setProgress] = useState(0);
 
@@ -40,7 +41,7 @@ function ImageUploader({ setImage, currentImageUrl, height, width }) {
       let getImageBase64 = await getBase64(file);
       setImageUrl({ loading: false, url: getImageBase64, file: file });
       setImage({ file: file });
-      onSuccess('Ok');
+      onSuccess("Ok");
     } catch (err) {
       console.log("Eroor: ", err);
       const error = new Error("Some error");
@@ -76,20 +77,22 @@ function ImageUploader({ setImage, currentImageUrl, height, width }) {
   }, [currentImageUrl]);
 
   return (
-    <Upload {...props}>
-      {imageUrl?.url ? (
-        <Image
-          src={imageUrl.url}
-          height={height}
-          width={width}
-          preview={false}
-          alt="avatar"
-          className="rounded-md w-full h-full"
-        />
-      ) : (
-        uploadButton
-      )}
-    </Upload>
+    <ImgCrop aspect={aspect}>
+      <Upload {...props}>
+        {imageUrl?.url ? (
+          <Image
+            src={imageUrl.url}
+            height={height}
+            width={width}
+            preview={false}
+            alt="avatar"
+            className="rounded-md"
+          />
+        ) : (
+          uploadButton
+        )}
+      </Upload>
+    </ImgCrop>
   );
 }
 

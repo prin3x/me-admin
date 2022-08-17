@@ -33,6 +33,7 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
               <Col span={10} offset={1}>
                 <Form.Item rules={[{ required: true }]} name="image">
                   <ImageUploader
+                    aspect={3 / 2}
                     height={272}
                     width={408}
                     setImage={setImage}
@@ -64,7 +65,10 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
                   label="Description"
                   name="description"
                 >
-                  <Input placeholder="description" />
+                  <Input.TextArea
+                    placeholder="description"
+                    autoSize={{ minRows: 2 }}
+                  />
                 </Form.Item>
                 <Form.Item
                   rules={[{ required: true }]}

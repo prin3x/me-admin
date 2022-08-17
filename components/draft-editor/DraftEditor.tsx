@@ -25,6 +25,12 @@ function DraftEditor({ textState, onChangeEditorState }: Props) {
         editorClassName="border border-1 min-h-[10rem]"
         onEditorStateChange={onChangeEditorState}
         toolbar={{
+          fontFamily: {
+            options: [],
+            className: 'hidden',
+            component: undefined,
+            dropdownClassName: 'hidden',
+          },
           embedded: {
             embedCallback: embedVideoCallBack,
           },

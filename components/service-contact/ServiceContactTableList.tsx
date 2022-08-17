@@ -318,21 +318,21 @@ function ServiceContactTableList({
                           <Form.Item
                             rules={[{ required: true }]}
                             name="contactID"
-                            label="Contact ID"
+                            label="1st Contact"
                           >
                             <Input
                               type="text"
-                              placeholder="ID พนักงาน"
+                              placeholder="เบอร์ติดต่อหลัก"
                               className=""
                             />
                           </Form.Item>
                           <Form.Item
                             name="contactPhoneNumber"
-                            label="Contact Phone"
+                            label="2nd Contact"
                           >
                             <Input
                               type="text"
-                              placeholder="เบอร์ ติดต่อ"
+                              placeholder="เบอร์ติดต่อรอง"
                               className=""
                             />
                           </Form.Item>

@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import LayoutHOC from "../../../components/layouts/LayoutHOC";
 import RoomEditor from "../../../components/room-booking/RoomEditor";
-import ImageUploader from "../../../components/utils/ImageUploader";
 import { _createRoom } from "../../../services/meeting-rooms/meeting-rooms.service";
 
 type Props = {};
@@ -31,9 +30,7 @@ function MakeRooms({}: Props) {
 
   return (
     <LayoutHOC>
-      <>
        <RoomEditor form={form} onFinish={onFinish} setImage={setImage}/>
-      </>
     </LayoutHOC>
   );
 }

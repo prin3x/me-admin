@@ -26,7 +26,7 @@ function EditCarousel({}: Props) {
 
     try {
       await _updateCarousels(set);
-      router.push("/meeting-rooms");
+      router.push("/carousel");
     } catch (error) {
       message.error(error.response.message);
     }
@@ -49,15 +49,13 @@ function EditCarousel({}: Props) {
 
   return (
     <LayoutHOC>
-      <>
-        <CarouselEditor
-          carouselData={carouselData.data}
-          onFinish={onFinish}
-          setImage={setImage}
-          isEdit={true}
-          form={form}
-        />
-      </>
+      <CarouselEditor
+        carouselData={carouselData.data}
+        onFinish={onFinish}
+        setImage={setImage}
+        isEdit={true}
+        form={form}
+      />
     </LayoutHOC>
   );
 }

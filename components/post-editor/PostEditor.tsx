@@ -24,7 +24,6 @@ import React, { ReactElement, useEffect } from "react";
 import { useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { queryClient } from "../../pages/_app";
-import { EDITOR_BODY } from "../../services/post/post.model";
 import { ALL_RECENT_NEWS } from "../../services/post/post.queryKey";
 import {
   _makeNewsContent,
@@ -51,7 +50,7 @@ function PostEditor(props): ReactElement {
   const router = useRouter();
   const [form] = Form.useForm();
   const { initialContent, slug } = props;
-  const [allCategories, setAllCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("announcement");
   const [mainImage, setMainImage] = useState("");
   const [homeImage, setHomeImage] = useState("");
   const [tags, setTags] = useState([]);
@@ -137,12 +136,16 @@ function PostEditor(props): ReactElement {
 
   //   try {
   //     res = await _getAllNewsCategories();
-  //     setAllCategories(res);
+  //     setSelectedCategory(res);
   //     form.setFieldsValue({ categoryName: res?.[0]?.title });
   //   } catch (e) {
   //     message.error("Failed Cannot Get Category");
   //   }
   // }
+
+  const onSelectCategory = (_value: string) => {
+    setSelectedCategory(_value);
+  };
 
   const onChangeEditorState = (_editorState: EditorState) => {
     setTextState({ editorState: _editorState });
@@ -180,6 +183,7 @@ function PostEditor(props): ReactElement {
                       placeholder="Select Category"
                       className="w-full"
                       style={{ width: 200 }}
+                      onChange={onSelectCategory}
                     >
                       <Select.Option value="announcement">
                         Announcement
@@ -280,6 +284,7 @@ function PostEditor(props): ReactElement {
                   <div className="text-3xl">Cover Image</div>
                   <ImageUploader
                     height={240}
+                    aspect={1 / 1}
                     width={240}
                     setImage={setMainImage}
                     currentImageUrl={initialContent?.imageUrl || ""}
@@ -296,6 +301,9 @@ function PostEditor(props): ReactElement {
                     <ImageUploader
                       height={240}
                       width={353}
+                      aspect={
+                        selectedCategory === "announcement" ? 3 / 4 : 3 / 2
+                      }
                       setImage={setHomeImage}
                       currentImageUrl={initialContent?.homeImageUrl || ""}
                     />
@@ -310,7 +318,7 @@ function PostEditor(props): ReactElement {
                         <span className="min-w-[3rem]">
                           IT Clinic & Activities
                         </span>
-                        <span>:495 x 333 px, 2:3</span>
+                        <span>:495 x 333 px, 3:2</span>
                       </p>
                     </div>
                   </Col>

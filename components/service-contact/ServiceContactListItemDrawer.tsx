@@ -64,10 +64,10 @@ function ServiceContactListItemDrawer({
               name="contactID"
               label="1st Contact"
             >
-              <Input type="text" placeholder="ID พนักงาน" className="" />
+              <Input type="text" placeholder="เบอร์ติดต่อหลัก" className="" />
             </Form.Item>
             <Form.Item name="contactPhoneNumber" label="2nd Contact">
-              <Input type="text" placeholder="เบอร์ ติดต่อ" className="" />
+              <Input type="text" placeholder="เบอร์ติดต่อรอง" className="" />
             </Form.Item>
             <Form.Item rules={[{ required: true }]} name="name">
               <Input type="text" placeholder="ชื่อ Contact" className="" />
