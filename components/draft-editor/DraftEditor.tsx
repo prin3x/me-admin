@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import { EditorState } from "draft-js";
+import PropTypes from "prop-types";
+import { SketchPicker } from "react-color";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { CloudOutlined, HighlightOutlined } from "@ant-design/icons";
 type Props = {
   textState: any;
   onChangeEditorState: (raw: EditorState) => void;
@@ -27,12 +30,15 @@ function DraftEditor({ textState, onChangeEditorState }: Props) {
         toolbar={{
           fontFamily: {
             options: [],
-            className: 'hidden',
+            className: "hidden",
             component: undefined,
-            dropdownClassName: 'hidden',
+            dropdownClassName: "hidden",
           },
           embedded: {
             embedCallback: embedVideoCallBack,
+          },
+          colorPicker: {
+            component: (props) => <ColorPic {...props} />,
           },
         }}
       />
@@ -41,3 +47,48 @@ function DraftEditor({ textState, onChangeEditorState }: Props) {
 }
 
 export default DraftEditor;
+
+function ColorPic({ expanded, onExpandEvent, onChange, currentState }) {
+  const [currentColor, setCurrentColor] = useState<any>();
+  const stopPropagation = (event) => {
+    event.stopPropagation();
+  };
+
+  const onChangeColor = (color) => {
+    setCurrentColor(color);
+  };
+
+
+
+  useEffect(() => {
+    if(expanded) return
+    onChange("color", currentColor?.hex || '#000');
+
+    // return () => onChange("color", currentState.color.hex);
+  },[expanded])
+
+  const renderModal = () => {
+    return (
+      <div onClick={stopPropagation} className="absolute">
+        <SketchPicker
+          color={currentColor}
+          onChange={onChangeColor}
+        />
+      </div>
+    );
+  };
+
+  return (
+    <div
+      aria-haspopup="true"
+      aria-expanded={expanded}
+      aria-label="rdw-color-picker"
+      className="rdw-link-wrapper"
+    >
+      <div onClick={onExpandEvent} className="rdw-option-wrapper">
+        <HighlightOutlined />
+      </div>
+      {expanded ? renderModal() : null}
+    </div>
+  );
+}
