@@ -84,22 +84,22 @@ function ColorPic({ expanded, onExpandEvent, onChange, currentState }) {
           onChange={throttle((color) => onChangeColor(color), 500)}
           disableAlpha
         />
-        <Row>
+        <Row justify="center">
           <Col>
             <Button
-              type="primary"
-              className="mt-3"
+              style={{backgroundColor: 'black', color: '#fff'}}
+              className="mt-3 shadow-2xl	"
               onClick={() => onChange("color", currentColor?.hex || "#000")}
             >
-              Select
+              Select As Color
             </Button>
           </Col>
           <Col>
             <Button
-              className="mt-3"
+              className="mt-3 ml-3 shadow-2xl	"
               onClick={() => onChange("bgcolor", currentColor?.hex || "#fff")}
             >
-              Select as bg
+            As BG Color
             </Button>
           </Col>
         </Row>
