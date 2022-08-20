@@ -31,7 +31,7 @@ export interface ICreateFormsRequestItem {
   categoryId?: string;
   content: string;
   file: any;
-  index: number;
+  index: string | number;
 }
 
 export interface IUpdateFormsRequestItem
@@ -52,4 +52,9 @@ export interface IUpdateFormsRequestCategory
 export enum ETypeOfEditing {
   CREATE = "create",
   UPDATED = "update",
+}
+
+export enum UPLOAD_OR_LINK {
+  upload = "upload",
+  link = "link",
 }

@@ -1,7 +1,10 @@
 import {
   CloseOutlined,
+  CopyOutlined,
   ExclamationCircleOutlined,
   PlusOutlined,
+  StarOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -18,6 +21,7 @@ import {
   Select,
   Space,
   Typography,
+  Upload,
 } from "antd";
 import { useRouter } from "next/router";
 import React, { ReactElement, useEffect } from "react";
@@ -39,6 +43,8 @@ import {
 import ImageUploader from "../utils/ImageUploader";
 import DraftEditor from "../draft-editor/DraftEditor";
 import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
+import { API_URL } from "../../config";
+import { getAuthToken } from "../../services/auth/auth.service";
 
 const INITIAL_STATE = {
   categoryName: "announcement",
@@ -171,114 +177,97 @@ function PostEditor(props): ReactElement {
       <div className="bg-white p-5">
         <Row className="mt-10 w-full" justify="center">
           <Col lg={20}>
-            <Form form={form}>
-              <Row justify="start">
-                <Col span={24}>
-                  <Form.Item
-                    name="categoryName"
-                    label="Category Name"
-                    rules={[{ required: true }]}
-                  >
-                    <Select
-                      placeholder="Select Category"
-                      className="w-full"
-                      style={{ width: 200 }}
-                      onChange={onSelectCategory}
-                    >
-                      <Select.Option value="announcement">
-                        Announcement
-                      </Select.Option>
-                      <Select.Option value="itclinic">IT Clinic</Select.Option>
-                      <Select.Option value="activity">Activity</Select.Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row justify="start">
-                <Col span={12}>
-                  <Form.Item
-                    name="title"
-                    rules={[{ required: true }]}
-                    label="Title"
-                  >
-                    <Input placeholder="ชื่อเรื่อง" width={200} />
-                  </Form.Item>
-                </Col>
-                <Col span={10} offset={1}>
-                  <Form.Item
-                    name="tag"
-                    rules={[{ required: true }]}
-                    label="Tag"
-                  >
-                    <Select
-                      dropdownRender={(menu) => (
-                        <>
-                          {menu}
-                          <Divider style={{ margin: "8px 0" }} />
-                          <Space
-                            align="center"
-                            style={{ padding: "0 8px 4px" }}
-                          >
-                            <Input
-                              placeholder="Please enter item"
-                              onChange={(e) => setNewTagValue(e.target.value)}
-                              value={newTagValue}
+            <Form
+              form={form}
+              wrapperCol={{ span: 6 }}
+              labelCol={{ span: 3 }}
+              labelAlign="left"
+            >
+              <Form.Item
+                name="categoryName"
+                label="Category Name"
+                rules={[{ required: true }]}
+              >
+                <Select
+                  placeholder="Select Category"
+                  className="w-full"
+                  style={{ width: 200 }}
+                  onChange={onSelectCategory}
+                >
+                  <Select.Option value="announcement">
+                    Announcement
+                  </Select.Option>
+                  <Select.Option value="itclinic">IT Clinic</Select.Option>
+                  <Select.Option value="activity">Activity</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="title"
+                rules={[{ required: true }]}
+                label="Title"
+              >
+                <Input placeholder="ชื่อเรื่อง" width={200} />
+              </Form.Item>
+              <Form.Item name="tag" rules={[{ required: true }]} label="Tag">
+                <Select
+                  dropdownRender={(menu) => (
+                    <>
+                      {menu}
+                      <Divider style={{ margin: "8px 0" }} />
+                      <Space align="center" style={{ padding: "0 8px 4px" }}>
+                        <Input
+                          placeholder="Please enter item"
+                          onChange={(e) => setNewTagValue(e.target.value)}
+                          value={newTagValue}
+                        />
+                        <Typography.Link
+                          style={{ whiteSpace: "nowrap" }}
+                          onClick={() => addNewTag(newTagValue)}
+                        >
+                          <PlusOutlined /> Add item
+                        </Typography.Link>
+                      </Space>
+                    </>
+                  )}
+                >
+                  {tags.length > 0 &&
+                    tags.map((tag) => (
+                      <Select.Option key={tag.id} value={tag.tag}>
+                        <div className="flex justify-between">
+                          <span>{tag.tag}</span>
+                          <span className="z-30">
+                            <CloseOutlined
+                              className="delete--contact-options"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeItem(tag.id);
+                              }}
                             />
-                            <Typography.Link
-                              style={{ whiteSpace: "nowrap" }}
-                              onClick={() => addNewTag(newTagValue)}
-                            >
-                              <PlusOutlined /> Add item
-                            </Typography.Link>
-                          </Space>
-                        </>
-                      )}
-                    >
-                      {tags.length > 0 &&
-                        tags.map((tag) => (
-                          <Select.Option key={tag.id} value={tag.tag}>
-                            <div className="flex justify-between">
-                              <span>{tag.tag}</span>
-                              <span className="z-30">
-                                <CloseOutlined
-                                  className="delete--contact-options"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    removeItem(tag.id);
-                                  }}
-                                />
-                              </span>
-                            </div>
-                          </Select.Option>
-                        ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Row className="w-full">
-                  <Col span={12}>
-                    <Form.Item
-                      name="description"
-                      rules={[{ required: true }]}
-                      label="Description"
-                      className="w-full"
-                    >
-                      <Input.TextArea
-                        placeholder="description"
-                        autoSize={{ minRows: 1 }}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={10} offset={1}>
-                    <Form.Item
-                      name="postBy"
-                      rules={[{ required: true }]}
-                      label="Post By"
-                    >
-                      <Input placeholder="เขียนโดย" width={200} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Row>
+                          </span>
+                        </div>
+                      </Select.Option>
+                    ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="description"
+                rules={[{ required: true }]}
+                wrapperCol={{ span: 12 }}
+                label="Description"
+                className="w-full"
+              >
+                <Input.TextArea
+                  placeholder="description"
+                  autoSize={{ minRows: 3 }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="postBy"
+                rules={[{ required: true }]}
+                label="Post By"
+              >
+                <Input placeholder="เขียนโดย" width={200} />
+              </Form.Item>
               <Row justify="center">
                 <Col span={9}>
                   <div className="text-3xl">Cover Image</div>
@@ -334,8 +323,30 @@ function PostEditor(props): ReactElement {
                   </Form.Item>
                 </Col>
               </Row>
+              <Upload
+                listType="picture"
+                action={`${API_URL}/upload/image`}
+                method="POST"
+                className="upload-list-inline"
+                headers={{
+                  authorization: `Bearer ${getAuthToken()}`,
+                }}
+                showUploadList={{
+                  showDownloadIcon: true,
+                  downloadIcon: (
+                    <CopyOutlined className='hover:text-black focus:text-green-500'/>
+                  ),
+                  showRemoveIcon: true,
+                }}
+                onDownload={(file) => {
+                  navigator.clipboard.writeText((file as any).response);
+                  message.success("Copy File Url Successfully");
+                }}
+              >
+                <Button icon={<UploadOutlined />}>Custom Upload Image</Button>
+              </Upload>
               <Row justify="center" className="mt-10">
-                <Col lg={18} md={18} className="bg-white">
+                <Col lg={24} md={24} className="bg-white">
                   <DraftEditor
                     textState={textState}
                     onChangeEditorState={onChangeEditorState}

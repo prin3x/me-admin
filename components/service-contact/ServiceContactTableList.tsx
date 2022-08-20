@@ -238,7 +238,7 @@ function ServiceContactTableList({
                         />{" "}
                         {item.title}
                       </div>
-                      <div className="flex items-center">
+                      <div className="flex items-center mr-5">
                         <PlusCircleFilled
                           onClick={() => onCickAddNewListItem(item.id)}
                           className="ml-5"
@@ -275,7 +275,7 @@ function ServiceContactTableList({
                             onDecreaseIndex(contact.id, contact.index)
                           }
                           style={{ color: "white" }}
-                          className="ml-3 block cursor-pointer bg-gray-600 rounded-full"
+                          className="ml-auto mr-5 block cursor-pointer bg-gray-600 rounded-full"
                         />
                       </div>
                     </td>

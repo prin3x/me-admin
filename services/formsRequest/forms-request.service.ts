@@ -14,9 +14,22 @@ export function _getFormRequestContent(): Promise<IFormsRequest[]> {
 export function _createFormsRequestListItem(
   createItem: ICreateFormsRequestItem
 ): Promise<IFormsRequest> {
-  return axios
-    .post("/forms-request", { ...createItem })
-    .then((res) => res.data);
+  let formData = new FormData();
+  console.log(createItem?.file)
+  formData.append("downloadLink", createItem.downloadLink || "");
+  formData.append("content", createItem.content);
+  formData.append("categoryId", createItem.categoryId);
+  formData.append("index", createItem.index.toString());
+  formData.append(
+    "file",
+    createItem?.file && createItem.file.file
+  );
+
+  const config = {
+    url: `/forms-request`,
+    data: formData,
+  };
+  return axios.post(config.url, config.data).then((res) => res.data);
 }
 
 export function _updateFormsRequestListItem(

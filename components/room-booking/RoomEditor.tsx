@@ -1,6 +1,20 @@
-import { Button, Col, Form, Input, InputNumber, message, Row } from "antd";
+import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Col,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Row,
+  Select,
+  Space,
+  Typography,
+} from "antd";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { createFloor, getFloors, removeFloor, updateFloor } from "../../services/floor/floor.service";
 import { IRoom } from "../../services/meeting-rooms/meeting-room.model";
 import ImageUploader from "../utils/ImageUploader";
 
@@ -10,10 +24,62 @@ type Props = {
   form;
   roomData?: IRoom;
   isEdit?: boolean;
+  floor?: any[];
+  setFloor?: any;
 };
 
-function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
+function RoomEditor({
+  onFinish,
+  setImage,
+  form,
+  roomData,
+  isEdit,
+}: Props) {
+  const [floors, setFloors] = useState([]);
   const router = useRouter();
+  const floorRef = useRef();
+
+  async function fetchAllFloors(): Promise<any> {
+    try {
+      const floors = await getFloors();
+      setFloors(floors);
+    } catch (error) {
+      message.error(error.message);
+    }
+  }
+
+  const createNewFloor = async (newFloor) => {
+    try {
+      await createFloor({floor: newFloor});
+      await fetchAllFloors();
+    } catch (error) {
+      message.error(error);
+    }
+  }
+
+  const updateExistingFloor =  async (id, updates) => {
+    try {
+      await updateFloor(id, updates);
+      await fetchAllFloors();
+    } catch (error) {
+      message.error(error);
+    }
+  }
+
+  const removeExistingFloor = async (floor) => {
+    try {
+      await removeFloor(floor);
+      await fetchAllFloors();
+    } catch (error) {
+      message.error(error);
+    }
+  }
+
+
+  useEffect(() => {
+    fetchAllFloors();
+  }, []);
+
   return (
     <div className="mt-10">
       <div className="lg:text-6xl font-bold text-white md:text-4xl xs:text-xl ml-10">
@@ -67,15 +133,47 @@ function RoomEditor({ onFinish, setImage, form, roomData, isEdit }: Props) {
                 >
                   <Input.TextArea
                     placeholder="description"
-                    autoSize={{ minRows: 2 }}
+                    autoSize={{ minRows: 3 }}
                   />
                 </Form.Item>
                 <Form.Item
                   rules={[{ required: true }]}
                   label="Floor"
                   name="floor"
+                  wrapperCol={{ span: 10 }}
                 >
-                  <InputNumber placeholder="floor" min={1} defaultValue={1} />
+                  <Select
+                    dropdownRender={(menu) => (
+                      <>
+                        {menu}
+                        <Divider style={{ margin: "8px 0" }} />
+                        <Space align="center" style={{ padding: "0 8px 4px" }}>
+                          <Input placeholder="Please enter item" ref={floorRef} />
+                          <Typography.Link onClick={() => (floorRef.current as any).state.value ? createNewFloor((floorRef.current as any).state.value) : null} style={{ whiteSpace: "nowrap" }}>
+                            <PlusOutlined /> Add item
+                          </Typography.Link>
+                        </Space>
+                      </>
+                    )}
+                  >
+                    {floors.length > 0 &&
+                        floors.map((floor) => (
+                          <Select.Option key={floor.id} value={floor.floor}>
+                            <div className="flex justify-between">
+                              <span>{floor.floor}</span>
+                              <span className="z-30">
+                                <CloseOutlined
+                                  className="delete--contact-options"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeExistingFloor(floor.floor)
+                                  }}
+                                />
+                              </span>
+                            </div>
+                          </Select.Option>
+                        ))}
+                  </Select>
                 </Form.Item>
                 <Row justify="end" align="bottom" className="h-52">
                   <Form.Item>

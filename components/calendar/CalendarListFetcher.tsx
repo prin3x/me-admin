@@ -22,6 +22,7 @@ const INITIAL_QUERIES: ListCalendarDTO = {
   year: "2022",
   category: ECalendarEventType.EVENT,
   page: 1,
+  limit: 20,
 };
 
 function CalendarListFetcher({
@@ -58,6 +59,7 @@ function CalendarListFetcher({
     calendarListData: calendarListData.data,
     isLoading: calendarListData.isLoading,
     setQuery,
+    query,
     onEdit,
   };
 

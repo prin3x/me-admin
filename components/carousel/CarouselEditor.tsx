@@ -42,14 +42,14 @@ function CarouselEditor({
           <Form.Item rules={[{ required: true }]} name="image">
             <ImageUploader
               width={1004}
-              height={565}
+              height={360}
               aspect={16/9}
               setImage={setImage}
               currentImageUrl={carouselData?.imageUrl || ""}
             />
           </Form.Item>
           <div className="lead text-lg text-center">
-            Size (W x H) 1004 x 565 px
+            Size (W x H) 1004 x 360 px
             <br />
             16 : 9
           </div>

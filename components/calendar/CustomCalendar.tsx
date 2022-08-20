@@ -433,7 +433,7 @@ function CustomCalendar(): ReactElement {
               {calendarMeta.month} {calendarMeta.year}
             </Col>
           </Row>
-          <div className="container mx-auto px-20 py-10 calendar-container">
+          <div className="container mx-auto py-10 calendar-container">
             <FullCalendar
               ref={calendarRef}
               schedulerLicenseKey="0261586002-fcs-1640591838"

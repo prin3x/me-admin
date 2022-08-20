@@ -16,31 +16,33 @@ type Props = {
   isLoading: boolean;
   setQuery: Dispatch<SetStateAction<ListCalendarDTO>>;
   onEdit(argetEvent: ICalendarEntity): void;
+  query: ListCalendarDTO;
 };
 
 function CalendarListTable({
   calendarListData,
   isLoading,
   setQuery,
+  query,
   onEdit,
 }: Props) {
   const queryClient = useQueryClient();
   const onFormChange = (formValues) => {
     setQuery((prev) => {
-      return { ...prev, ...formValues, page : 1 };
+      return { ...prev, ...formValues, page: 1 };
     });
   };
 
-  const onChangePage = (page: number) => {
+  const onChangePage = (page: number, pageSize: number) => {
     setQuery((prev) => {
-      return { ...prev, page };
+      return { ...prev, page, limit: pageSize };
     });
   };
 
   async function deleteEvent(id) {
     try {
       await _deleteEvent(id);
-      queryClient.invalidateQueries(['CALENDAR_LIST']);
+      queryClient.invalidateQueries(["CALENDAR_LIST"]);
       message.success("DONE");
     } catch (e) {
       console.error(e);
@@ -103,10 +105,7 @@ function CalendarListTable({
             label="Calendar Type"
             initialValue={ECalendarEventType.EVENT}
           >
-            <Select
-              className="w-full"
-              style={{ width: 200 }}
-            >
+            <Select className="w-full" style={{ width: 200 }}>
               <Select.Option value={ECalendarEventType.HOLIDAY}>
                 {ECalendarEventType.HOLIDAY.toUpperCase()}
               </Select.Option>
@@ -143,9 +142,10 @@ function CalendarListTable({
         tableLayout="fixed"
         pagination={{
           current: calendarListData?.page || 1,
-          pageSize: 20,
+          pageSize: query.limit,
           total: calendarListData?.total,
           onChange: onChangePage,
+          showSizeChanger: true,
         }}
         columns={columns}
       />

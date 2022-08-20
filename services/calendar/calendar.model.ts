@@ -77,6 +77,8 @@ export class ListCalendarDTO {
   page: number;
 
   startMonth?: number;
+
+  limit: number;
 }
 
 export enum ECalendarEventType {

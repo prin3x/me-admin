@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import {
   ICreateFormsRequestItem,
   IFormsRequestDetail,
+  UPLOAD_OR_LINK,
 } from "../../services/formsRequest/forms-request.model";
 import { IFormRequestEditState } from "./FormRequestTableList";
 
@@ -25,10 +26,7 @@ type Props = {
   onRemove: (id: string) => void;
 };
 
-enum UPLOAD_OR_LINK {
-  upload = "upload",
-  link = "link",
-}
+
 
 function FormRequestListDrawer({
   editListItemData,
@@ -122,7 +120,7 @@ function FormRequestListDrawer({
                 ]}
                 name="file"
               >
-                <Upload maxCount={1} multiple={false}>
+                <Upload beforeUpload={() => false} maxCount={1} multiple={false}>
                   <Button icon={<UploadOutlined />}>Click to Upload</Button>
                 </Upload>
               </Form.Item>

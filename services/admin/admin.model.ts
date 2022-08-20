@@ -7,6 +7,7 @@ export enum ADMIN_ROLES {
   USER = "user",
   ADMIN = "admin",
   SUPER_ADMIN = "superAdmin",
+  HOST = "host",
 }
 
 export interface IAdminModel {

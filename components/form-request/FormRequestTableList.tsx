@@ -6,8 +6,10 @@ import {
   EditOutlined,
   MoreOutlined,
   PlusCircleFilled,
+  SwapOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row } from "antd";
+import { Button, Col, Form, Input, Row, Upload } from "antd";
 import React, { Fragment, useState } from "react";
 import {
   ETypeOfEditing,
@@ -17,6 +19,7 @@ import {
   IFormsRequestDetail,
   IUpdateFormsRequestCategory,
   IUpdateFormsRequestItem,
+  UPLOAD_OR_LINK,
 } from "../../services/formsRequest/forms-request.model";
 import FormRequestCategoryDrawer from "./FormRequestCategoryDrawer";
 import FormRequestListDrawer from "./FormRequestListDrawer";
@@ -73,6 +76,9 @@ function FormRequestTableList({
   });
   const [editListItemData, setEditListItemData] =
     useState<IFormRequestEditState>(INIT_EDIT_LIST);
+  const [uploadOrLink, setUploadOrLink] = useState<UPLOAD_OR_LINK>(
+    UPLOAD_OR_LINK.link
+  );
 
   const onToggleListItemToEdit = (item?: IFormsRequestDetail) => {
     let currentState = { ...editListItemData };
@@ -134,8 +140,6 @@ function FormRequestTableList({
 
       set.index = lastIndex;
 
-      console.log(set,'set')
-
       await onCreate(set);
       onCickAddNewListItem();
     } catch (e) {
@@ -186,6 +190,14 @@ function FormRequestTableList({
     set.index = data.length + 1;
 
     onCreateNewObjectiveCategory(set);
+  };
+
+  const toggleUploadOrLink = (current: UPLOAD_OR_LINK): any => {
+    if (current === UPLOAD_OR_LINK.link) {
+      setUploadOrLink(UPLOAD_OR_LINK.upload);
+    } else {
+      setUploadOrLink(UPLOAD_OR_LINK.link);
+    }
   };
 
   return (
@@ -280,12 +292,14 @@ function FormRequestTableList({
                             onDecreaseIndex(contact.id, contact.index)
                           }
                           style={{ color: "white" }}
-                          className="ml-3 block cursor-pointer bg-gray-600 rounded-full"
+                          className="ml-auto mr-5 block cursor-pointer bg-gray-600 rounded-full"
                         />
                       </div>
                     </td>
                     <td className="border border-slate-300 text-center">
-                      <p className="mb-0">{contact.downloadLink || contact.filePath}</p>
+                      <p className="mb-0">
+                        {contact.downloadLink || contact.filePath}
+                      </p>
                     </td>
                   </tr>
                 ))}
@@ -307,16 +321,77 @@ function FormRequestTableList({
                       </td>
                       <td className="border border-slate-300 pl-7">
                         <div className="flex items-center justify-center">
-                          <Form.Item
-                            rules={[{ required: true }]}
-                            name="downloadLink"
+                          {uploadOrLink === UPLOAD_OR_LINK.link ? (
+                            <Form.Item
+                              rules={[
+                                ({ getFieldValue }) => ({
+                                  validator(_, value) {
+                                    if (
+                                      getFieldValue("file")?.fileList?.length >
+                                        0 ||
+                                      value?.length > 0
+                                    ) {
+                                      return Promise.resolve();
+                                    }
+                                    return Promise.reject(
+                                      new Error(
+                                        "กรุณา Upload File หรือ ใส่ Link"
+                                      )
+                                    );
+                                  },
+                                }),
+                              ]}
+                              name="downloadLink"
+                              label="Upload File หรือ ใส่ Link"
+                            >
+                              <Input
+                                type="text"
+                                placeholder="Add Link"
+                                className=""
+                              />
+                            </Form.Item>
+                          ) : (
+                            <Form.Item
+                              dependencies={["downloadLink"]}
+                              label="Upload File หรือ ใส่ Link"
+                              hasFeedback
+                              rules={[
+                                ({ getFieldValue }) => ({
+                                  validator(_, value) {
+                                    if (
+                                      getFieldValue("downloadLink")?.length >
+                                        0 ||
+                                      value.fileList.length > 0
+                                    ) {
+                                      return Promise.resolve();
+                                    }
+                                    return Promise.reject(
+                                      new Error(
+                                        "กรุณา Upload File หรือ ใส่ Link"
+                                      )
+                                    );
+                                  },
+                                }),
+                              ]}
+                              name="file"
+                            >
+                              <Upload beforeUpload={() => false}  maxCount={1} multiple={false} >
+                                <Button icon={<UploadOutlined />}>
+                                  Click to Upload
+                                </Button>
+                              </Upload>
+                            </Form.Item>
+                          )}
+                          <Button
+                            icon={<SwapOutlined />}
+                            type="primary"
+                            onClick={() => toggleUploadOrLink(uploadOrLink)}
+                            className="mr-5"
                           >
-                            <Input
-                              type="text"
-                              placeholder="Link"
-                              className=""
-                            />
-                          </Form.Item>
+                            {uploadOrLink === UPLOAD_OR_LINK.link
+                              ? "Upload File"
+                              : "Add Link"}
+                          </Button>
                           <CheckCircleOutlined
                             onClick={onClickConfirmCreateNewListItem}
                             style={{ color: "green" }}
