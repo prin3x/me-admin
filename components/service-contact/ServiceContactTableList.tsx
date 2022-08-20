@@ -2,13 +2,23 @@ import {
   ArrowUpOutlined,
   CaretUpOutlined,
   CheckCircleOutlined,
+  CheckSquareOutlined,
   CloseCircleOutlined,
   EditOutlined,
   MoreOutlined,
   PlusCircleFilled,
 } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row } from "antd";
-import React, { Fragment, useState } from "react";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Popover,
+  Row,
+} from "antd";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
   ETypeOfEditing,
   ICreateServiceContactCategory,
@@ -19,6 +29,7 @@ import {
   IUpdateServiceContactItem,
 } from "../../services/serviceContact/service-contact.model";
 import { _createContactServiceListItem } from "../../services/serviceContact/service-contact.service";
+import { IndexChanger } from "../utils/IndexChanger";
 import ServiceContactDrawer from "./ServiceContactDrawer";
 import ServiceContactListItemDrawer from "./ServiceContactListItemDrawer";
 
@@ -41,7 +52,7 @@ type Props = {
   _onUpdateObjectiveTitle: (items: IUpdateServiceContactCategory) => void;
   _onRemoveListItem: (id: string) => void;
   _onRemoveObjectiveCategory: (id: string) => void;
-  _onDecreaseIndex: (id: string, index: number) => void;
+  _onChangeIndex: (id: string, index: number) => void;
   _onDecreaseCategoryIndex: (id: string, index: number) => void;
 };
 
@@ -53,7 +64,7 @@ function ServiceContactTableList({
   _onUpdateObjectiveTitle,
   _onRemoveListItem,
   _onRemoveObjectiveCategory,
-  _onDecreaseIndex,
+  _onChangeIndex,
   _onDecreaseCategoryIndex,
 }: Props) {
   const [form] = Form.useForm();
@@ -177,11 +188,20 @@ function ServiceContactTableList({
     if (newIndex === index) return;
 
     if (type === "item") {
-      _onDecreaseIndex(id, newIndex);
+      _onChangeIndex(id, newIndex);
     } else {
       _onDecreaseCategoryIndex(id, newIndex);
     }
   };
+
+  const content = (currentIndex: number) => (
+    <div className="flex gap-5">
+      <InputNumber min={1} value={currentIndex} />
+      <Button type="primary" ghost>
+        ADJUST
+      </Button>
+    </div>
+  );
 
   return (
     <div className="px-10 pb-20">
@@ -270,13 +290,32 @@ function ServiceContactTableList({
                           onClick={() => onToggleListItemToEdit(contact)}
                         />
                         {contact.objective}
-                        <ArrowUpOutlined
-                          onClick={() =>
-                            onDecreaseIndex(contact.id, contact.index)
-                          }
-                          style={{ color: "white" }}
-                          className="ml-auto mr-5 block cursor-pointer bg-gray-600 rounded-full"
-                        />
+                        <div className="ml-auto flex items-center relative cursor-pointer">
+                          <Popover
+                            placement="topLeft"
+                            title="Change item order manually"
+                            content={() => (
+                              <IndexChanger
+                                contactDetail={contact}
+                                _onChangeIndex={_onChangeIndex}
+                              />
+                            )}
+                            arrowPointAtCenter
+                          >
+                            <div className="w-5 h-5 rounded-full bg-amber-500 flex justify-center items-center mr-3">
+                              <p className="leading-0 mb-0 text-sm text-white">
+                                {contact.index}
+                              </p>
+                            </div>
+                          </Popover>
+                          <ArrowUpOutlined
+                            onClick={() =>
+                              onDecreaseIndex(contact.id, contact.index)
+                            }
+                            style={{ color: "white" }}
+                            className="ml-auto mr-5 block cursor-pointer bg-gray-600 rounded-full"
+                          />
+                        </div>
                       </div>
                     </td>
                     <td className="border border-slate-300 text-center">

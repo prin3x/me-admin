@@ -9,7 +9,7 @@ import {
   SwapOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row, Upload } from "antd";
+import { Button, Col, Form, Input, Popover, Row, Upload } from "antd";
 import React, { Fragment, useState } from "react";
 import {
   ETypeOfEditing,
@@ -21,6 +21,7 @@ import {
   IUpdateFormsRequestItem,
   UPLOAD_OR_LINK,
 } from "../../services/formsRequest/forms-request.model";
+import { IndexChanger } from "../utils/IndexChanger";
 import FormRequestCategoryDrawer from "./FormRequestCategoryDrawer";
 import FormRequestListDrawer from "./FormRequestListDrawer";
 
@@ -34,7 +35,7 @@ type Props = {
   _onUpdateObjectiveTitle: (items: IUpdateFormsRequestCategory) => void;
   _onRemoveListItem: (id: string) => void;
   _onRemoveObjectiveCategory: (id: string) => void;
-  _onDecreaseIndex: (id: string, index: number) => void;
+  _onChangeIndex: (id: string, index: number) => void;
   _onDecreaseCategoryIndex: (id: string, index: number) => void;
 };
 
@@ -60,7 +61,7 @@ function FormRequestTableList({
   _onUpdateObjectiveTitle,
   _onRemoveListItem,
   _onRemoveObjectiveCategory,
-  _onDecreaseIndex,
+  _onChangeIndex,
   _onDecreaseCategoryIndex,
 }: Props) {
   const [form] = Form.useForm();
@@ -178,7 +179,7 @@ function FormRequestTableList({
     if (newIndex === index) return;
 
     if (type === "item") {
-      _onDecreaseIndex(id, newIndex);
+      _onChangeIndex(id, newIndex);
     } else {
       _onDecreaseCategoryIndex(id, newIndex);
     }
@@ -287,13 +288,32 @@ function FormRequestTableList({
                           className="cursor-pointer"
                         />
                         {contact.content}
-                        <ArrowUpOutlined
-                          onClick={() =>
-                            onDecreaseIndex(contact.id, contact.index)
-                          }
-                          style={{ color: "white" }}
-                          className="ml-auto mr-5 block cursor-pointer bg-gray-600 rounded-full"
-                        />
+                        <div className="ml-auto flex items-center relative cursor-pointer">
+                          <Popover
+                            placement="topLeft"
+                            title="Change item order manually"
+                            content={() => (
+                              <IndexChanger
+                                contactDetail={contact}
+                                _onChangeIndex={_onChangeIndex}
+                              />
+                            )}
+                            arrowPointAtCenter
+                          >
+                            <div className="w-5 h-5 rounded-full bg-amber-500 flex justify-center items-center mr-3">
+                              <p className="leading-0 mb-0 text-sm text-white">
+                                {contact.index}
+                              </p>
+                            </div>
+                          </Popover>
+                          <ArrowUpOutlined
+                            onClick={() =>
+                              onDecreaseIndex(contact.id, contact.index)
+                            }
+                            style={{ color: "white" }}
+                            className="ml-auto mr-5 block cursor-pointer bg-gray-600 rounded-full"
+                          />
+                        </div>
                       </div>
                     </td>
                     <td className="border border-slate-300 text-center">

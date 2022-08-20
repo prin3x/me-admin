@@ -98,7 +98,7 @@ function FormRequestFetcher({}: Props) {
     }
   };
 
-  const _onDecreaseIndex = async (id: string, index: number) => {
+  const _onChangeIndex = async (id: string, index: number) => {
     try {
       await _alterItemIndex(id, index);
       queryClient.invalidateQueries([FORMS_REQUEST]);
@@ -135,7 +135,7 @@ function FormRequestFetcher({}: Props) {
         _onUpdateObjectiveTitle={onUpdateObjectiveTitle}
         _onRemoveListItem={onRemoveListItem}
         _onRemoveObjectiveCategory={onRemoveObjectiveCategory}
-        _onDecreaseIndex={_onDecreaseIndex}
+        _onChangeIndex={_onChangeIndex}
         _onDecreaseCategoryIndex={_onDecreaseCategoryIndex}
       />
     );
