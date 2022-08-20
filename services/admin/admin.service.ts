@@ -38,7 +38,9 @@ export function _changeAdminNewPassword(id: string | number, password: string) {
 
 
 export function validateAdminRole(): IAdminJWT {
-  const decoded = jwt_decode(localStorage.getItem("token"));
+  const token = localStorage.getItem("token");
+  if(!token) return;
+  const decoded = jwt_decode(token);
 
   return decoded as IAdminJWT;
 }
