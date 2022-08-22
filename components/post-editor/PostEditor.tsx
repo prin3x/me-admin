@@ -26,7 +26,6 @@ import {
 import { useRouter } from "next/router";
 import React, { ReactElement, useEffect } from "react";
 import { useState } from "react";
-import "react-quill/dist/quill.snow.css";
 import { queryClient } from "../../pages/_app";
 import { ALL_RECENT_NEWS } from "../../services/post/post.queryKey";
 import {

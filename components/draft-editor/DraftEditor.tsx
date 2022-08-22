@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import { EditorState } from "draft-js";
-import PropTypes from "prop-types";
 import { SketchPicker } from "react-color";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { CloudOutlined, HighlightOutlined } from "@ant-design/icons";
+import { HighlightOutlined } from "@ant-design/icons";
 import { throttle } from "lodash";
 import { Button, Col, Row } from "antd";
 type Props = {
