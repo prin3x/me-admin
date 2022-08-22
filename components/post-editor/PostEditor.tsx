@@ -3,12 +3,10 @@ import {
   CopyOutlined,
   ExclamationCircleOutlined,
   PlusOutlined,
-  StarOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import {
   Button,
-  Card,
   Checkbox,
   Col,
   Divider,
@@ -45,11 +43,6 @@ import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
 import { API_URL } from "../../config";
 import { getAuthToken } from "../../services/auth/auth.service";
 
-const INITIAL_STATE = {
-  categoryName: "announcement",
-  content: "",
-  title: "",
-};
 
 function PostEditor(props): ReactElement {
   const router = useRouter();

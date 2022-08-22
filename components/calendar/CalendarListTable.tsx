@@ -106,16 +106,16 @@ function CalendarListTable({
             initialValue={ECalendarEventType.EVENT}
           >
             <Select className="w-full" style={{ width: 200 }}>
-              <Select.Option value={ECalendarEventType.HOLIDAY}>
+              <Select.Option value={ECalendarEventType.HOLIDAY} key={ECalendarEventType.HOLIDAY} >
                 {ECalendarEventType.HOLIDAY.toUpperCase()}
               </Select.Option>
-              <Select.Option value={ECalendarEventType.EVENT}>
+              <Select.Option value={ECalendarEventType.EVENT} key={ECalendarEventType.EVENT} >
                 {ECalendarEventType.EVENT.toUpperCase()}
               </Select.Option>
-              <Select.Option value={ECalendarEventType.BIRTHDAY}>
+              <Select.Option value={ECalendarEventType.BIRTHDAY} key={ECalendarEventType.BIRTHDAY} >
                 {ECalendarEventType.BIRTHDAY.toUpperCase()}
               </Select.Option>
-              <Select.Option value={ECalendarEventType.OTHER}>
+              <Select.Option value={ECalendarEventType.OTHER} key={ECalendarEventType.OTHER} >
                 {ECalendarEventType.OTHER.toUpperCase()}
               </Select.Option>
             </Select>
