@@ -22,7 +22,7 @@ import {
   Upload,
 } from "antd";
 import { useRouter } from "next/router";
-import React, { ReactElement, useEffect } from "react";
+import React, { ReactElement, useEffect, useRef } from "react";
 import { useState } from "react";
 import { queryClient } from "../../pages/_app";
 import { ALL_RECENT_NEWS } from "../../services/post/post.queryKey";
@@ -42,7 +42,6 @@ import DraftEditor from "../draft-editor/DraftEditor";
 import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
 import { API_URL } from "../../config";
 import { getAuthToken } from "../../services/auth/auth.service";
-
 
 function PostEditor(props): ReactElement {
   const router = useRouter();
@@ -260,84 +259,86 @@ function PostEditor(props): ReactElement {
               >
                 <Input placeholder="เขียนโดย" width={200} />
               </Form.Item>
-              <Row justify="center">
-                <Col span={9}>
-                  <div className="text-3xl">Cover Image</div>
-                  <ImageUploader
-                    height={240}
-                    aspect={1 / 1}
-                    width={240}
-                    setImage={setMainImage}
-                    currentImageUrl={initialContent?.imageUrl || ""}
-                  />
-                  <div className="lead text-xl font-bold">
-                    Size (W x H)
-                    <br />
-                    <p className="font-normal text-xl">146 x 146 px, 1 : 1</p>
-                  </div>
-                </Col>
-                {!isSameImage && (
-                  <Col span={10} offset={1}>
-                    <div className="text-3xl">Home Image</div>
+              <div className="pb-10">
+                <Row justify="center">
+                  <Col span={9}>
+                    <div className="text-3xl">Cover Image</div>
                     <ImageUploader
                       height={240}
-                      width={353}
-                      aspect={
-                        selectedCategory === "announcement" ? 3 / 4 : 3 / 2
-                      }
-                      setImage={setHomeImage}
-                      currentImageUrl={initialContent?.homeImageUrl || ""}
+                      aspect={1 / 1}
+                      width={240}
+                      setImage={setMainImage}
+                      currentImageUrl={initialContent?.imageUrl || ""}
                     />
-                    <div className="lead text-xl  font-bold">
+                    <div className="lead text-xl font-bold">
                       Size (W x H)
                       <br />
-                      <p className="font-normal text-xl mb-0">
-                        <span className="min-w-[3rem]">Announcement</span>
-                        <span>:240 x 353 px, 3:4</span>
-                      </p>
-                      <p className="font-normal text-xl">
-                        <span className="min-w-[3rem]">
-                          IT Clinic & Activities
-                        </span>
-                        <span>:495 x 333 px, 3:2</span>
-                      </p>
+                      <p className="font-normal text-xl">146 x 146 px, 1 : 1</p>
                     </div>
                   </Col>
-                )}
-                <Col span={4}>
-                  <Form.Item name="isSameImage">
-                    <Checkbox
-                      onChange={onCheckSameImage}
-                      style={{ marginLeft: 24 }}
-                    >
-                      Same Image
-                    </Checkbox>
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Upload
-                listType="picture"
-                action={`${API_URL}/upload/image`}
-                method="POST"
-                className="upload-list-inline"
-                headers={{
-                  authorization: `Bearer ${getAuthToken()}`,
-                }}
-                showUploadList={{
-                  showDownloadIcon: true,
-                  downloadIcon: (
-                    <CopyOutlined className='hover:text-black focus:text-green-500'/>
-                  ),
-                  showRemoveIcon: true,
-                }}
-                onDownload={(file) => {
-                  navigator.clipboard.writeText((file as any).response);
-                  message.success("Copy File Url Successfully");
-                }}
-              >
-                <Button icon={<UploadOutlined />}>Custom Upload Image</Button>
-              </Upload>
-              <Row justify="center" className="mt-10">
+                  {!isSameImage && (
+                    <Col span={10} offset={1}>
+                      <div className="text-3xl">Home Image</div>
+                      <ImageUploader
+                        height={240}
+                        width={353}
+                        aspect={
+                          selectedCategory === "announcement" ? 3 / 4 : 3 / 2
+                        }
+                        setImage={setHomeImage}
+                        currentImageUrl={initialContent?.homeImageUrl || ""}
+                      />
+                      <div className="lead text-xl  font-bold">
+                        Size (W x H)
+                        <br />
+                        <p className="font-normal text-xl mb-0">
+                          <span className="min-w-[3rem]">Announcement</span>
+                          <span>:240 x 353 px, 3:4</span>
+                        </p>
+                        <p className="font-normal text-xl">
+                          <span className="min-w-[3rem]">
+                            IT Clinic & Activities
+                          </span>
+                          <span>:495 x 333 px, 3:2</span>
+                        </p>
+                      </div>
+                    </Col>
+                  )}
+                  <Col span={4}>
+                    <Form.Item name="isSameImage">
+                      <Checkbox
+                        onChange={onCheckSameImage}
+                        style={{ marginLeft: 24 }}
+                      >
+                        Same Image
+                      </Checkbox>
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Upload
+                  listType="picture"
+                  action={`${API_URL}/upload/image`}
+                  method="POST"
+                  className="upload-list-inline"
+                  headers={{
+                    authorization: `Bearer ${getAuthToken()}`,
+                  }}
+                  showUploadList={{
+                    showDownloadIcon: true,
+                    downloadIcon: (
+                      <CopyOutlined className="hover:text-black focus:text-green-500" />
+                    ),
+                    showRemoveIcon: true,
+                  }}
+                  onDownload={(file) => {
+                    navigator.clipboard.writeText((file as any).response);
+                    message.success("Copy File Url Successfully");
+                  }}
+                >
+                  <Button icon={<UploadOutlined />}>Custom Upload Image</Button>
+                </Upload>
+              </div>
+              <Row justify="center">
                 <Col lg={24} md={24} className="bg-white">
                   <DraftEditor
                     textState={textState}

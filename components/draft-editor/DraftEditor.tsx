@@ -24,7 +24,7 @@ function DraftEditor({ textState, onChangeEditorState }: Props) {
     <div>
       <Editor
         editorState={textState.editorState}
-        toolbarClassName="toolbarClassName"
+        toolbarClassName="sticky top-0 z-50"
         wrapperClassName="wrapperClassName"
         editorClassName="border border-1 min-h-[10rem]"
         onEditorStateChange={onChangeEditorState}

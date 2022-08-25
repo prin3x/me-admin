@@ -1,7 +1,7 @@
 import { DeleteFilled, FormOutlined } from "@ant-design/icons";
 import { Col, Form, message, Popconfirm, Row, Select, Table } from "antd";
 import moment from "moment";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 import { useQueryClient } from "react-query";
 import {
   ECalendarEventType,
@@ -26,6 +26,7 @@ function CalendarListTable({
   query,
   onEdit,
 }: Props) {
+  const [form] = Form.useForm();
   const queryClient = useQueryClient();
   const onFormChange = (formValues) => {
     setQuery((prev) => {
@@ -49,6 +50,12 @@ function CalendarListTable({
       message.error("Error Please Try Again");
     }
   }
+
+  useEffect(() => {
+    form.setFieldsValue({
+      category: query.category
+    })
+  },[query])
 
   const columns = [
     {
@@ -99,7 +106,7 @@ function CalendarListTable({
     <div>
       <div className="font-bold text-3xl text-center">Calendar List</div>
       <Row className="my-5" justify="center">
-        <Form onValuesChange={(_, all) => onFormChange(all)} layout="inline">
+        <Form form={form} onValuesChange={(_, all) => onFormChange(all)} layout="inline">
           <Form.Item
             name="category"
             label="Calendar Type"
