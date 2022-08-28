@@ -38,6 +38,7 @@ export async function _createRoom(params) {
   formData.append("floor", params.floor);
   formData.append("image", params.image.file);
   formData.append("description", params.description);
+  formData.append("capacity", params.capacity);
 
   const config = {
     url: `/rooms`,
@@ -52,6 +53,7 @@ export async function _updateRoom(params) {
   formData.append("floor", params.floor);
   formData.append("image", params.image?.file || params.image);
   formData.append("description", params.description);
+  formData.append("capacity", params.capacity);
 
   const config = {
     url: `/rooms/${params.id}`,

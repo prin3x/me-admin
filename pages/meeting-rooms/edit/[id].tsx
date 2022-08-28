@@ -1,7 +1,7 @@
 import { Form, message } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import LayoutHOC from "../../../components/layouts/LayoutHOC";
 import RoomEditor from "../../../components/room-booking/RoomEditor";
 import { MEETINGROOMS_KEY } from "../../../services/meeting-rooms/meeting-room.model";
@@ -13,6 +13,7 @@ import {
 type Props = {};
 
 function EditRooms({}: Props) {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const [form] = Form.useForm();
   const roomData = useQuery([MEETINGROOMS_KEY, router.query.id], () =>
@@ -26,6 +27,7 @@ function EditRooms({}: Props) {
 
     try {
       await _updateRoom(set);
+      queryClient.invalidateQueries([MEETINGROOMS_KEY])
       router.push("/meeting-rooms");
     } catch (error) {
       message.error(error.response.message);
