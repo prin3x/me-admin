@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import { EditorState } from "draft-js";
 import { SketchPicker } from "react-color";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { HighlightOutlined } from "@ant-design/icons";
 import { throttle } from "lodash";
 import { Button, Col, Row } from "antd";
@@ -26,7 +25,7 @@ function DraftEditor({ textState, onChangeEditorState }: Props) {
         editorState={textState.editorState}
         toolbarClassName="sticky top-0 z-50"
         wrapperClassName="wrapperClassName"
-        editorClassName="border border-1 min-h-[10rem]"
+        editorClassName="home-editor rdw-editor-main border border-1 min-h-[30rem] h-[15rem] overflow-x-scroll"
         onEditorStateChange={onChangeEditorState}
         toolbar={{
           fontFamily: {
@@ -37,6 +36,13 @@ function DraftEditor({ textState, onChangeEditorState }: Props) {
           },
           embedded: {
             embedCallback: embedVideoCallBack,
+            className: undefined,
+            component: undefined,
+            popupClassName: undefined,
+            defaultSize: {
+              height: 'auto',
+              width: 'auto',
+            },
           },
           colorPicker: {
             component: (props) => (

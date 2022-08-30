@@ -273,7 +273,7 @@ function PostEditor(props): ReactElement {
                     <div className="lead text-xl font-bold">
                       Size (W x H)
                       <br />
-                      <p className="font-normal text-xl">146 x 146 px, 1 : 1</p>
+                      <p className="font-normal text-xl">2048 x 2048 px, 1 : 1</p>
                     </div>
                   </Col>
                   {!isSameImage && (
@@ -283,7 +283,7 @@ function PostEditor(props): ReactElement {
                         height={240}
                         width={353}
                         aspect={
-                          selectedCategory === "announcement" ? 3 / 4 : 3 / 2
+                          selectedCategory === "announcement" ? 960 / 1412 : 1980 / 1332
                         }
                         setImage={setHomeImage}
                         currentImageUrl={initialContent?.homeImageUrl || ""}
@@ -293,13 +293,13 @@ function PostEditor(props): ReactElement {
                         <br />
                         <p className="font-normal text-xl mb-0">
                           <span className="min-w-[3rem]">Announcement</span>
-                          <span>:240 x 353 px, 3:4</span>
+                          <span>:960 x 1412 px, 3:4</span>
                         </p>
                         <p className="font-normal text-xl">
                           <span className="min-w-[3rem]">
                             IT Clinic & Activities
                           </span>
-                          <span>:495 x 333 px, 3:2</span>
+                          <span>:1980 x 1332 px, 3:2</span>
                         </p>
                       </div>
                     </Col>

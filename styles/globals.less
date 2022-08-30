@@ -3,6 +3,7 @@
 @tailwind utilities;
 @import "~antd/dist/antd.less";
 @import "~@glidejs/glide/dist/css/glide.core.css";
+@import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 @font-face {
   font-family: "DB Ozone";
@@ -209,4 +210,9 @@ fc-daygrid-day-number {
   .rdw-embedded-modal-size {
     justify-content: flex-start !important;
   }
+}
+
+
+.DraftEditor-editorContainer iframe {
+  display: initial !important;
 }
