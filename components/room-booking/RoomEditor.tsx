@@ -166,7 +166,7 @@ function RoomEditor({
                                   className="delete--contact-options"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    removeExistingFloor(floor.floor)
+                                    removeExistingFloor(floor.id)
                                   }}
                                 />
                               </span>

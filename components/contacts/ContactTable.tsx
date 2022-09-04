@@ -207,7 +207,7 @@ function ContactTable({}: Props) {
       title: "Created Date",
       dataIndex: "createdDate",
       className: "normal-col",
-      width: 150,
+      width: 100,
       sorter: true,
       render: (_self, _record) => (
         <p className="text-center">
@@ -219,7 +219,7 @@ function ContactTable({}: Props) {
       title: "NAME",
       dataIndex: "name",
       className: "normal-col",
-      width: 200,
+      width: 100,
       render: (_self: string, _record: any) => (
         <div className="flex items-center gap-2">
           <div className="">
