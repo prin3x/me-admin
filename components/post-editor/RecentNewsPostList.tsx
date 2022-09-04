@@ -1,30 +1,20 @@
 import {
-  DeleteFilled,
-  FormOutlined,
-  LoadingOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import {
   Button,
   Col,
-  Image,
   Input,
-  List,
   message,
   Row,
   Select,
-  Switch,
 } from "antd";
 import Link from "next/link";
 import React, { ReactElement, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { useQuery, useQueryClient } from "react-query";
 import {
-  EPostCategory,
-  IPostItem,
   IPostStruct,
   ListQueryPost,
-  POST_RESPOSE,
   POST_STATUS,
 } from "../../services/post/post.model";
 import { ALL_RECENT_NEWS } from "../../services/post/post.queryKey";

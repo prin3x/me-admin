@@ -1,4 +1,9 @@
-import { DeleteFilled, FormOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  DeleteFilled,
+  FormOutlined,
+  SearchOutlined,
+  UndoOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -11,7 +16,11 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { ContactStatus, CreateStaffDTO, IContact } from "../../services/contact/contact.model";
+import {
+  ContactStatus,
+  CreateStaffDTO,
+  IContact,
+} from "../../services/contact/contact.model";
 import { ALL_CONTACT } from "../../services/contact/contact.queryKey";
 import {
   _createNewStaffContact,
@@ -54,6 +63,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import moment from "moment-timezone";
 import { INITIAL_IMAGE_STATE } from "../utils/ImageUploader";
+import { resetPassword } from "../../services/auth/auth.service";
 
 type Props = {};
 
@@ -132,6 +142,7 @@ function ContactTable({}: Props) {
     try {
       await _removeStaffContact(_id);
       await queryClient.invalidateQueries([ALL_CONTACT]);
+      message.success('Remove contact successfully');
     } catch (e) {
       message.error(e.response.message);
     }
@@ -143,7 +154,7 @@ function ContactTable({}: Props) {
       page: pageInfo.current,
       limit: pageInfo.pageSize,
       orderBy: sortInfo.field,
-      order: sortInfo.order
+      order: sortInfo.order,
     };
     setQueryStr(querySet);
   }
@@ -163,8 +174,8 @@ function ContactTable({}: Props) {
     let res;
     form.validateFields().then(async (_result) => {
       let staffContactInstance = {} as CreateStaffDTO;
-      staffContactInstance = {..._result}
-      staffContactInstance.profilePicFile = image ? image.file : '';
+      staffContactInstance = { ..._result };
+      staffContactInstance.profilePicFile = image ? image.file : "";
 
       try {
         if (drawerMeta.type === DrawerType.NEW) {
@@ -181,6 +192,15 @@ function ContactTable({}: Props) {
 
     return res;
   }
+
+  const resetUserPassword = async (id: string) => {
+    try {
+      await resetPassword(id);
+      message.success('Reset contact\'s password successfully');
+    } catch (e) {
+      message.error(e.message);
+    }
+  };
 
   const columns = [
     {
@@ -274,7 +294,7 @@ function ContactTable({}: Props) {
         <Row justify="center" gutter={40}>
           <Col span={3}>
             <div className="cursor-pointer text-center">
-              <FormOutlined onClick={() => openDrawerByContact(_record)} />
+              <FormOutlined   style={{ color: "orange" }} onClick={() => openDrawerByContact(_record)} />
             </div>
           </Col>
           <Col span={3}>
@@ -285,7 +305,22 @@ function ContactTable({}: Props) {
                 cancelText="No"
                 onConfirm={() => removeContactById(_record.id)}
               >
-                <DeleteFilled />
+                <DeleteFilled style={{ color: "red" }} />
+              </Popconfirm>
+            </div>
+          </Col>
+          <Col span={3}>
+            <div className="cursor-pointer text-center">
+              <Popconfirm
+                title="Are you sure to reset password for this account?"
+                okText="Yes"
+                cancelText="No"
+                onConfirm={() => resetUserPassword(_record.id)}
+              >
+                <UndoOutlined
+                  style={{ color: "green" }}
+                  className="cursor-pointer ml-1"
+                />
               </Popconfirm>
             </div>
           </Col>

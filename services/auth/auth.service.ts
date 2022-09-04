@@ -20,3 +20,7 @@ export function clearToken() {
 export async function checkAuth(): Promise<IContact> {
   return await axios.get("/auth/checkauth").then((res) => res.data);
 }
+
+export async function resetPassword(id: string): Promise<IContact> {
+  return await axios.post("/auth/reset-password", { id });
+}
