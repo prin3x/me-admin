@@ -15,7 +15,6 @@ export function _createFormsRequestListItem(
   createItem: ICreateFormsRequestItem
 ): Promise<IFormsRequest> {
   let formData = new FormData();
-  console.log(createItem?.file)
   formData.append("downloadLink", createItem.downloadLink || "");
   formData.append("content", createItem.content);
   formData.append("categoryId", createItem.categoryId);
@@ -35,12 +34,13 @@ export function _createFormsRequestListItem(
 export function _updateFormsRequestListItem(
   updatedItem: IUpdateFormsRequestItem
 ) {
+  console.log(updatedItem,'updatedItem')
   let formData = new FormData();
   formData.append("downloadLink", updatedItem.downloadLink || "");
   formData.append("content", updatedItem.content);
   formData.append(
     "file",
-    updatedItem?.file && updatedItem.file.file.originFileObj
+    updatedItem?.file && updatedItem.file.file
   );
 
   const config = {
