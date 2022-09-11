@@ -17,6 +17,7 @@ function DraftEditor({ textState, onChangeEditorState }: Props) {
       link = link.replace("/watch/", "/embed/");
       link = link.replace("youtu.be/", "youtube.com/embed/");
     }
+
     return link;
   };
   return (
