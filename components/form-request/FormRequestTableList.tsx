@@ -44,6 +44,13 @@ export interface IFormRequestEditState {
   content: string;
   downloadLink: string;
   isEditing: boolean;
+  filePath?: string;
+  status?: string;
+  adminId?: number;
+  index?: number;
+  categoryId?: number;
+  createdDate?: Date;
+  updatedDate?: Date;
 }
 
 const INIT_EDIT_LIST = {
@@ -395,7 +402,11 @@ function FormRequestTableList({
                               ]}
                               name="file"
                             >
-                              <Upload beforeUpload={() => false}  maxCount={1} multiple={false} >
+                              <Upload
+                                beforeUpload={() => false}
+                                maxCount={1}
+                                multiple={false}
+                              >
                                 <Button icon={<UploadOutlined />}>
                                   Click to Upload
                                 </Button>

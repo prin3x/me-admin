@@ -26,8 +26,6 @@ type Props = {
   onRemove: (id: string) => void;
 };
 
-
-
 function FormRequestListDrawer({
   editListItemData,
   onClose,
@@ -35,6 +33,7 @@ function FormRequestListDrawer({
   onRemove,
 }: Props): ReactElement {
   const [form] = Form.useForm();
+  const [isUpdateingFile, setIsUpdateingFile] = useState(false);
   const [uploadOrLink, setUploadOrLink] = useState<UPLOAD_OR_LINK>(
     UPLOAD_OR_LINK.link
   );
@@ -42,6 +41,7 @@ function FormRequestListDrawer({
     form.resetFields();
     if (editListItemData.id) {
       form.setFieldsValue({ ...editListItemData });
+      setIsUpdateingFile(false);
     }
   }, [editListItemData]);
 
@@ -76,7 +76,7 @@ function FormRequestListDrawer({
             >
               <Input type="text" placeholder="ชื่อรายการ" className="w-full" />
             </Form.Item>
-            {uploadOrLink === UPLOAD_OR_LINK.link ? (
+            {isUpdateingFile && uploadOrLink === UPLOAD_OR_LINK.link ? (
               <Form.Item
                 rules={[
                   ({ getFieldValue }) => ({
@@ -98,7 +98,7 @@ function FormRequestListDrawer({
               >
                 <Input type="text" placeholder="Add Link" className="" />
               </Form.Item>
-            ) : (
+            ) : isUpdateingFile && uploadOrLink === UPLOAD_OR_LINK.upload ? (
               <Form.Item
                 dependencies={["downloadLink"]}
                 label="Upload File หรือ ใส่ Link"
@@ -120,22 +120,40 @@ function FormRequestListDrawer({
                 ]}
                 name="file"
               >
-                <Upload beforeUpload={() => false} maxCount={1} multiple={false}>
+                <Upload
+                  beforeUpload={() => false}
+                  maxCount={1}
+                  multiple={false}
+                >
                   <Button icon={<UploadOutlined />}>Click to Upload</Button>
                 </Upload>
               </Form.Item>
+            ) : null}
+
+            {isUpdateingFile && (
+              <Button
+                icon={<SwapOutlined />}
+                type="primary"
+                onClick={() => toggleUploadOrLink(uploadOrLink)}
+                className="mb-5"
+              >
+                {uploadOrLink === UPLOAD_OR_LINK.link
+                  ? "Upload File"
+                  : "Add Link"}
+              </Button>
             )}
 
-            <Button
-              icon={<SwapOutlined />}
-              type="primary"
-              onClick={() => toggleUploadOrLink(uploadOrLink)}
-              className="mb-5"
-            >
-              {uploadOrLink === UPLOAD_OR_LINK.link
-                ? "Upload File"
-                : "Add Link"}
-            </Button>
+            {!isUpdateingFile && (
+              <Button
+                icon={<UploadOutlined />}
+                type="primary"
+                ghost
+                onClick={() => setIsUpdateingFile(true)}
+                className="mb-5"
+              >
+                Adjust File
+              </Button>
+            )}
             <Row justify="end" className="mt-6">
               <Form.Item>
                 <Button type="primary" htmlType="submit">

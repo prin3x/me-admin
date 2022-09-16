@@ -29,28 +29,19 @@ function CalendarEventModal({
   toggleShowTime,
   isShowTime,
 }: Props): ReactElement {
-  const timeOptions = React.useMemo(() => {
-    const options: any[] = [];
-    [...(Array(24) as any).keys()].slice(6, 22).map((h: any) => {
-      [0, 15, 30, 45].map((m) => {
-        const time = `${h.toString().padStart(2, "0")}:${m
-          .toString()
-          .padStart(2, "0")}`;
-        options.push({ value: time, label: time });
-        return m;
-      });
-      return h;
-    });
-    return options;
-  }, []);
-
+  const [disableDateTime, setDisableDateTime] = useState(false);
   useEffect(() => {
+    setDisableDateTime(false)
     if (selectedEvent.dateTime) {
       form.setFieldsValue({ ...selectedEvent });
     }
 
+    if (selectedEvent.categoryName === 'birthday'){
+      setDisableDateTime(true)
+    }
+
     return () => form.resetFields();
-  }, []);
+  }, [selectedEvent]);
 
   useEffect(() => {
     if (
@@ -74,6 +65,7 @@ function CalendarEventModal({
       <Form form={form} layout="vertical">
         <Form.Item name="dateTime" label="เวลาเริ่ม">
           <RangePicker
+            disabled={disableDateTime}
             locale={locale}
             className="w-full"
             showTime={isShowTime}

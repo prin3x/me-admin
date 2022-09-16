@@ -68,7 +68,6 @@ import { resetPassword } from "../../services/auth/auth.service";
 type Props = {};
 
 function ContactTable({}: Props) {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [image, setImage] = useState(INITIAL_IMAGE_STATE);
   const [form] = Form.useForm();
@@ -183,6 +182,7 @@ function ContactTable({}: Props) {
         } else {
           res = await _patchStaffContact(drawerMeta.id, staffContactInstance);
         }
+        setImage(INITIAL_IMAGE_STATE)
         queryClient.invalidateQueries([ALL_CONTACT]);
         toggleDrawer();
       } catch (e) {

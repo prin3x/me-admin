@@ -77,6 +77,7 @@ function DrawerEditor({
         birthDate: moment(drawerMeta.birthDate),
       });
     }
+
   }, [drawerMeta]);
 
   async function addNewItem(contactType: CONTACT_OPTIONS, newItem: string) {
