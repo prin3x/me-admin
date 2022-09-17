@@ -77,13 +77,13 @@ function CalendarEventModal({
           />
         </Form.Item>
         <Form.Item name="title" label="ชื่อกิจกรรม">
-          <Input />
+          <Input disabled={disableDateTime} />
         </Form.Item>
         <Form.Item name="hyperlink" label="Hyperlink">
-          <Input />
+          <Input disabled={disableDateTime} />
         </Form.Item>
         <Form.Item name="categoryName" label="ประเภท">
-          <Select placeholder="">
+          <Select disabled={disableDateTime} placeholder="">
             {categories?.map((_slot) => (
               <Select.Option key={_slot.title} value={_slot.title}>
                 {_slot.title}
