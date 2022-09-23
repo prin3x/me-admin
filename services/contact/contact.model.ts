@@ -117,7 +117,7 @@ export interface CreateStaffDTO {
 
   status?: CONTACT_STATUS;
 
-  birthDate: string;
+  birthDate: string | Date;
 
   hash: string;
 

@@ -63,7 +63,7 @@ function CustomCalendar(): ReactElement {
     month: moment().format("MMMM"),
     year: moment().format("YYYY"),
     startDate: moment().startOf("month").format("YYYY-MM-DD"),
-    endDate: moment().endOf("month").format("YYYY-MM-DD"),
+    endDate: moment().endOf("month").add(1, "d").format("YYYY-MM-DD"),
   });
   const [dateTitle, setDateTitle] = useState("");
   const [isShowTime, setIsShowTime] = useState(false);
@@ -143,7 +143,7 @@ function CustomCalendar(): ReactElement {
         .startOf("month")
         .format("YYYY-MM-DD"),
       endDate: moment(calendarApi.getDate())
-        .endOf("month")
+        .endOf("month").add(1, "d")
         .format("YYYY-MM-DD"),
       month: moment(calendarApi.getDate()).format("MMMM"),
       year: moment(calendarApi.getDate()).format("YYYY"),
@@ -161,6 +161,7 @@ function CustomCalendar(): ReactElement {
         .format("YYYY-MM-DD"),
       endDate: moment(calendarApi.getDate())
         .endOf("month")
+        .add(1, "d")
         .format("YYYY-MM-DD"),
       month: moment(calendarApi.getDate()).format("MMMM"),
       year: moment(calendarApi.getDate()).format("YYYY"),
