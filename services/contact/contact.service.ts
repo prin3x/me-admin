@@ -21,7 +21,7 @@ export function _createNewStaffContact(_contactDto: CreateStaffDTO) {
   formData.append("division", _contactDto.division);
   formData.append("ipPhone", _contactDto.ipPhone);
   formData.append("email", _contactDto.email);
-  formData.append("birthDate", _contactDto.birthDate);
+  formData.append("birthDate", _contactDto.birthDate as string);
   formData.append("image", _contactDto?.profilePicFile);
 
   const config = {
