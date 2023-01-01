@@ -127,7 +127,7 @@ function CalendarListTable({
               </Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item name="year" label="Year" initialValue={2022}>
+          <Form.Item name="year" label="Year" initialValue={2023}>
             <Select
               placeholder="2023"
               className="w-full"
