@@ -19,7 +19,7 @@ type Props = {
 };
 
 const INITIAL_QUERIES: ListCalendarDTO = {
-  year: "2022",
+  year: "2023",
   category: ECalendarEventType.EVENT,
   page: 1,
   limit: 20,

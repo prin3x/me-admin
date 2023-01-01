@@ -129,10 +129,11 @@ function CalendarListTable({
           </Form.Item>
           <Form.Item name="year" label="Year" initialValue={2022}>
             <Select
-              placeholder="2022"
+              placeholder="2023"
               className="w-full"
               style={{ width: 200 }}
             >
+              <Select.Option value="2023">2023</Select.Option>
               <Select.Option value="2022">2022</Select.Option>
             </Select>
           </Form.Item>
