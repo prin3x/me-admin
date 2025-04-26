@@ -46,10 +46,11 @@ function EditRooms({}: Props) {
         name: data.name,
         description: data.description,
         floor: data.floor,
-        capacity: data.capacity
+        capacity: data.capacity,
+        order: data.order,
       });
     }
-  }, [roomData.isSuccess]);
+  }, [form, roomData, roomData.isSuccess]);
 
   return (
     <LayoutHOC>

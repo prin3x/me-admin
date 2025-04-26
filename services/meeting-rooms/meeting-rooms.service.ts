@@ -54,6 +54,7 @@ export async function _updateRoom(params) {
   formData.append("image", params.image?.file || params.image);
   formData.append("description", params.description);
   formData.append("capacity", params.capacity);
+  formData.append("order", params.order);
 
   const config = {
     url: `/rooms/${params.id}`,

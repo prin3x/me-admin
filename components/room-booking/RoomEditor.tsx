@@ -128,6 +128,13 @@ function RoomEditor({
                 </Form.Item>
                 <Form.Item
                   rules={[{ required: true }]}
+                  label="Order"
+                  name="order"
+                >
+                  <InputNumber placeholder="order" min={0} />
+                </Form.Item>
+                <Form.Item
+                  rules={[{ required: true }]}
                   label="Description"
                   name="description"
                 >
@@ -148,8 +155,20 @@ function RoomEditor({
                         {menu}
                         <Divider style={{ margin: "8px 0" }} />
                         <Space align="center" style={{ padding: "0 8px 4px" }}>
-                          <Input placeholder="Please enter item" ref={floorRef} />
-                          <Typography.Link onClick={() => (floorRef.current as any).state.value ? createNewFloor((floorRef.current as any).state.value) : null} style={{ whiteSpace: "nowrap" }}>
+                          <Input
+                            placeholder="Please enter item"
+                            ref={floorRef}
+                          />
+                          <Typography.Link
+                            onClick={() =>
+                              (floorRef.current as any).state.value
+                                ? createNewFloor(
+                                    (floorRef.current as any).state.value
+                                  )
+                                : null
+                            }
+                            style={{ whiteSpace: "nowrap" }}
+                          >
                             <PlusOutlined /> Add item
                           </Typography.Link>
                         </Space>
@@ -157,22 +176,22 @@ function RoomEditor({
                     )}
                   >
                     {floors.length > 0 &&
-                        floors.map((floor) => (
-                          <Select.Option key={floor.id} value={floor.floor}>
-                            <div className="flex justify-between">
-                              <span>{floor.floor}</span>
-                              <span className="z-30">
-                                <CloseOutlined
-                                  className="delete--contact-options"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    removeExistingFloor(floor.id)
-                                  }}
-                                />
-                              </span>
-                            </div>
-                          </Select.Option>
-                        ))}
+                      floors.map((floor) => (
+                        <Select.Option key={floor.id} value={floor.floor}>
+                          <div className="flex justify-between">
+                            <span>{floor.floor}</span>
+                            <span className="z-30">
+                              <CloseOutlined
+                                className="delete--contact-options"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeExistingFloor(floor.id);
+                                }}
+                              />
+                            </span>
+                          </div>
+                        </Select.Option>
+                      ))}
                   </Select>
                 </Form.Item>
                 <Row justify="end" align="bottom" className="h-52">

@@ -57,6 +57,10 @@ const availableSelectedKeys = [
     url: "/admin-management",
     key: "Admin Management",
   },
+  {
+    url: "/department-management",
+    key: "Department Management",
+  },
 ];
 
 function LayoutHOC({ children }: Props): ReactElement {
@@ -202,6 +206,11 @@ function RenderAdminAccess({ roles, router }: any) {
           <Menu.Item key={"/forms-request"} icon={<DownloadOutlined />}>
             <Link href="/forms-request" passHref>
               <div className="text-[20px]">Forms Request</div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key={"/department-management"} icon={<UserOutlined />}>
+            <Link href="/department-management" passHref>
+              <div className="text-[20px]">Department Management</div>
             </Link>
           </Menu.Item>
         </>

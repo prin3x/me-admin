@@ -23,6 +23,7 @@ export interface IRoom {
   capacity: number;
   description: string;
   floor: string;
+  order: number;
   createdDate: Date;
   updatedDate: Date;
   createdBy: number;
