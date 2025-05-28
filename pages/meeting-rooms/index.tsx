@@ -24,6 +24,7 @@ function MeetingRooms({}: Props) {
   const [queryStr, setQueryStr] = useState({
     page: 1,
     orderBy: "updatedDate",
+    limit: 10,
   });
 
   const parseQuery = () => queryString.stringify(queryStr);
