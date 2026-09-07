@@ -23,14 +23,18 @@ export interface POST_RESPOSE {
 
 
 
+// Mirrors POST_LIST_SELECT on the backend; list endpoints omit `content`.
 export interface IPostItem {
   id: number;
   imageUrl: string;
+  homeImageUrl: string;
   title: string;
-  content: string;
+  description: string;
   status: string;
   adminId: number;
+  readers: number;
   categoryName: string;
+  postBy: string;
   slug: string;
   tag: string;
   createdDate: Date;

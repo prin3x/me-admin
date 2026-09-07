@@ -48,11 +48,11 @@ function PostTable({
     },
     {
       title: "CONTENT",
-      dataIndex: "content",
+      dataIndex: "description",
       className: "normal-col",
       render: (_self, _record) => (
         <p className="text-center">
-          {_self.length > 20 ? _self.slice(0, 20) + "..." : _self}
+          {_self?.length > 20 ? _self.slice(0, 20) + "..." : _self}
         </p>
       ),
     },
