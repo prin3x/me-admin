@@ -10,6 +10,7 @@ export const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: false,
+      staleTime: 30_000,
     },
   },
 });
@@ -41,7 +42,7 @@ function MyApp({ Component, pageProps }) {
     <QueryClientProvider client={queryClient}>
       <title>ADMIN</title>
       <Component {...pageProps} />
-      <ReactQueryDevtools />
+      {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
     </QueryClientProvider>
   );
 }
