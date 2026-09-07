@@ -23,7 +23,7 @@ function MeetingRooms({}: Props) {
   const queryClient = useQueryClient();
   const [queryStr, setQueryStr] = useState({
     page: 1,
-    orderBy: "updatedDate",
+    orderBy: "order",
     limit: 10,
   });
 
